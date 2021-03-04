@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "TmdbAPI",
+        "repositoryURL": "https://github.com/vegiwoo/TmdbAPI.git",
+        "state": {
+          "branch": null,
+          "revision": "e01f48b3a6f046b065eea54c078d847f6856626f",
+          "version": "0.0.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
