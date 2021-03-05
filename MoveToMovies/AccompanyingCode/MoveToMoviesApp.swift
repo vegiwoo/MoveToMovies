@@ -11,7 +11,7 @@ import SwiftUI
 struct MoveToMoviesApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            PopularMoviesScreen()
         }
     }
 }
