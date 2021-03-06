@@ -9,7 +9,7 @@ import SwiftUI
 import TmdbAPI
 
 struct MovieDetailScreen: View {
-    
+
     var movie: MovieListResultObject
     
     var body: some View {

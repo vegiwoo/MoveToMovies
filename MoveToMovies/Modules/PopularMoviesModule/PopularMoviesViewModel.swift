@@ -30,4 +30,14 @@ extension PopularMoviesViewModel {
     }
 }
 
+extension PopularMoviesViewModel {
+    func getRandomElement() -> Movie? {
+        guard movies.count > 0,
+              let randomMovie = movies.randomElement()
+        else { return nil }
+        
+        return randomMovie 
+    }
+}
+
 extension MovieListResultObject: Identifiable {}

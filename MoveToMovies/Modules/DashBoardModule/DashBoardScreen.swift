@@ -8,8 +8,16 @@
 import SwiftUI
 
 struct DashBoardScreen: View {
+    
+    @EnvironmentObject var appState: AppState
+    
     var body: some View {
-        Text("DashBoardScreen")
+        Button(action: {
+            appState.selectionTab = .popularMoviesScreen
+            appState.isQuickLink = true
+        }, label: {
+            Text("Get random movie")
+        })
     }
 }
 
