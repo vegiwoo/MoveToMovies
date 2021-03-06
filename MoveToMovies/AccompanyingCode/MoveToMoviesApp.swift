@@ -10,8 +10,11 @@ import SwiftUI
 @main
 struct MoveToMoviesApp: App {
     var body: some Scene {
+        
+        let appState: AppState = .init()
+        
         WindowGroup {
-            PopularMoviesScreen()
+            MainScreen().environmentObject(appState)
         }
     }
 }

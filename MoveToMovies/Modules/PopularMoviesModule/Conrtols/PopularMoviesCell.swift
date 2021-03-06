@@ -8,17 +8,18 @@
 import SwiftUI
 import TmdbAPI
 
-struct PopularMoviesCell: View {
+struct PopularMoviesCell: View, SizeClassAdjustable {
     
     @Environment(\.verticalSizeClass) var _verticalSizeClass
     @Environment(\.horizontalSizeClass) var _horizontalSizeClass
     var verticalSizeClass: UserInterfaceSizeClass? { _verticalSizeClass }
     var horizontalSizeClass: UserInterfaceSizeClass? { _horizontalSizeClass }
-
+    
     @State private var currentWidth: CGFloat?
     @State private var currentHeight: CGFloat?
     
     let movie: MovieListResultObject
+    @Binding var isActive: (Bool, MovieListResultObject?)
     
     var body: some View {
         GeometryReader{geometry in
@@ -32,15 +33,15 @@ struct PopularMoviesCell: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 1)
                     // Name
-                    Text("Name, Name, Name, Name, Name, Name, Name, Name, Name")
+                    Text(movie.title ?? "")
                         .font(Font.system(size: isPad ? 24 : isPadOrLandscapeMax ? 18 : 14)).fontWeight(.bold)
                         .lineLimit(2)
                     // Gerne
-                    Text("Gerne, Gerne, Gerne Gerne, Gerne, Gerne Gerne, Gerne, Gerne")
+                    Text((movie.gerneIds != nil) ? String(movie.gerneIds!.first!) : "")
                         .font(Font.system(size: isPad ? 24 : isPadOrLandscapeMax ? 18 : 14)).fontWeight(.regular)
                         .lineLimit(2)
                     // Year
-                    Text("Year")
+                    Text(movie.releaseDate ?? "")
                         .font(Font.system(size: isPad ? 20 : isPadOrLandscapeMax ? 16 : 12)).fontWeight(.semibold)
                         .lineLimit(1)
                     Text("")
@@ -53,8 +54,9 @@ struct PopularMoviesCell: View {
                     .padding(.trailing)
                     .foregroundColor(.gray)
                     .frame(width: isPad ? geometry.size.width / 12 : isPadOrLandscapeMax ? geometry.size.width / 10 : geometry.size.width / 8)
+            }.onTapGesture {
+                isActive = (true, movie)
             }
-            .frame(width: geometry.size.width, height: isPad ? geometry.size.height / 6 : isPadOrLandscapeMax ? geometry.size.height / 3 : geometry.size.height / 6 )
             
         }
     }
@@ -63,38 +65,6 @@ struct PopularMoviesCell: View {
 struct PopularMoviesCell_Previews: PreviewProvider {
     static var previews: some View {
         
-        PopularMoviesCell(movie: MovieListResultObject())
-        
+        PopularMoviesCell(movie: MovieListResultObject(), isActive: .constant((false, nil)))
     }
 }
-
-
-protocol SizeClassAdjustable {
-    var verticalSizeClass: UserInterfaceSizeClass? { get }
-    var horizontalSizeClass: UserInterfaceSizeClass? { get }
-}
-extension SizeClassAdjustable {
-    var isPad: Bool {
-        return horizontalSizeClass == .regular && verticalSizeClass == .regular
-    }
-//    var isPadLandscape: Bool {
-//        isPad && DeviceFeatures.IS_LANDSCAPE
-//    }
-//    var isPadPortrait: Bool {
-//        isPad && DeviceFeatures.IS_PORTRAIT
-//    }
-    var isPadOrLandscapeMax: Bool {
-        horizontalSizeClass == .regular
-    }
-    var isLandscapeMax: Bool {
-        horizontalSizeClass == .regular && verticalSizeClass == .compact
-    }
-    var isLandscape: Bool {
-        verticalSizeClass == .compact
-    }
-    var isPortrait: Bool {
-        verticalSizeClass == .regular
-    }
-}
-
-extension PopularMoviesCell: SizeClassAdjustable {}
