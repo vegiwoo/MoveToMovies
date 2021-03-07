@@ -10,6 +10,8 @@ import TmdbAPI
 
 struct PopularMoviesCell: View, SizeClassAdjustable {
     
+    @EnvironmentObject var popularMoviesViewModel: PopularMoviesViewModel
+    
     @Environment(\.verticalSizeClass) var _verticalSizeClass
     @Environment(\.horizontalSizeClass) var _horizontalSizeClass
     var verticalSizeClass: UserInterfaceSizeClass? { _verticalSizeClass }
@@ -22,7 +24,7 @@ struct PopularMoviesCell: View, SizeClassAdjustable {
 
     var body: some View {
         GeometryReader{geometry in
-            NavigationLink(destination: MovieDetailScreen(movie: movie)) {
+            NavigationLink(destination: MovieDetailScreen(movie: movie, isMapPresented: false).environmentObject(popularMoviesViewModel)) {
                 HStack(spacing: geometry.size.width / 50) {
                     RoundedRectangle(cornerRadius: 15)
                         .stroke()

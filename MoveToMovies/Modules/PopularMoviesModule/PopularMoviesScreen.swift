@@ -17,9 +17,8 @@ struct PopularMoviesScreen: View, SizeClassAdjustable {
     var verticalSizeClass: UserInterfaceSizeClass? { _verticalSizeClass }
     var horizontalSizeClass: UserInterfaceSizeClass? { _horizontalSizeClass }
     
-
     var navigationLink: NavigationLink<EmptyView, MovieDetailScreen>? {
-        return NavigationLink(destination: MovieDetailScreen(movie: appState.randomMovie), isActive: $appState.isQuickLink) { EmptyView() }
+        return NavigationLink(destination: MovieDetailScreen(movie: appState.randomMovie, isMapPresented: false), isActive: $appState.isQuickLink) { EmptyView() }
     }
     
     var body: some View {
@@ -28,10 +27,11 @@ struct PopularMoviesScreen: View, SizeClassAdjustable {
                 List(appState.popularMoviesViewModel.movies){ movie in
                     PopularMoviesCell(movie: movie)
                         .frame(width: geometry.size.width, height: isPad ? geometry.size.height / 6 : isPadOrLandscapeMax ? geometry.size.height / 3 : geometry.size.height / 6 )
+                        .environmentObject(appState.popularMoviesViewModel)
                 }.listStyle(InsetListStyle())
             }
             .navigationBarTitle("Popular Movies")
-            .overlay(navigationLink?.hidden())
+            .overlay(navigationLink?.environmentObject(appState.popularMoviesViewModel).hidden())
         }
     }
 }

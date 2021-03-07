@@ -7,10 +7,12 @@
 
 import SwiftUI
 import TmdbAPI
+import Combine
 
 final class PopularMoviesViewModel: ObservableObject {
-    typealias Movie = MovieListResultObject
-    @Published var movies: [Movie] = []
+    @Published var movies: [MovieListResultObject] = []
+    
+    let subject = PassthroughSubject<Movie, Never>()
     
     init() {
         getMovies()
@@ -28,10 +30,22 @@ extension PopularMoviesViewModel {
             }
         }
     }
+    
+    func getMovie(by id: Int) {
+        TmdbAPI.DefaultAPI.movieMovieIdGet(movieId: id, apiKey: API.apiKey.description) { (movie, error) in
+            
+            guard let movie = movie, error == nil else {
+                print(error!.localizedDescription); return
+            }
+            
+            self.subject.send(movie)
+            
+        }
+    }
 }
 
 extension PopularMoviesViewModel {
-    func getRandomElement() -> Movie? {
+    func getRandomElement() -> MovieListResultObject? {
         guard movies.count > 0,
               let randomMovie = movies.randomElement()
         else { return nil }

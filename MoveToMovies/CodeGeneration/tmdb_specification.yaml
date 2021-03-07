@@ -3,7 +3,7 @@ openapi: 3.0.0
 info:
   title: API client for https://www.themoviedb.org
   description: Developed as part of the 'Move to Movies' educational project on the "iOS Developer professional" course on the educational platform [Otus](https://otus.ru)
-  version: 0.0.9
+  version: 0.0.14
   contact:
     name: Dmitry Samartcev
     url: https://github.com/vegiwoo
@@ -123,18 +123,24 @@ components:
             $ref: '#/components/schemas/ProductionCountry'     
         release_date:
           type: string
-          format: date 
         revenue:
           type: integer
         runtime:
           type: integer
+          nullable: true
         spoken_languages:
           type: array
           items:
             $ref: '#/components/schemas/SpokenLanguage'     
         status:
           type: string
-          enum: [Rumored, Planned, In Production, Post Production, Released, Canceled]
+          enum: 
+            - Rumored
+            - Planned
+            - In Production
+            - Post Production
+            - Released
+            - Canceled
         tagline:
           type: string
           nullable: true
@@ -218,9 +224,9 @@ paths:
         - in: query
           name: api_key
           required: true
-          description: API key for using the service.
           schema:
             type : string
+          description: API key for using the service.
       responses:
         '200':
           description: Gerne list result object
@@ -233,6 +239,53 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Genre'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_message:
+                    type: string
+                  status_code: 
+                    type: integer
+        '404':  
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_message:
+                    type: string
+                  status_code: 
+                    type: integer
+  /movie/{movie_id}:
+    get:
+      summary: Get the primary information about a movie.
+      parameters:
+        - in: path
+          name: movie_id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The movie ID.
+        - in: query
+          name: api_key
+          required: true
+          schema:
+            type : string
+          description: API key for using the service.
+
+      responses:
+        '200':
+          description: Primary information about a movie.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
         '401':
           description: Unauthorized
           content:
