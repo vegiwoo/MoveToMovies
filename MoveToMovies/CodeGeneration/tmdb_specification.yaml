@@ -3,7 +3,7 @@ openapi: 3.0.0
 info:
   title: API client for https://www.themoviedb.org
   description: Developed as part of the 'Move to Movies' educational project on the "iOS Developer professional" course on the educational platform [Otus](https://otus.ru)
-  version: 0.0.15
+  version: 0.0.21
   contact:
     name: Dmitry Samartcev
     url: https://github.com/vegiwoo
@@ -11,6 +11,7 @@ info:
 
 servers:
   - url: https://api.themoviedb.org/3
+    description: Server main address.
 
 components:
   schemas:
@@ -328,3 +329,32 @@ paths:
                     type: string
                   status_code: 
                     type: integer
+                    
+  # /t/p/{image_size}/{poster_path}:
+  #   get:
+  #     summary: Get a movie poster.
+  #     servers:
+  #       - url: https://image.tmdb.org
+  #         description: Server address for storing images.
+  #     parameters:
+  #       - in: path
+  #         name: image_size
+  #         required: true
+  #         schema:
+  #           type: string
+  #           enum: [w92, w154, w185, w342, w500, w780, original]
+  #         description: Specifies width of poster in pixels.
+  #       - in: path
+  #         name: poster_path
+  #         required: true
+  #         schema:
+  #           type: string
+  #         description: Specifies path of poster
+  #     responses:
+  #       '200':
+  #         description: Date object containing poster.
+  #         content:
+  #           image/png:
+  #             schema:
+  #               type: string
+  #               format: binary

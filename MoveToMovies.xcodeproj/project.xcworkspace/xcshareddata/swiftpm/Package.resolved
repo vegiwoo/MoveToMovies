@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/vegiwoo/TmdbAPI.git",
         "state": {
           "branch": null,
-          "revision": "22ef39fd0afec1a712c957063b5e9b40dd18abbb",
-          "version": "0.0.16"
+          "revision": "15d3e9bf431d28286607a64755523b2612bafdbd",
+          "version": "0.0.21"
         }
       }
     ]

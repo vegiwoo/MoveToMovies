@@ -16,6 +16,7 @@ final class AppViewModel: ObservableObject {
     @Published var genres: [Genre] = .init()
     private var popularMoviesList: [MovieListResultObject] = .init()
     @Published var popularMovies: [Movie] = .init()
+    var posters: [Int: UIImage] = .init()
     
     let queue = DispatchQueue.global(qos: .utility)
     
@@ -51,6 +52,7 @@ extension AppViewModel {
             didSet {
                 if completion {
                     self.getMoviesInfo()
+                    self.getPosters()
                 }
             }
         }
@@ -87,6 +89,36 @@ extension AppViewModel {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+    
+    private func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
+        URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
+    }
+    
+    private func getPoster(for movieId: Int, from posterPath: String, posterSize: PosterSizes) {
+        
+        let string = "https://image.tmdb.org/t/p/\(posterSize)\(posterPath)"
+        guard let url = URL(string: string) else { return }
+        
+        self.getData(from: url) { data, response, error in
+            guard let data = data, error == nil else { return }
+            //print(response?.suggestedFilename ?? url.lastPathComponent)
+            guard let poster = UIImage(data: data) else { return }
+            self.posters.updateValue(poster, forKey: movieId)
+        }
+        
+    }
+    
+    private func getPosters() {
+        guard popularMoviesList.count > 0 else { return }
+        posters.removeAll()
+        queue.async(flags: .barrier) {
+            self.popularMoviesList.forEach {
+                if let id = $0.id, let posterPath = $0.posterPath {
+                    self.getPoster(for: id, from: posterPath, posterSize: .w185)
                 }
             }
         }
@@ -130,8 +162,17 @@ extension AppViewModel {
         
         return releaseDate.components(separatedBy: "-").first
     }
+    
+    func getPosterForMovie(id: Int) -> UIImage? {
+        return posters[id]
+    }
+
 }
 
 
 extension Genre: Identifiable {}
 extension Movie: Identifiable {}
+
+enum PosterSizes {
+    case w92, w154, w185, w342, w500, w780, original
+}
