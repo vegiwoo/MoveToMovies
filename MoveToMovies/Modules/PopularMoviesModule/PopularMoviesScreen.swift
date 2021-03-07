@@ -17,22 +17,28 @@ struct PopularMoviesScreen: View, SizeClassAdjustable {
     var verticalSizeClass: UserInterfaceSizeClass? { _verticalSizeClass }
     var horizontalSizeClass: UserInterfaceSizeClass? { _horizontalSizeClass }
     
-    var navigationLink: NavigationLink<EmptyView, MovieDetailScreen>? {
-        return NavigationLink(destination: MovieDetailScreen(movie: appState.randomMovie, isMapPresented: false), isActive: $appState.isQuickLink) { EmptyView() }
-    }
+    @State var selectedMovie: Movie?
     
     var body: some View {
         NavigationView {
             GeometryReader{geometry in
-                List(appState.popularMoviesViewModel.movies){ movie in
-                    PopularMoviesCell(movie: movie)
-                        .frame(width: geometry.size.width, height: isPad ? geometry.size.height / 6 : isPadOrLandscapeMax ? geometry.size.height / 3 : geometry.size.height / 6 )
-                        .environmentObject(appState.popularMoviesViewModel)
+                List(appState.appViewModel.popularMovies){ movie in
+                    PopularMoviesCell(movie: movie, selectedMovie: $selectedMovie)
+                        .frame(width: geometry.size.width - 36, height: isPad ? geometry.size.height / 6 : isPadOrLandscapeMax ? geometry.size.height / 3 : geometry.size.height / 6 )
+                        .environmentObject(appState.appViewModel)
                 }.listStyle(InsetListStyle())
             }
             .navigationBarTitle("Popular Movies")
-            .overlay(navigationLink?.environmentObject(appState.popularMoviesViewModel).hidden())
+            .navigate(using: $selectedMovie, destination: makeDestination)
+            .onAppear{
+                selectedMovie = appState.randomMovie != nil ? appState.randomMovie! : nil
+            }
         }
+    }
+    
+    @ViewBuilder
+    private func makeDestination(for movie: Movie) -> some View {
+        MovieDetailScreen(movie: movie, isMapPresented: false).environmentObject(appState)
     }
 }
 

@@ -14,10 +14,12 @@ struct DashBoardScreen: View {
     var body: some View {
         Button(action: {
             appState.selectionTab = .popularMoviesScreen
-            appState.isQuickLink = true
+            appState.randomMovie = appState.appViewModel.getRandomMovie() 
         }, label: {
             Text("Get random movie")
-        })
+        }).onAppear{
+            appState.randomMovie = nil
+        }
     }
 }
 

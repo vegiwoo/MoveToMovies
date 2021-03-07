@@ -15,13 +15,11 @@ extension ProductionCountry: Identifiable {
     }
 }
 
-
-
 struct MovieDetailScreen: View {
 
-    @EnvironmentObject var popularMoviesViewModel: PopularMoviesViewModel
+    @EnvironmentObject var appState: AppState
     
-    var movie: MovieListResultObject
+    var movie: Movie
     @State var fullMovieInfo: Movie?
     
     @State var isMapPresented: Bool
@@ -54,9 +52,7 @@ struct MovieDetailScreen: View {
                Text("")
             }
         }.onAppear {
-            popularMoviesViewModel.getMovie(by: movie.id!)
-        }.onReceive(popularMoviesViewModel.subject) { subjectMovie in
-            fullMovieInfo = subjectMovie
+            // TODO: ...
         }.sheet(isPresented: $isMapPresented) {
             VStack {
                 ZStack {
@@ -90,6 +86,6 @@ struct MovieDetailScreen: View {
 
 struct MovieDetailScreen_Previews: PreviewProvider {
     static var previews: some View {
-        MovieDetailScreen(movie: MovieListResultObject(title: "Some movie"), isMapPresented: false)
+        MovieDetailScreen(movie: Movie(title: "Some movie"), isMapPresented: false)
     }
 }
