@@ -13,15 +13,15 @@ struct TabbarView: View {
     
     var body: some View {
         TabView(selection: $appState.selectionTab) {
-            DashBoardScreen().tabItem {
+            NavigationHost().environmentObject(appState.navigation).tabItem {
                 TabbarView.Tab.dashboardScreen.icon
                 TabbarView.Tab.dashboardScreen.text
             }.tag(TabbarView.Tab.dashboardScreen)
-            PopularMoviesScreen().tabItem{
+            NavigationHost().environmentObject(appState.navigation).tabItem {
                 TabbarView.Tab.popularMoviesScreen.icon
                 TabbarView.Tab.popularMoviesScreen.text
             }.tag(TabbarView.Tab.popularMoviesScreen)
-            AboutUsScreen().tabItem {
+            NavigationHost().environmentObject(appState.navigation).tabItem {
                 TabbarView.Tab.aboutUSScreen.icon
                 TabbarView.Tab.aboutUSScreen.text
             }.tag(TabbarView.Tab.aboutUSScreen)

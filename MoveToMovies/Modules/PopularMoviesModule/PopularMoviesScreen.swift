@@ -16,29 +16,26 @@ struct PopularMoviesScreen: View, SizeClassAdjustable {
     @Environment(\.horizontalSizeClass) var _horizontalSizeClass
     var verticalSizeClass: UserInterfaceSizeClass? { _verticalSizeClass }
     var horizontalSizeClass: UserInterfaceSizeClass? { _horizontalSizeClass }
-    
-    @State var selectedMovie: Movie?
+
     
     var body: some View {
-        NavigationView {
-            GeometryReader{geometry in
+        
+        GeometryReader{geometry in
+            VStack {
+                Text("Popular Movies").font(Font.system(.largeTitle).bold()).padding(.bottom)
                 List(appState.appViewModel.popularMovies){ movie in
-                    PopularMoviesCell(movie: movie, selectedMovie: $selectedMovie)
-                        .frame(width: geometry.size.width - 36, height: isPad ? geometry.size.height / 6 : isPadOrLandscapeMax ? geometry.size.height / 3 : geometry.size.height / 6 )
-                        .environmentObject(appState.appViewModel)
+                    PopularMoviesCell(movie: movie)
+                        .frame(width: geometry.size.width - 36, height: isPad ? geometry.size.height / 6 : isPadOrLandscapeMax ? geometry.size.height / 3 : geometry.size.height / 6)
+                        .onTapGesture {
+                            appState.navigation.advance(NavigationItem(view: AnyView(MovieDetailScreen(movie: movie))))
+                        }
                 }.listStyle(InsetListStyle())
             }
-            .navigationBarTitle("Popular Movies")
-            .navigate(using: $selectedMovie, destination: makeDestination)
-            .onAppear{
-                selectedMovie = appState.randomMovie != nil ? appState.randomMovie! : nil
+        }.onAppear{
+            if appState.isQuickLink {
+                appState.navigation.advance(NavigationItem(view: AnyView(MovieDetailScreen(movie: appState.randomMovie!))))
             }
         }
-    }
-    
-    @ViewBuilder
-    private func makeDestination(for movie: Movie) -> some View {
-        MovieDetailScreen(movie: movie, isMapPresented: false).environmentObject(appState)
     }
 }
 

@@ -8,7 +8,13 @@
 import SwiftUI
 import TmdbAPI
 
+
+
+
 struct PopularMoviesCell: View, SizeClassAdjustable {
+    
+    @EnvironmentObject var appState: AppState
+    let movie: Movie
     
     @Environment(\.verticalSizeClass) var _verticalSizeClass
     @Environment(\.horizontalSizeClass) var _horizontalSizeClass
@@ -17,12 +23,7 @@ struct PopularMoviesCell: View, SizeClassAdjustable {
     
     @State private var currentWidth: CGFloat?
     @State private var currentHeight: CGFloat?
-    
-    let movie: Movie
-    
-    @EnvironmentObject var viewModel: AppViewModel
-    @Binding var selectedMovie: Movie?
-    
+
     @State var gernes: String?
     @State var movieYear: String?
     @State var poster: UIImage?
@@ -35,14 +36,13 @@ struct PopularMoviesCell: View, SizeClassAdjustable {
                     Image(uiImage: poster)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: isPad ? geometry.size.width / 5 :  isPadOrLandscapeMax ? geometry.size.height / 3 : geometry.size.width / 5.5, height: geometry.size.height - 10 )
-    
+                        .smallPosterFrame(geometrySize: geometry.size)
                         .cornerRadius(15)
                 } else {
                     RoundedRectangle(cornerRadius: 15)
                         .stroke()
                         .foregroundColor(.gray)
-                        .frame(width: isPad ? geometry.size.width / 5 :  isPadOrLandscapeMax ? geometry.size.height / 3 : geometry.size.width / 5.5, height:  geometry.size.height - 10 )
+                        .smallPosterFrame(geometrySize: geometry.size)
                 }
                 VStack(alignment: .leading, spacing: geometry.size.width / 65) {
                     // EmptyView
@@ -77,12 +77,9 @@ struct PopularMoviesCell: View, SizeClassAdjustable {
                 .foregroundColor(.secondary)
             }
             .onAppear{
-                gernes = viewModel.getGernesString(for: movie)
-                movieYear = viewModel.getYearForMovie(id: movie.id!)
-                poster = viewModel.getPosterForMovie(id: movie.id!)
-            }
-            .onTapGesture {
-                selectedMovie = movie
+                gernes = appState.appViewModel.getGernesString(for: movie)
+                movieYear = appState.appViewModel.getYearForMovie(id: movie.id!)
+                poster = appState.appViewModel.getPosterForMovie(id: movie.id!)
             }
         }
     }
@@ -90,7 +87,6 @@ struct PopularMoviesCell: View, SizeClassAdjustable {
 
 struct PopularMoviesCell_Previews: PreviewProvider {
     static var previews: some View {
-        PopularMoviesCell(movie: Movie(title: "Some movie"),
-                          selectedMovie: .constant(nil))
+        PopularMoviesCell(movie: Movie(title: "Some movie"))
     }
 }

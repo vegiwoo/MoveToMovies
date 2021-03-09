@@ -164,9 +164,12 @@ extension AppViewModel {
     }
     
     func getPosterForMovie(id: Int) -> UIImage? {
-        return posters[id]
+        posters[id]
     }
-
+    
+    func getAverageColorForMovie(id: Int) -> UIColor? {
+        posters[id]?.averageColor
+    }
 }
 
 
