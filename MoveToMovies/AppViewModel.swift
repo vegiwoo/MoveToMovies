@@ -8,6 +8,13 @@
 import SwiftUI
 import TmdbAPI
 import Combine
+import MapKit
+
+struct ProductionCountryDTO {
+    let key: String
+    let name: String
+    let coordinate: CLLocationCoordinate2D
+}
 
 final class AppViewModel: ObservableObject {
     
@@ -17,6 +24,7 @@ final class AppViewModel: ObservableObject {
     private var popularMoviesList: [MovieListResultObject] = .init()
     @Published var popularMovies: [Movie] = .init()
     var posters: [Int: UIImage] = .init()
+    var productionCountries: [ProductionCountryDTO] = .init()
     
     let queue = DispatchQueue.global(qos: .utility)
     
@@ -75,6 +83,7 @@ extension AppViewModel {
     }
     
     private func getMoviesInfo() {
+        
         popularMoviesList.forEach {
             if let movieId = $0.id {
                 queue.async(flags: .barrier) {
@@ -86,12 +95,16 @@ extension AppViewModel {
                         } else {
                             if let movie = movie {
                                 self.popularMovies.append(movie)
+                                if self.popularMoviesList.count == self.popularMovies.count {
+                                    self.getContries()
+                                }
                             }
                         }
                     }
                 }
             }
         }
+        
     }
     
     private func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
@@ -119,6 +132,35 @@ extension AppViewModel {
             self.popularMoviesList.forEach {
                 if let id = $0.id, let posterPath = $0.posterPath {
                     self.getPoster(for: id, from: posterPath, posterSize: .w185)
+                }
+            }
+        }
+    }
+    
+    private func getContries() {
+        popularMovies.compactMap{$0.productionCountries}.forEach{countries in
+            countries.forEach{country in
+                
+                if let iso31661 = country.iso31661, let name = country.name,
+                   !productionCountries.contains(where: {$0.key == iso31661}) {
+                    
+                    queue.async(flags: .barrier) {
+                        
+                        let searchRequest = MKLocalSearch.Request()
+                        searchRequest.naturalLanguageQuery = country.name
+                        let search = MKLocalSearch(request: searchRequest)
+                        
+                        search.start { (response, error)  in
+                            guard let response = response else {
+                                print("Error: \(error?.localizedDescription ?? "Unknown error").")
+                                return
+                            }
+                            
+                            if let coordinate = response.mapItems.first?.placemark.coordinate{
+                                self.productionCountries.append(ProductionCountryDTO(key: iso31661, name: name, coordinate: coordinate))
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -169,6 +211,10 @@ extension AppViewModel {
     
     func getAverageColorForMovie(id: Int) -> UIColor? {
         posters[id]?.averageColor
+    }
+    
+    func getProductionCountry(by key: String) -> ProductionCountryDTO? {
+        productionCountries.first(where: {$0.key == key})
     }
 }
 
