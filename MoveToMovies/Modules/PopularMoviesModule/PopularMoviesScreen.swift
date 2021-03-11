@@ -11,7 +11,7 @@ import TmdbAPI
 struct PopularMoviesScreen: View {
 
     var body: some View {
-        NavCoordinatorView() {
+        NavCoordinatorView {
             PopularMoviesScreenContent()
         }
     }
@@ -52,8 +52,6 @@ struct PopularMoviesScreenContent: View, SizeClassAdjustable {
             if appState.isQuickLink, let randomMovie = appState.randomMovie {
                 viewModel.push(MovieDetailScreen(movie: randomMovie))
             }
-        }.onChange(of: viewModel.navigationListCount) { (value) in
-            print(value)
         }
     }
 }
