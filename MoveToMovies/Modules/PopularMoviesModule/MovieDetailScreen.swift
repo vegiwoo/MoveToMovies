@@ -18,6 +18,7 @@ extension ProductionCountry: Identifiable {
 struct MovieDetailScreen: View, SizeClassAdjustable {
 
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var viewModel: NavCoordinatorViewModel
     
     @Environment(\.verticalSizeClass) var _verticalSizeClass
     @Environment(\.horizontalSizeClass) var _horizontalSizeClass
@@ -32,17 +33,12 @@ struct MovieDetailScreen: View, SizeClassAdjustable {
     
     @State private var countries: [ProductionCountryDTO] = .init()
     
-    private func unwind() {
-        appState.isQuickLink = false
-        //appState.selectionTab = .popularMoviesScreen
-    }
-    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                LinearGradient(gradient: Gradient(colors: [Color.white,averageColor != nil ? Color(averageColor!) : .white]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea(edges: [.bottom, .trailing])
+                LinearGradient(gradient: Gradient(colors: [Color.white,averageColor != nil ? Color(averageColor!) : .white]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
                 VStack(spacing: geometry.size.width / 40) {
-                    NavPopButton {
+                    NavPopButton(action: zeroingQuickLink) {
                         HStack {
                             Image(systemName: "chevron.backward")
                             Text("Back").font(.title2)
@@ -73,7 +69,6 @@ struct MovieDetailScreen: View, SizeClassAdjustable {
                     EmptyView()
                 }.frame(width: geometry.size.width - 32, height: geometry.size.height - 52, alignment: .top)
             }
-            .ignoresSafeArea()
         }
         .onAppear {
             averageColor = appState.appViewModel.getAverageColorForMovie(id: movie.id!)
@@ -99,6 +94,11 @@ struct MovieDetailScreen: View, SizeClassAdjustable {
             }
         }
     }
+    
+    private func zeroingQuickLink() {
+        appState.isQuickLink = false
+    }
+    
 }
 
 struct MovieDetailScreen_Previews: PreviewProvider {

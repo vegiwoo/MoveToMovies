@@ -45,22 +45,15 @@ struct PopularMoviesScreenContent: View, SizeClassAdjustable {
                         
                     }
                 }.padding()
-                
-                
-                
-                //List(appState.appViewModel.popularMovies){ movie in
-                   
-                    
-                    
-             
-//                            appState.navigation.advance(NavigationItem(view: AnyView(MovieDetailScreen(movie: movie))))
-                        
-               // }
             }
         }.onAppear{
-            if appState.isQuickLink {
-//                appState.navigation.advance(NavigationItem(view: AnyView(MovieDetailScreen(movie: appState.randomMovie!))))
+            print(viewModel.navigationListCount)
+            
+            if appState.isQuickLink, let randomMovie = appState.randomMovie {
+                viewModel.push(MovieDetailScreen(movie: randomMovie))
             }
+        }.onChange(of: viewModel.navigationListCount) { (value) in
+            print(value)
         }
     }
 }

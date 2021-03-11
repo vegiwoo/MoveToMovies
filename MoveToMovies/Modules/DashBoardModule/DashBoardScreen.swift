@@ -29,9 +29,13 @@ struct DashBoardScreenContent: View {
     var body: some View {
         Button(action: {
             appState.isQuickLink = true
+            appState.selectTabIndex = 1
         }, label: {
             Text("Get random movie")
         })
+        .onAppear{
+            appState.isQuickLink = false
+        }
     }
 }
 

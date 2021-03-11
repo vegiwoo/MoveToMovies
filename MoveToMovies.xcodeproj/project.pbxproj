@@ -20,7 +20,6 @@
 		7758CEDE25F2586700F7064B /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7758CEDD25F2586700F7064B /* AppViewModel.swift */; };
 		7758CEE225F2596400F7064B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7758CEE125F2596400F7064B /* AppState.swift */; };
 		77848DEA25F7BCF8004DBB1A /* NavigationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848DE925F7BCF8004DBB1A /* NavigationStack.swift */; };
-		77848DED25F7C1FE004DBB1A /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848DEC25F7C1FE004DBB1A /* BackButton.swift */; };
 		77848E0825F8BCCB004DBB1A /* TabBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848E0725F8BCCB004DBB1A /* TabBarItem.swift */; };
 		77848E0B25F8BE0A004DBB1A /* TabBarItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848E0A25F8BE0A004DBB1A /* TabBarItemView.swift */; };
 		77848E0F25F8C0E0004DBB1A /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848E0E25F8C0E0004DBB1A /* TabBar.swift */; };
@@ -53,7 +52,6 @@
 		7758CEDD25F2586700F7064B /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
 		7758CEE125F2596400F7064B /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		77848DE925F7BCF8004DBB1A /* NavigationStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStack.swift; sourceTree = "<group>"; };
-		77848DEC25F7C1FE004DBB1A /* BackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackButton.swift; sourceTree = "<group>"; };
 		77848E0725F8BCCB004DBB1A /* TabBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarItem.swift; sourceTree = "<group>"; };
 		77848E0A25F8BE0A004DBB1A /* TabBarItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarItemView.swift; sourceTree = "<group>"; };
 		77848E0E25F8C0E0004DBB1A /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
@@ -245,7 +243,6 @@
 			isa = PBXGroup;
 			children = (
 				7746165525F15F19001D8ADB /* PopularMoviesCell.swift */,
-				77848DEC25F7C1FE004DBB1A /* BackButton.swift */,
 			);
 			path = Conrtols;
 			sourceTree = "<group>";
@@ -342,7 +339,6 @@
 				7752F96A25F4CC8200DBE89B /* View + Ext.swift in Sources */,
 				77848E0825F8BCCB004DBB1A /* TabBarItem.swift in Sources */,
 				7752F96725F4CC4200DBE89B /* NavigationLink + Ext.swift in Sources */,
-				77848DED25F7C1FE004DBB1A /* BackButton.swift in Sources */,
 				7752F91D25F3727700DBE89B /* MovieDetailScreen.swift in Sources */,
 				7746165625F15F19001D8ADB /* PopularMoviesCell.swift in Sources */,
 				77FEBA1525F60CF2004605A7 /* UIColor.swift in Sources */,

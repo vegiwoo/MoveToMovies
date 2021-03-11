@@ -32,6 +32,10 @@ public class NavCoordinatorViewModel: ObservableObject {
             currentScreen = navigationList.lastValue
         }
     }
+    
+    var navigationListCount: Int {
+        return navigationList.count
+    }
 
     func push<S: View>(_ screenView: S)  {
         let screen: Screen = .init(id: UUID(), nextScreen: AnyView(screenView))
@@ -91,18 +95,21 @@ public struct NavPushButton<Label, Destination>: View where Label: View, Destina
 
 public struct NavPopButton<Label>: View where Label: View {
     @EnvironmentObject var vm: NavCoordinatorViewModel
-    
-    private let label: () -> Label
+
     private let destination: PopDestination
+    private let action: () -> Void
+    private let label: () -> Label
     
-    public init (destination: PopDestination = .previous,
+    public init (destination: PopDestination = .previous, action:  @escaping () -> Void,
                  @ViewBuilder label: @escaping () -> Label) {
         self.destination = destination
+        self.action = action
         self.label = label
     }
     
     public var body: some View {
         label().onTapGesture {
+            action()
             vm.popTo(destination: destination)
         }
     }
