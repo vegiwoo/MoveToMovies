@@ -27,13 +27,13 @@ struct PopularMoviesScreen: View, SizeClassAdjustable {
                     PopularMoviesCell(movie: movie)
                         .frame(width: geometry.size.width - 36, height: isPad ? geometry.size.height / 6 : isPadOrLandscapeMax ? geometry.size.height / 3 : geometry.size.height / 6)
                         .onTapGesture {
-                            appState.navigation.advance(NavigationItem(view: AnyView(MovieDetailScreen(movie: movie))))
+//                            appState.navigation.advance(NavigationItem(view: AnyView(MovieDetailScreen(movie: movie))))
                         }
                 }.listStyle(InsetListStyle())
             }
         }.onAppear{
             if appState.isQuickLink {
-                appState.navigation.advance(NavigationItem(view: AnyView(MovieDetailScreen(movie: appState.randomMovie!))))
+//                appState.navigation.advance(NavigationItem(view: AnyView(MovieDetailScreen(movie: appState.randomMovie!))))
             }
         }
     }

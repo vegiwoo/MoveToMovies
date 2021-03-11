@@ -12,7 +12,7 @@ struct MainScreen: View {
     @EnvironmentObject var appState: AppState
     
     var body: some View {
-        TabbarView()
+        TabbarView(selectionScreen: $appState.selectionScreen)
     }
 }
 

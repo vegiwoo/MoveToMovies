@@ -9,6 +9,21 @@ import SwiftUI
 
 struct DashBoardScreen: View {
     
+    var body: some View {
+        NavCoordinatorView() {
+            DashBoardScreenContent()
+        }
+    }
+}
+
+struct DashBoardScreen_Previews: PreviewProvider {
+    static var previews: some View {
+        DashBoardScreen()
+    }
+}
+
+struct DashBoardScreenContent: View {
+    
     @EnvironmentObject var appState: AppState
     
     var body: some View {
@@ -20,8 +35,8 @@ struct DashBoardScreen: View {
     }
 }
 
-struct DashBoardScreen_Previews: PreviewProvider {
+struct DashBoardScreenContent_Previews: PreviewProvider {
     static var previews: some View {
-        DashBoardScreen()
+        DashBoardScreenContent()
     }
 }

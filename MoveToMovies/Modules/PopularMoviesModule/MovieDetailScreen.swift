@@ -34,7 +34,7 @@ struct MovieDetailScreen: View, SizeClassAdjustable {
     
     private func unwind() {
         appState.isQuickLink = false
-        appState.selectionTab = .popularMoviesScreen
+        //appState.selectionTab = .popularMoviesScreen
     }
     
     var body: some View {

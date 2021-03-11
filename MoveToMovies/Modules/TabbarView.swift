@@ -11,56 +11,74 @@ struct TabbarView: View {
     
     @EnvironmentObject var appState: AppState
     
+    @Binding var selectionScreen: AnyView
+    
+    @State var selectionIndex: Int = 0
+    
+    var tabBarItems: [TabBarItem] = [
+        TabBarItem(sfSymbolName: "list.dash", title: "Dashboard", color: .red),
+        TabBarItem(sfSymbolName: "tv", title: "Popular Movies", color: .green),
+        TabBarItem(sfSymbolName: "info", title: "About us", color: .blue),
+    ]
+
     var body: some View {
-        TabView(selection: $appState.selectionTab) {
-            NavigationHost().environmentObject(appState.navigation).tabItem {
-                TabbarView.Tab.dashboardScreen.icon
-                TabbarView.Tab.dashboardScreen.text
-            }.tag(TabbarView.Tab.dashboardScreen)
-            NavigationHost().environmentObject(appState.navigation).tabItem {
-                TabbarView.Tab.popularMoviesScreen.icon
-                TabbarView.Tab.popularMoviesScreen.text
-            }.tag(TabbarView.Tab.popularMoviesScreen)
-            NavigationHost().environmentObject(appState.navigation).tabItem {
-                TabbarView.Tab.aboutUSScreen.icon
-                TabbarView.Tab.aboutUSScreen.text
-            }.tag(TabbarView.Tab.aboutUSScreen)
-        }
+        GeometryReader {geometry in
+            VStack {
+                selectionScreen.frame(height: (geometry.size.height / 10) * 9 )
+                TabBar(selectedIndex: $appState.selectTabIndex, tabBarItems: tabBarItems, animanion: .easeInOut).frame(height: geometry.size.height / 10)
+            }
+        } 
     }
 }
 
-struct TabbarView_Previews: PreviewProvider {
-    static var previews: some View {
-        TabbarView()
-    }
-}
+//struct TabbarView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TabbarView()
+//    }
+//}
 
-extension TabbarView {
-    enum Tab: Hashable {
-        case dashboardScreen
-        case popularMoviesScreen
-        case aboutUSScreen
-        
-        var text: Text {
-            switch self {
-            case .dashboardScreen:
-                return Text("Dashboard")
-            case .popularMoviesScreen:
-                return Text("Popular")
-            case .aboutUSScreen:
-                return Text("About us")
-            }
+enum TabbarTab: Hashable, CaseIterable, CustomStringConvertible {
+    case dashboardScreen
+    case popularMoviesScreen
+    case aboutUSScreen
+    
+    var description: String {
+        switch self {
+        case .dashboardScreen: return "Dashboard Screen"
+        case .popularMoviesScreen: return "Popular Movies Screen"
+        case .aboutUSScreen: return "About us Screen"
         }
-        
-        var icon: Image {
-            switch self {
-            case .dashboardScreen:
-                return Image(systemName: "list.dash")
-            case .popularMoviesScreen:
-                return Image(systemName: "tv")
-            case .aboutUSScreen:
-                return Image(systemName: "info")
-            }
+    }
+    
+    
+    var rawValue: Int {
+        switch self {
+        case .dashboardScreen: return 0
+        case .popularMoviesScreen: return 1
+        case .aboutUSScreen: return 2
+        }
+    }
+    
+    
+    var text: Text {
+        switch self {
+        case .dashboardScreen:
+            return Text("Dashboard")
+        case .popularMoviesScreen:
+            return Text("Popular")
+        case .aboutUSScreen:
+            return Text("About us")
+        }
+    }
+    
+    var icon: Image {
+        switch self {
+        case .dashboardScreen:
+            return Image(systemName: "list.dash")
+        case .popularMoviesScreen:
+            return Image(systemName: "tv")
+        case .aboutUSScreen:
+            return Image(systemName: "info")
         }
     }
 }

@@ -21,6 +21,13 @@
 		7758CEE225F2596400F7064B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7758CEE125F2596400F7064B /* AppState.swift */; };
 		77848DEA25F7BCF8004DBB1A /* NavigationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848DE925F7BCF8004DBB1A /* NavigationStack.swift */; };
 		77848DED25F7C1FE004DBB1A /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848DEC25F7C1FE004DBB1A /* BackButton.swift */; };
+		77848E0825F8BCCB004DBB1A /* TabBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848E0725F8BCCB004DBB1A /* TabBarItem.swift */; };
+		77848E0B25F8BE0A004DBB1A /* TabBarItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848E0A25F8BE0A004DBB1A /* TabBarItemView.swift */; };
+		77848E0F25F8C0E0004DBB1A /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848E0E25F8C0E0004DBB1A /* TabBar.swift */; };
+		77848E1225F8D1A4004DBB1A /* Transition + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848E1125F8D1A4004DBB1A /* Transition + Ext.swift */; };
+		77848E1525F8E0FB004DBB1A /* LinkedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848E1425F8E0FB004DBB1A /* LinkedList.swift */; };
+		77848E1825F8E8D4004DBB1A /* NavCoordinatorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848E1725F8E8D4004DBB1A /* NavCoordinatorViewModel.swift */; };
+		77848E1F25FA3458004DBB1A /* NavCoordinatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848E1E25FA3458004DBB1A /* NavCoordinatorView.swift */; };
 		77A67F8925F0DC82005CB877 /* MoveToMoviesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A67F8825F0DC82005CB877 /* MoveToMoviesApp.swift */; };
 		77A67F8B25F0DC82005CB877 /* PopularMoviesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A67F8A25F0DC82005CB877 /* PopularMoviesScreen.swift */; };
 		77A67F8D25F0DC83005CB877 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 77A67F8C25F0DC83005CB877 /* Assets.xcassets */; };
@@ -50,6 +57,13 @@
 		7758CEE125F2596400F7064B /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		77848DE925F7BCF8004DBB1A /* NavigationStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStack.swift; sourceTree = "<group>"; };
 		77848DEC25F7C1FE004DBB1A /* BackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackButton.swift; sourceTree = "<group>"; };
+		77848E0725F8BCCB004DBB1A /* TabBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarItem.swift; sourceTree = "<group>"; };
+		77848E0A25F8BE0A004DBB1A /* TabBarItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarItemView.swift; sourceTree = "<group>"; };
+		77848E0E25F8C0E0004DBB1A /* TabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
+		77848E1125F8D1A4004DBB1A /* Transition + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Transition + Ext.swift"; sourceTree = "<group>"; };
+		77848E1425F8E0FB004DBB1A /* LinkedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedList.swift; sourceTree = "<group>"; };
+		77848E1725F8E8D4004DBB1A /* NavCoordinatorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavCoordinatorViewModel.swift; sourceTree = "<group>"; };
+		77848E1E25FA3458004DBB1A /* NavCoordinatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavCoordinatorView.swift; sourceTree = "<group>"; };
 		77A67F8525F0DC82005CB877 /* MoveToMovies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoveToMovies.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		77A67F8825F0DC82005CB877 /* MoveToMoviesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveToMoviesApp.swift; sourceTree = "<group>"; };
 		77A67F8A25F0DC82005CB877 /* PopularMoviesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopularMoviesScreen.swift; sourceTree = "<group>"; };
@@ -110,6 +124,7 @@
 				7752F96625F4CC4200DBE89B /* NavigationLink + Ext.swift */,
 				7752F96925F4CC8200DBE89B /* View + Ext.swift */,
 				77FEBA1425F60CF2004605A7 /* UIColor.swift */,
+				77848E1125F8D1A4004DBB1A /* Transition + Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -129,6 +144,25 @@
 				77848DE925F7BCF8004DBB1A /* NavigationStack.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		77848E0525F8BC98004DBB1A /* CustomTabBar */ = {
+			isa = PBXGroup;
+			children = (
+				77848E0725F8BCCB004DBB1A /* TabBarItem.swift */,
+				77848E0A25F8BE0A004DBB1A /* TabBarItemView.swift */,
+				77848E0E25F8C0E0004DBB1A /* TabBar.swift */,
+			);
+			path = CustomTabBar;
+			sourceTree = "<group>";
+		};
+		77848E1A25F8E8DA004DBB1A /* NavigationController */ = {
+			isa = PBXGroup;
+			children = (
+				77848E1725F8E8D4004DBB1A /* NavCoordinatorViewModel.swift */,
+				77848E1E25FA3458004DBB1A /* NavCoordinatorView.swift */,
+			);
+			path = NavigationController;
 			sourceTree = "<group>";
 		};
 		77A67F7C25F0DC82005CB877 = {
@@ -151,6 +185,7 @@
 		77A67F8725F0DC82005CB877 /* MoveToMovies */ = {
 			isa = PBXGroup;
 			children = (
+				77848E0525F8BC98004DBB1A /* CustomTabBar */,
 				7752F96525F4CC2700DBE89B /* Extensions */,
 				77FBABE225F2842B00282331 /* Modules */,
 				7758CED925F2506E00F7064B /* Helpers */,
@@ -160,6 +195,8 @@
 				77A67F8E25F0DC83005CB877 /* Preview Content */,
 				7758CEDD25F2586700F7064B /* AppViewModel.swift */,
 				7758CEE125F2596400F7064B /* AppState.swift */,
+				77848E1425F8E0FB004DBB1A /* LinkedList.swift */,
+				77848E1A25F8E8DA004DBB1A /* NavigationController */,
 			);
 			path = MoveToMovies;
 			sourceTree = "<group>";
@@ -310,7 +347,9 @@
 				7752F94325F3CC9000DBE89B /* MapView.swift in Sources */,
 				77FBABF025F2856E00282331 /* AboutUsScreen.swift in Sources */,
 				7758CED725F24E0400F7064B /* SizeClassAdjustable.swift in Sources */,
+				77848E0F25F8C0E0004DBB1A /* TabBar.swift in Sources */,
 				7752F96A25F4CC8200DBE89B /* View + Ext.swift in Sources */,
+				77848E0825F8BCCB004DBB1A /* TabBarItem.swift in Sources */,
 				7752F96725F4CC4200DBE89B /* NavigationLink + Ext.swift in Sources */,
 				77848DED25F7C1FE004DBB1A /* BackButton.swift in Sources */,
 				7752F91D25F3727700DBE89B /* MovieDetailScreen.swift in Sources */,
@@ -318,15 +357,20 @@
 				77FBABF325F2858500282331 /* AboutUsViewModel.swift in Sources */,
 				77FEBA1525F60CF2004605A7 /* UIColor.swift in Sources */,
 				7758CEE225F2596400F7064B /* AppState.swift in Sources */,
+				77848E1825F8E8D4004DBB1A /* NavCoordinatorViewModel.swift in Sources */,
+				77848E1225F8D1A4004DBB1A /* Transition + Ext.swift in Sources */,
 				77848DEA25F7BCF8004DBB1A /* NavigationStack.swift in Sources */,
 				77FBABE725F2845400282331 /* DashboardViewModel.swift in Sources */,
 				77FEBA1225F60BA7004605A7 /* SmallPosterFrame.swift in Sources */,
 				77A67F8B25F0DC82005CB877 /* PopularMoviesScreen.swift in Sources */,
+				77848E1F25FA3458004DBB1A /* NavCoordinatorView.swift in Sources */,
 				7752F91925F2B5D300DBE89B /* MainScreen.swift in Sources */,
 				77FBABE425F2844100282331 /* DashBoardScreen.swift in Sources */,
 				77A67F8925F0DC82005CB877 /* MoveToMoviesApp.swift in Sources */,
+				77848E0B25F8BE0A004DBB1A /* TabBarItemView.swift in Sources */,
 				77FBABDF25F283D100282331 /* TabbarView.swift in Sources */,
 				7752F97825F4E52F00DBE89B /* API.swift in Sources */,
+				77848E1525F8E0FB004DBB1A /* LinkedList.swift in Sources */,
 				7758CEDE25F2586700F7064B /* AppViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
