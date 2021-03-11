@@ -25,7 +25,6 @@ final class AppState: ObservableObject {
     
     @Published var selectionScreen: AnyView = AnyView(DashBoardScreen())
     
-    
     private func selectedTabHandler() {
         if let selectedTab = TabbarTab.allCases.first(where: {$0.rawValue == selectTabIndex}) {
             switch selectedTab {
@@ -36,16 +35,6 @@ final class AppState: ObservableObject {
             case .aboutUSScreen:
                 selectionScreen = AnyView(AboutUsScreen())
             }
-    //        case .dashboardScreen:
-    //            //navigation.zeroingStack(with:NavigationItem(view: AnyView(DashBoardScreen())))
-    //        case .popularMoviesScreen:
-    //            navigation.zeroingStack(with:NavigationItem(view: AnyView(PopularMoviesScreen())))
-    //        case .aboutUSScreen:
-    //            navigation.zeroingStack(with:NavigationItem(view: AnyView(AboutUsScreen())))
-    //        }
         }
-   
-
     }
-    
 }

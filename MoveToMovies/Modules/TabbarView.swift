@@ -24,18 +24,21 @@ struct TabbarView: View {
     var body: some View {
         GeometryReader {geometry in
             VStack {
-                selectionScreen.frame(height: (geometry.size.height / 10) * 9 )
-                TabBar(selectedIndex: $appState.selectTabIndex, tabBarItems: tabBarItems, animanion: .easeInOut).frame(height: geometry.size.height / 10)
+                selectionScreen
+                    .frame(height: (geometry.size.height / 12) * 11 )
+                    .transition(.moveAndFade)
+                TabBar(selectedIndex: $appState.selectTabIndex, tabBarItems: tabBarItems, animanion: .easeInOut)
+                    .frame(height: geometry.size.height / 12)
             }
         } 
     }
 }
 
-//struct TabbarView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        TabbarView()
-//    }
-//}
+struct TabbarView_Previews: PreviewProvider {
+    static var previews: some View {
+        TabbarView(selectionScreen: .constant(AnyView(DashBoardScreen())))
+    }
+}
 
 enum TabbarTab: Hashable, CaseIterable, CustomStringConvertible {
     case dashboardScreen
@@ -50,7 +53,6 @@ enum TabbarTab: Hashable, CaseIterable, CustomStringConvertible {
         }
     }
     
-    
     var rawValue: Int {
         switch self {
         case .dashboardScreen: return 0
@@ -58,7 +60,6 @@ enum TabbarTab: Hashable, CaseIterable, CustomStringConvertible {
         case .aboutUSScreen: return 2
         }
     }
-    
     
     var text: Text {
         switch self {

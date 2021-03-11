@@ -42,7 +42,15 @@ struct MovieDetailScreen: View, SizeClassAdjustable {
             ZStack {
                 LinearGradient(gradient: Gradient(colors: [Color.white,averageColor != nil ? Color(averageColor!) : .white]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea(edges: [.bottom, .trailing])
                 VStack(spacing: geometry.size.width / 40) {
-                    BackButton(width: geometry.size.width - 32, text: "Back", color: .blue, action: unwind)
+                    NavPopButton {
+                        HStack {
+                            Image(systemName: "chevron.backward")
+                            Text("Back").font(.title2)
+                        }
+                        .foregroundColor(.blue)
+                        .frame(width: geometry.size.width - 32, alignment: .leading)
+                        .padding(.bottom)
+                    }
                     Text(movie.title!).font(.largeTitle).lineLimit(3).multilineTextAlignment(.center)
                     if countries.count > 0 {
                         HStack {

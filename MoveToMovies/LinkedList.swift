@@ -35,6 +35,8 @@ public struct LinkedList<T>: CustomStringConvertible where T: Equatable{
      var head: LinkedListNode<T>?
      var tail: LinkedListNode<T>?
     
+    public var count: Int = 0
+    
     /// Проверка связанного списка на пустоту.
     public var isEmpty: Bool {
         return head == nil
@@ -44,6 +46,7 @@ public struct LinkedList<T>: CustomStringConvertible where T: Equatable{
     public var first: LinkedListNode<T>? {
         return head
     }
+    
     /// Возврашает значение первой ноды (головы) связанного списка.
     public var firstValue: T? {
         return head?.value
@@ -83,6 +86,7 @@ public struct LinkedList<T>: CustomStringConvertible where T: Equatable{
             head = newNode
         }
         tail = newNode
+        count += 1
     }
     
     // MARK: - Поиск
@@ -172,11 +176,14 @@ public struct LinkedList<T>: CustomStringConvertible where T: Equatable{
         node.previous = nil
         node.next = nil
         
+        count -= 1
+        
         return node.value
     }
 
     /// Удаляет последнюю ноду (хвост) связанного списка.
     /// - Returns: Значение удаленной ноды или nil если удаление не удалось.
+    @discardableResult
     public mutating func pop() -> T? {
         guard !isEmpty, tail != nil else { return nil }
         return remove(node: tail!)
@@ -184,32 +191,34 @@ public struct LinkedList<T>: CustomStringConvertible where T: Equatable{
     
     /// Удаляет все ноды связанного списка кроме первой (головы).
     /// - Returns: Значение первой ноды списка.
-    public func popToHead() -> T? {
+    @discardableResult
+    public mutating func popToHead() -> T? {
         guard let head = head else { return nil }
         tail?.next = nil; tail?.previous = nil
         head.next = nil; head.previous = nil
+        count = 1
         return head.value
     }
 
-    /// Удаляет все ноды связанного списка до указанной (не включая ее).
-    ///
-    /// Нода, указанная по id становится хвостом связнанного списка.
-    /// - Parameter byId: Идентификатор для поиска целевой ноды.
-    /// - Returns: Значение указанной ноды или nil если она не найдена.
-    public mutating func popToNode(byId id: UUID) -> T? {
-        guard let destinationNode = getNode(id) else {
-            return nil
-        }
-        
-        if destinationNode.id == head?.id {
-            return popToHead()
-        } else {
-            tail?.next = nil; tail?.previous = nil
-            destinationNode.next = nil
-            tail = destinationNode
-            return tail?.value
-        }
-    }
+//    /// Удаляет все ноды связанного списка до указанной (не включая ее).
+//    ///
+//    /// Нода, указанная по id становится хвостом связнанного списка.
+//    /// - Parameter byId: Идентификатор для поиска целевой ноды.
+//    /// - Returns: Значение указанной ноды или nil если она не найдена.
+//    public mutating func popToNode(byId id: UUID) -> T? {
+//        guard let destinationNode = getNode(id) else {
+//            return nil
+//        }
+//
+//        if destinationNode.id == head?.id {
+//            return popToHead()
+//        } else {
+//            tail?.next = nil; tail?.previous = nil
+//            destinationNode.next = nil
+//            tail = destinationNode
+//            return tail?.value
+//        }
+//    }
     
     /// Удаляеет все ноды связанного списка, обнуляя его
     public mutating func removeAll() {

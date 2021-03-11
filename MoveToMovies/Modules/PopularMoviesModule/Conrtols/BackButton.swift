@@ -18,13 +18,7 @@ struct BackButton: View {
         Button {
             action()
         } label: {
-            HStack {
-                Image(systemName: "chevron.backward")
-                Text(text).font(.title2)
-            }
-            .foregroundColor(color)
-            .frame(width: width, alignment: .leading)
-            .padding(.bottom)
+            
         }
     }
 }
