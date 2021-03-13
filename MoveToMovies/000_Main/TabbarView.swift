@@ -9,6 +9,8 @@ import SwiftUI
 import UIControls
 
 struct TabbarView: View {
+    @Environment(\.verticalSizeClass) var _verticalSizeClass
+    @Environment(\.horizontalSizeClass) var _horizontalSizeClass
     
     @EnvironmentObject var appState: AppState
     @Binding var selectionScreen: AnyView
@@ -16,18 +18,39 @@ struct TabbarView: View {
     
     @ObservedObject var vm: TabbarViewModel
     
-    
     var body: some View {
         GeometryReader {geometry in
             VStack {
                 selectionScreen
-                    .frame(height: (geometry.size.height / 12) * 11 )
+                    .frame(width: geometry.size.width,
+                           height: isPad
+                            ? (geometry.size.height / 11) * 10
+                            : isPadOrLandscapeMax
+                                ? (geometry.size.height / 6) * 5
+                                : (geometry.size.height / 12) * 11)
                     .transition(.moveAndFade)
-                TabBar(selectedIndex: $appState.selectTabIndex, tabBarItems: vm.tabBarItems, animanion: .easeInOut)
-                    .frame(height: geometry.size.height / 12)
+                TabBar(selectedIndex: $appState.selectTabIndex,
+                       tabBarItems: vm.tabBarItems,
+                       animanion: .easeInOut)
+                    .frame(width: isPad
+                                ? geometry.size.width / 2
+                                : isLandscape
+                                    ? geometry.size.width / 2
+                                    : geometry.size.width,
+                           height: isPad
+                            ? geometry.size.height / 11
+                            : isPadOrLandscapeMax
+                                ? geometry.size.height / 6
+                            : geometry.size.height / 12)
+                
             }
         }
     }
+}
+
+extension TabbarView: SizeClassAdjustable {
+    var vsc: UserInterfaceSizeClass? { _verticalSizeClass }
+    var hsc: UserInterfaceSizeClass? { _horizontalSizeClass }
 }
 
 struct TabbarView_Previews: PreviewProvider {

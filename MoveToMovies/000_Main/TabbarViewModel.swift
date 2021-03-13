@@ -10,8 +10,8 @@ import UIControls
 
 final class TabbarViewModel: ObservableObject {
     var tabBarItems: [TabBarItem] = [
-        TabBarItem(sfSymbolName: "list.dash", title: "Dashboard", color: .red),
-        TabBarItem(sfSymbolName: "tv", title: "Popular Movies", color: .green),
-        TabBarItem(sfSymbolName: "info", title: "About us", color: .blue),
+        TabBarItem(sfSymbolName: "list.dash", title: "Dashboard", color: Color(UIColor.systemIndigo)),
+        TabBarItem(sfSymbolName: "tv", title: "Popular Movies", color: Color(UIColor.systemPurple)),
+        TabBarItem(sfSymbolName: "info", title: "About us", color: Color(UIColor.systemOrange)),
     ]
 }

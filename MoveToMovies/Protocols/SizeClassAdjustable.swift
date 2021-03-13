@@ -8,29 +8,21 @@
 import SwiftUI
 
 protocol SizeClassAdjustable {
-    var verticalSizeClass: UserInterfaceSizeClass? { get }
-    var horizontalSizeClass: UserInterfaceSizeClass? { get }
+    /// Vertical size class
+    var vsc: UserInterfaceSizeClass? { get }
+    /// Horizontal size class
+    var hsc: UserInterfaceSizeClass? { get }
 }
 extension SizeClassAdjustable {
-    var isPad: Bool {
-        return horizontalSizeClass == .regular && verticalSizeClass == .regular
-    }
+    var isPad: Bool { hsc == .regular && vsc == .regular }
 //    var isPadLandscape: Bool {
 //        isPad && DeviceFeatures.IS_LANDSCAPE
 //    }
 //    var isPadPortrait: Bool {
 //        isPad && DeviceFeatures.IS_PORTRAIT
 //    }
-    var isPadOrLandscapeMax: Bool {
-        horizontalSizeClass == .regular
-    }
-    var isLandscapeMax: Bool {
-        horizontalSizeClass == .regular && verticalSizeClass == .compact
-    }
-    var isLandscape: Bool {
-        verticalSizeClass == .compact
-    }
-    var isPortrait: Bool {
-        verticalSizeClass == .regular
-    }
+    var isPadOrLandscapeMax: Bool { hsc == .regular }
+    var isLandscapeMax: Bool { hsc == .regular && vsc == .compact }
+    var isLandscape: Bool { vsc == .compact }
+    var isPortrait: Bool { vsc == .regular }
 }

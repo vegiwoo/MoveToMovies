@@ -22,8 +22,8 @@ struct MovieDetailScreen: View, SizeClassAdjustable {
     //@Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Environment(\.verticalSizeClass) var _verticalSizeClass
     @Environment(\.horizontalSizeClass) var _horizontalSizeClass
-    var verticalSizeClass: UserInterfaceSizeClass? { _verticalSizeClass }
-    var horizontalSizeClass: UserInterfaceSizeClass? { _horizontalSizeClass }
+    var vsc: UserInterfaceSizeClass? { _verticalSizeClass }
+    var hsc: UserInterfaceSizeClass? { _horizontalSizeClass }
     
     var movie: Movie
     @State var averageColor: UIColor?
