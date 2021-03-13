@@ -1,0 +1,68 @@
+openapi: 3.0.0
+
+info:
+  title: API client for http://www.omdbapi.com
+  description: Developed as part of 'Move to Movies' training project on "iOS Developer professional" course on educational platform [Otus](https://otus.ru)
+  version: 0.0.1
+  contact:
+    name: Dmitry Samartcev
+    url: https://github.com/vegiwoo
+    email: vegiwoo@protonmail.com
+
+servers:
+  - url: http://www.omdbapi.com/
+    description: Server main address.
+
+components:
+  schemas:
+    MovieOmdbapiObject:
+      type: object
+      properties:
+        Title:
+          type: string
+        Year:
+          type: string
+        imdbID:
+          type: string
+        Type: 
+          type: string
+          enum: 
+          - movie
+          - series
+          - episode
+        Poster: 
+          type: string
+
+paths:
+  /:
+    get: 
+      summary: Returns the result of a search query by name of movie/tvshow.
+      parameters:
+        - in: query
+          name: s
+          required: true
+          description: Movie title to search for.
+          schema:
+            type: string
+        - in: query
+          name: apikey
+          required: true
+          description: API key for using the service.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Some description.
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Search:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MovieOmdbapiObject'
+                  totalResults:
+                    type: string
+                  Response:
+                    type: string
