@@ -14,7 +14,7 @@ struct TabbarView: View {
     
     @EnvironmentObject var appState: AppState
     @Binding var selectionScreen: AnyView
-    @State var selectionIndex: Int = 0
+    //@State var selectionIndex: Int = 0
     
     @ObservedObject var vm: TabbarViewModel
     
@@ -42,7 +42,6 @@ struct TabbarView: View {
                             : isPadOrLandscapeMax
                                 ? geometry.size.height / 6
                             : geometry.size.height / 12)
-                
             }
         }
     }

@@ -7,16 +7,16 @@
 
 import SwiftUI
 
-enum TabbarTab: Hashable, CaseIterable, CustomStringConvertible {
+enum TabbarTab: Hashable, CaseIterable {
     case dashboardScreen
     case movies
     case aboutUSScreen
     
-    var description: String {
+    var actualColor: Color {
         switch self {
-        case .dashboardScreen: return "Dashboard Screen"
-        case .movies: return "Movies Screen"
-        case .aboutUSScreen: return "About us Screen"
+        case .dashboardScreen: return Color(UIColor.systemIndigo)
+        case .movies: return Color(UIColor.systemPurple)
+        case .aboutUSScreen: return  Color(UIColor.systemOrange)
         }
     }
     

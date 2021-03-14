@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+import CoreData
 import TmdbAPI
+
 
 final class AppState: ObservableObject {
     @Published var selectTabIndex: Int = TabbarTab.dashboardScreen.rawValue  {
@@ -31,10 +33,43 @@ final class AppState: ObservableObject {
             case .dashboardScreen:
                 selectionScreen = AnyView(DashBoardScreen())
             case .movies:
-                selectionScreen = AnyView(PopularMoviesScreen(vm: PopularMoviesViewModel()))
+                selectionScreen = AnyView(MovieSearchScreen(actualColor: selectedTab.actualColor).environment(\.managedObjectContext, context))
             case .aboutUSScreen:
                 selectionScreen = AnyView(AboutUsScreen())
             }
         }
     }
+    
+    lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "MoveToMoviesModel")
+        container.loadPersistentStores { (storeDescription, error)  in
+            if let error = error {
+                assertionFailure(error.localizedDescription)
+            }
+            //print("🟢 Core Data stack has been initialized with description:\n \(storeDescription)")
+        }
+       
+        return container
+    }()
+    
+    @Published var context: NSManagedObjectContext!
+    
+    init() {
+        makeContext()
+    }
+    
+    func makeContext() {
+        context = persistentContainer.newBackgroundContext()
+    }
+
+    func saveContext() {
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                assertionFailure(error.localizedDescription)
+            }
+        }
+    }
+
 }
