@@ -28,25 +28,19 @@ enum TabbarTab: Hashable, CaseIterable {
         }
     }
     
-    var text: Text {
+    var text: String {
         switch self {
-        case .dashboardScreen:
-            return Text("Dashboard")
-        case .movies:
-            return Text("Movies")
-        case .aboutUSScreen:
-            return Text("About us")
+        case .dashboardScreen: return "Dashboard"
+        case .movies: return "Movies"
+        case .aboutUSScreen: return "About us"
         }
     }
     
     var icon: Image {
         switch self {
-        case .dashboardScreen:
-            return Image(systemName: "list.dash")
-        case .movies:
-            return Image(systemName: "tv")
-        case .aboutUSScreen:
-            return Image(systemName: "info")
+        case .dashboardScreen: return Image(systemName: "list.dash")
+        case .movies: return Image(systemName: "tv")
+        case .aboutUSScreen:  return Image(systemName: "info")
         }
     }
 }

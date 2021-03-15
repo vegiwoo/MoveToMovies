@@ -8,12 +8,13 @@
 import SwiftUI
 import UIControls
 
-struct MovieSearchScreen: View {
-    @Environment(\.managedObjectContext) var managedObjectContext
+struct MovieSearchScreen: View, BaseView {
     
+    @Environment(\.managedObjectContext) var managedObjectContext
     @ObservedObject var vm: MovieSearchScreenViewModel = .init()
 
-    private var actualColor: Color
+    var actualColor: Color
+    var title: String
     
     @State var selectSegment: Int = 0
     
@@ -21,14 +22,15 @@ struct MovieSearchScreen: View {
     
     @State var searchText: String = ""
 
-    init(actualColor: Color) {
+    init(actualColor: Color, title: String) {
         self.actualColor = actualColor
+        self.title = title
     }
     
     var body: some View {
         VStack (spacing: 20){
             // Title
-            Text("Movies")
+            Text(title)
                 .titleStyle()
                 .foregroundColor(actualColor)
             // Segment control
@@ -57,7 +59,6 @@ struct MovieSearchScreen: View {
             }
         }.animation(.easeInOut)
         .onAppear{
-            print("🍑", managedObjectContext)
             vm.setup(managedObjectContext)
         }
     }
@@ -65,7 +66,7 @@ struct MovieSearchScreen: View {
 
 struct SwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
-        MovieSearchScreen(actualColor: Color(UIColor.darkText))
+        MovieSearchScreen(actualColor: Color(UIColor.darkText), title: "Some screen")
     }
 }
 

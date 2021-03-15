@@ -25,15 +25,21 @@ final class AppState: ObservableObject {
     }
     @Published var randomMovie: Movie?
     
-    @Published var selectionScreen: AnyView = AnyView(DashBoardScreen())
+    @Published var selectionScreen: AnyView = AnyView(DashBoardScreen(actualColor: TabbarTab.dashboardScreen.actualColor, title: TabbarTab.dashboardScreen.text))
     
     private func selectedTabHandler() {
         if let selectedTab = TabbarTab.allCases.first(where: {$0.rawValue == selectTabIndex}) {
             switch selectedTab {
             case .dashboardScreen:
-                selectionScreen = AnyView(DashBoardScreen())
+                selectionScreen = AnyView(DashBoardScreen(
+                                            actualColor: selectedTab.actualColor,
+                                            title: selectedTab.text)
+                                            .environment(\.managedObjectContext, context))
             case .movies:
-                selectionScreen = AnyView(MovieSearchScreen(actualColor: selectedTab.actualColor).environment(\.managedObjectContext, context))
+                selectionScreen = AnyView(MovieSearchScreen(
+                                            actualColor: selectedTab.actualColor,
+                                            title: selectedTab.text)
+                                            .environment(\.managedObjectContext, context))
             case .aboutUSScreen:
                 selectionScreen = AnyView(AboutUsScreen())
             }

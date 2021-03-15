@@ -54,6 +54,6 @@ extension TabbarView: SizeClassAdjustable {
 
 struct TabbarView_Previews: PreviewProvider {
     static var previews: some View {
-        TabbarView(selectionScreen: .constant(AnyView(DashBoardScreen())), vm: TabbarViewModel())
+        TabbarView(selectionScreen: .constant(AnyView(DashBoardScreen(actualColor: TabbarTab.dashboardScreen.actualColor, title: TabbarTab.dashboardScreen.text))), vm: TabbarViewModel())
     }
 }
