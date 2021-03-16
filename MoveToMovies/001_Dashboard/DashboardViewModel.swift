@@ -9,58 +9,25 @@ import SwiftUI
 import CoreData
 import MapKit
 import TmdbAPI
+import Networking
+
 
 final class DashboardViewModel: ObservableObject {
     
-    private var context: NSManagedObjectContext?
+    private var networkService: NetworkService?
+    
+    
+    lazy private var context: NSManagedObjectContext? = nil
     let queue = DispatchQueue.global(qos: .utility)
     
     var popularMoviesIds: [Int] = .init()
-    
-    func setup(_ context: NSManagedObjectContext) {
+
+    func setup(networkService: NetworkService, _ context: NSManagedObjectContext) {
         self.context = context
-        loadGernes()
-        loadPopularMovies()
+        self.networkService = networkService
     }
     
     // MARK: Network
-    func loadGernes() {
-        queue.async {
-            DefaultAPI.genreMovieListGet(apiKey: API.tmdbApiKey.description) { (response, error) in
-                if let error = error {
-                    print("🔴 \(error.localizedDescription)")
-                }
-                
-                if let context = self.context, let genres = response?.genres {
-                    for item in genres {
-                        if let id = item.id, let name = item.name {
-                            let genre = NSEntityDescription.insertNewObject(forEntityName: "GenreItem", into: context) as! GenreItem
-                            genre.id = Int32(id)
-                            genre.name = name
-                            
-                            try! context.save()
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    func loadPopularMovies() {
-        queue.async {
-            TmdbAPI.DefaultAPI.moviePopularGet(apiKey: API.tmdbApiKey.description) { (response, error) in
-                if let error = error {
-                    print("🔴 \(error.localizedDescription)")
-                }
-                
-                if let popularMoviesList =  response?.results {
-                    self.popularMoviesIds.append(contentsOf: popularMoviesList.compactMap{$0.id})
-                    self.loadPopularMoviesInfo()
-                }
-            }
-        }
-    }
-    
     func loadPopularMoviesInfo() {
         
         let movieEntityName = "MovieItem"
@@ -72,9 +39,7 @@ final class DashboardViewModel: ObservableObject {
                 }
                 
                 guard let movie = movie, let id = movie.id, let title = movie.title, let context = self.context  else { return }
-                
-                
-                
+
                 let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: movieEntityName)
                 movieFetchRequest.predicate = NSPredicate(format: "id == %@ AND title == %i", id, title)
                 let existingMovies = try! context.fetch(movieFetchRequest) as! [MovieItem]
@@ -96,21 +61,62 @@ final class DashboardViewModel: ObservableObject {
                 }
             }
         }
-        
-        
-        // Загрузить постер по ссылке
-        // Загрузить фон по ссылке
-        // Получить координаты
-        
-        
     }
     
-    func loadPosters() {
+    func loadImages(movieId: Int, posterPath: String?, backdropPath: String?, posterSize: PosterSizes) {
         
+        guard let context = context else { return }
+        
+        let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MovieItem")
+        movieFetchRequest.predicate = NSPredicate(format: "%K = %@", "id", movieId)
+        let existingMovies = try! context.fetch(movieFetchRequest) as! [MovieItem]
+        
+        if let existingMovie = existingMovies.first {
+            
+            let tmdbImagesPath = API.tmdbImagesPath.description
+ 
+            // poster
+            if let posterPath = posterPath {
+                let posterString = "\(tmdbImagesPath)\(posterSize)\(posterPath)"
+                
+                guard let posterUrl = URL(string: posterString) else { fatalError()}
+                
+                self.loadData(from: posterUrl) { (data, response, error) in
+                    if let error = error {
+                        print("🔴 \(error.localizedDescription)")
+                    }
+                    if let data = data {
+                        let poster = NSEntityDescription.insertNewObject(forEntityName: "PosterItem", into: context) as! PosterItem
+                        poster.blob = data
+                        existingMovie.movieToPoster = poster
+                        try! context.save()
+                    }
+                }
+            }
+
+            //backdrop
+            if let backdropPath = backdropPath {
+                let backdropString = "\(tmdbImagesPath)\(posterSize)\(backdropPath)"
+                guard  let backdropUrl = URL(string: backdropString)
+                else { fatalError() }
+                
+                self.loadData(from: backdropUrl) { (data, response, error) in
+                    if let error = error {
+                        print("🔴 \(error.localizedDescription)")
+                    }
+                    if let data = data {
+                        let backdrop = NSEntityDescription.insertNewObject(forEntityName: "BackdropItem", into: context) as! BackdropItem
+                        backdrop.blob = data
+                        existingMovie.movieToBackdrop = backdrop
+                        try! context.save()
+                    }
+                }
+            }
+        }
     }
     
-    func loadCoordinates() {
-        
+    private func loadData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
+        URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
     }
     
     // MARK: Data store
@@ -127,7 +133,6 @@ final class DashboardViewModel: ObservableObject {
     }
     
     private func save(movie: Movie, id: Int, title: String, movieEntityName: String, in context: NSManagedObjectContext) {
-        
         
         let newMovie = NSEntityDescription.insertNewObject(forEntityName: movieEntityName, into: context) as! MovieItem
         
@@ -186,12 +191,11 @@ final class DashboardViewModel: ObservableObject {
         try! context.save()
         
         queue.async {
+            self.loadImages(movieId: id, posterPath: movie.posterPath, backdropPath: movie.backdropPath, posterSize: .w500)
             
         }
         
-        // Постер
-        // Фон
-        // Координаты
+       
     }
     
     private func save(collection: MovieBelongsToCollection, in context: NSManagedObjectContext) -> CollectionItem? {
@@ -278,10 +282,23 @@ final class DashboardViewModel: ObservableObject {
                 newCountry.id = country.id; newCountry.name = name
                 if let iso31661 = country.iso31661 { newCountry.iso31661 = iso31661}
                 
-                do {
-                    try context.save(); results.append(newCountry)
-                } catch {
-                    print("🔴 \(error.localizedDescription)")
+                let searchRequest = MKLocalSearch.Request()
+                searchRequest.naturalLanguageQuery = newCountry.name
+                let search = MKLocalSearch(request: searchRequest)
+                
+                search.start { (response, error)  in
+                    guard let response = response else {
+                        print("Error: \(error?.localizedDescription ?? "Unknown error").")
+                        return
+                    }
+                    
+                    if let coordinate = response.mapItems.first?.placemark.coordinate{
+                        newCountry.latitude = coordinate.latitude
+                        newCountry.longitude = coordinate.longitude
+                    }
+                    
+                    try! context.save(); results.append(newCountry)
+                    print("save coordinate!")
                 }
             }
         }
@@ -318,4 +335,9 @@ final class DashboardViewModel: ObservableObject {
         
         return NSSet(objects: results)
     }
+}
+
+
+enum PosterSizes {
+    case w92, w154, w185, w342, w500, w780, original
 }

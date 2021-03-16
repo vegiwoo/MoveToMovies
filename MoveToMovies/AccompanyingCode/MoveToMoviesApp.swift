@@ -19,7 +19,7 @@ struct MoveToMoviesApp: App {
         WindowGroup {
             MainScreen()
                 .environmentObject(appState)
-                .environment(\.managedObjectContext, appState.context)
+                .environment(\.managedObjectContext, AppState.context)
         }.onChange(of: scenePhase) { newScenePhase in
             switch newScenePhase {
             case .active:
