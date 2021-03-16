@@ -27,7 +27,7 @@ struct DashBoardScreen: View, BaseView {
         }, label: {
             Text("Get random movie")
         }).onAppear {
-            vm.setup(networkService: AppState.networkService, managedObjectContext)
+            vm.setup(networkService: AppState.networkService, dataStorageService: AppState.dataStoreService)
         }
     }
 }

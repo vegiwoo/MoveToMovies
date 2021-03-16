@@ -51,7 +51,7 @@ final class PopularMoviesViewModel: ObservableObject {
         isPageLoading = true
         page += 1
         
-        TmdbAPI.DefaultAPI.moviePopularGet(apiKey: API.tmdbApiKey.description) { (response, error) in
+        TmdbAPI.DefaultAPI.moviePopularGet(apiKey: "API.tmdbApiKey.description") { (response, error) in
             if let results = response?.results {
                 self.items.append(contentsOf: results)
             }

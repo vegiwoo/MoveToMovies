@@ -19,17 +19,17 @@ struct MoveToMoviesApp: App {
         WindowGroup {
             MainScreen()
                 .environmentObject(appState)
-                .environment(\.managedObjectContext, AppState.context)
+                .environment(\.managedObjectContext, AppState.dataStoreService.context)
         }.onChange(of: scenePhase) { newScenePhase in
             switch newScenePhase {
             case .active:
                 print("App is active")
             case .inactive:
                 print("App is inactive")
-                appState.saveContext()
+                AppState.dataStoreService.saveContext()
             case .background:
                 print("App is in background")
-                appState.saveContext()
+                AppState.dataStoreService.saveContext()
             @unknown default:
                 print("App is in ...?")
             }

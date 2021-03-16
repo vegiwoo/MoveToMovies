@@ -11,7 +11,7 @@ import Combine
 
 final class AppViewModel: ObservableObject {
     
-    let apikey = API.tmdbApiKey.description
+    let apikey = ""
     
     @Published var genres: [Genre] = .init()
     private var popularMoviesList: [MovieListResultObject] = .init()
