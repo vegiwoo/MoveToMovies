@@ -45,6 +45,9 @@ final class NetworkServiceImpl: NetworkService {
                 if let cointries = newValue.last?.productionCountries {
                     self.check(cointries: cointries)
                 }
+                if let movie = newValue.last {
+                    self.networkServicePublisher.send(movie)
+                }
             }
         }
     }
@@ -89,7 +92,11 @@ final class NetworkServiceImpl: NetworkService {
                 }
                 print("🟢 NetworkService: Info about \(existingCountries.count) countries was obtained from database.")
             }
-           
+            
+            if let coversDownloadRequest = value as? CoversDownloadRequest {
+                print("🟢 NetworkService: CoversDownloadRequest -->.")
+                self.loadCovers(with: coversDownloadRequest, posterSize: PosterSizes.w500)
+            }
         })
     }
     
@@ -124,9 +131,7 @@ final class NetworkServiceImpl: NetworkService {
     }
     
     private func loadPopularMoviesInfoFromTmdb(with ids: [Int]) {
-                
-        self.popularMoviesInfoList = [Movie]()
-        
+ 
         apiRequestQueue.async {
             for id in ids {
                 TmdbAPI.DefaultAPI.movieMovieIdGet(movieId: id, apiKey: API.tmdbApiKey.description) { (movie, error) in
@@ -134,8 +139,13 @@ final class NetworkServiceImpl: NetworkService {
                         print("🔴 ERROR in NetworkService:\n\(error.localizedDescription)")
                     }
                     if let movie = movie {
+                        if self.popularMoviesInfoList == nil {
+                            self.popularMoviesInfoList = [Movie]()
+                        }
                         self.popularMoviesInfoList!.append(movie)
-                        self.networkServicePublisher.send(movie)
+                        //self.networkServicePublisher.send(movie)
+                        
+                        // TODO: Запрос по картинкам
                     }
                 }
             }
@@ -184,6 +194,79 @@ final class NetworkServiceImpl: NetworkService {
                 }
             }
         }
+    }
+    
+    private func loadCovers(with request: CoversDownloadRequest, posterSize: PosterSizes) {
+       
+        let tmdbImagesPath = API.tmdbImagesPath.description
+        
+        var posterBlob: Data? {
+            didSet {
+                if let posterBlob = posterBlob {
+                    print("movieId \(request.movieItemId) posterBlob count", posterBlob.count)
+                }
+                if request.backdropPath == nil {
+                    // Выход с постером
+                    networkServicePublisher.send(CoversDownloadResponse(movieItemId: request.movieItemId, posterBlobData: posterBlob!, backdropBlobData: nil))
+                }
+            }
+        }
+        var backdropBlob: Data? {
+            didSet {
+                if let backdropBlob = backdropBlob {
+                    print("movieId \(request.movieItemId) backdropBlob count", backdropBlob.count)
+                    // Выход с постером и фоном
+                    networkServicePublisher.send(CoversDownloadResponse(movieItemId: request.movieItemId, posterBlobData: posterBlob, backdropBlobData: backdropBlob))
+                }
+            }
+        }
+        
+        var posterBlobWorkItem: DispatchWorkItem?
+        var backdropBlobWorkItem: DispatchWorkItem?
+  
+        if let posterPath = request.posterPath {
+            let posterURLString = "\(tmdbImagesPath)\(posterSize)\(posterPath)"
+            guard let posterUrl = URL(string: posterURLString) else { fatalError() }
+            
+            posterBlobWorkItem = DispatchWorkItem { self.loadData(from: posterUrl) { (data, response, error) in
+                if let error = error {
+                    print("🔴 ERROR in NetworkService:\n\(error.localizedDescription)")
+                }
+                if let data = data {
+                    posterBlob = data
+                }
+            }}
+        }
+        
+        if let backdropPath = request.backdropPath {
+            let backdropURLString = "\(tmdbImagesPath)\(posterSize)\(backdropPath)"
+            guard let backdropUrl = URL(string: backdropURLString) else { fatalError() }
+            
+            backdropBlobWorkItem = DispatchWorkItem { self.loadData(from: backdropUrl) { (data, response, error) in
+                if let error = error {
+                    print("🔴 ERROR in NetworkService:\n\(error.localizedDescription)")
+                }
+                if let data = data {
+                    backdropBlob = data
+                }
+            }}
+            
+        }
+        
+        if let workItem1 = posterBlobWorkItem, let workItem2 = backdropBlobWorkItem {
+            apiRequestQueue.async(execute: workItem1)
+            workItem1.notify(queue: apiRequestQueue, execute: workItem2)
+        } else if let workItem1 = posterBlobWorkItem, backdropBlobWorkItem == nil {
+            apiRequestQueue.async(execute: workItem1)
+        } else if posterBlobWorkItem == nil, let workItem2 = backdropBlobWorkItem {
+            apiRequestQueue.async(execute: workItem2)
+        } else {
+            return
+        }
+    }
+    
+    private func loadData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
+        URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
     }
 }
 
