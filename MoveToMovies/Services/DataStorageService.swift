@@ -89,6 +89,10 @@ final class DataStorageServiceImpl: DataStorageService {
                 if let country = value as? ProductionCountyDTO {
                     self.store(country: country)
                 }
+                
+                if let coversResponse = value as? CoversDownloadResponse {
+                    self.save(coversResponse: coversResponse)
+                }
             })
     }
     
@@ -244,30 +248,31 @@ final class DataStorageServiceImpl: DataStorageService {
         if let collection = movie.belongsToCollection,
            let collectionItem = self.save(collection: collection) {
             newMovie.collection = collectionItem
+            saveContext()
         }
         
         if let genres = movie.genres,
            let genreItems = self.fetchGernes(byIds: genres.compactMap{$0.id}) {
             newMovie.genres?.adding(genreItems)
-
+            saveContext()
         }
         
         if let companies = movie.productionCompanies,
            let companyItems = self.save(productionCompanies: companies) {
             newMovie.companies?.adding(companyItems)
-
+            saveContext()
         }
         
         if let countries = movie.productionCountries,
            let countriesItems = self.save(countries: countries) {
             newMovie.countries?.adding(countriesItems)
-  
+            saveContext()
         }
         
         if let spokenLanguages = movie.spokenLanguages,
            let languagesItems = self.save(spokenLanguages: spokenLanguages) {
             newMovie.languages?.adding(languagesItems)
-   
+            saveContext()
         }
         
         saveContext()
@@ -276,33 +281,40 @@ final class DataStorageServiceImpl: DataStorageService {
         self.checkPosterAndBackdropAvailability(posterPath: movie.posterPath, backdropPath: movie.backdropPath, movieItem: newMovie)
     }
     
+    private func fetchMovie(byId id: Int32) -> MovieItem? {
+        let entityName = "MovieItem"
+        let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        //movieFetchRequest.predicate = NSPredicate(format: "id == %i AND title == %@", id, title)
+        movieFetchRequest.predicate =  NSPredicate(format: "id == %i", id)
+        let existingMovies = try! self.context.fetch(movieFetchRequest) as! [MovieItem]
+        return existingMovies.first
+    }
+    
     // MARK: Collection
     private func save(collection: MovieBelongsToCollection) -> CollectionItem? {
         
         guard let id = collection.id else { return nil }
-        
+ 
         let entityName = "CollectionItem"
-        
         let collectionFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
         collectionFetchRequest.predicate = NSPredicate(format: "%K == %i", "id", id)
-        let fetchItems = try! context.fetch(collectionFetchRequest) as! [CollectionItem]
+        let fetchItems = try! self.context.fetch(collectionFetchRequest) as! [CollectionItem]
         
         if let existingCollectionItem = fetchItems.first {
             return existingCollectionItem
         } else {
-            let newCollectionItem = NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as! CollectionItem
+            let newCollectionItem = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self.context) as! CollectionItem
             
             if let collectionid = collection.id { newCollectionItem.id = Int32(collectionid) }
             if let collectionName = collection.name { newCollectionItem.name = collectionName }
             if let posterPath = collection.posterPath { newCollectionItem.posterPath = posterPath }
             if let backdropPath = collection.backdropPath { newCollectionItem.backdropPath = backdropPath }
             
-            saveContext()
+            self.saveContext()
             print("💾 Collection with id '\(collection.id ?? 0)' saved in DB.")
             
             return newCollectionItem
         }
-        
         // TODO: Запрос на загрузку картинок для коллекции
     }
     
@@ -495,6 +507,41 @@ final class DataStorageServiceImpl: DataStorageService {
             }
         }
         
+    }
+    
+    private func save(coversResponse: CoversDownloadResponse) {
+        
+        guard let movieItem = self.fetchMovie(byId: coversResponse.movieItemId) else {
+            fatalError()
+        }
+
+        if let posterBlobData = coversResponse.posterBlobData, posterBlobData.count > 0 {
+            dataStorageQueue.async {
+                let entityName = "PosterItem"
+                let newPosterItem = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self.context) as! PosterItem
+                
+                newPosterItem.blob = posterBlobData
+                
+                movieItem.poster = newPosterItem
+                
+                self.saveContext()
+                print("💾 Save poster to movie with id '\(movieItem.id)' in DB.")
+            }
+        }
+        
+        if let backdropBlobData = coversResponse.backdropBlobData, backdropBlobData.count > 0 {
+            dataStorageQueue.async {
+                let entityName = "BackdropItem"
+                let newBackdropItem = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self.context) as! BackdropItem
+                
+                newBackdropItem.blob = backdropBlobData
+                
+                movieItem.backdrop = newBackdropItem
+                
+                self.saveContext()
+                print("💾 Save backdrop to movie with id '\(movieItem.id)' in DB.")
+            }
+        }
     }
 }
 

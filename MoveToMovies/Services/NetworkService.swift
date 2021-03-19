@@ -94,7 +94,6 @@ final class NetworkServiceImpl: NetworkService {
             }
             
             if let coversDownloadRequest = value as? CoversDownloadRequest {
-                print("🟢 NetworkService: CoversDownloadRequest -->.")
                 self.loadCovers(with: coversDownloadRequest, posterSize: PosterSizes.w500)
             }
         })
@@ -180,7 +179,6 @@ final class NetworkServiceImpl: NetworkService {
             searchRequest.naturalLanguageQuery = name
             let search = MKLocalSearch(request: searchRequest)
             
-            
             search.start { (response, error)  in
                 guard let response = response else {
                     print("🔴 ERROR Direct geocoding in NetworkService:\n \(error?.localizedDescription ?? "Unknown error").")
@@ -202,12 +200,10 @@ final class NetworkServiceImpl: NetworkService {
         
         var posterBlob: Data? {
             didSet {
-                if let posterBlob = posterBlob {
-                    print("movieId \(request.movieItemId) posterBlob count", posterBlob.count)
-                }
-                if request.backdropPath == nil {
-                    // Выход с постером
-                    networkServicePublisher.send(CoversDownloadResponse(movieItemId: request.movieItemId, posterBlobData: posterBlob!, backdropBlobData: nil))
+                if let posterBlob = posterBlob, request.backdropPath == nil {
+                    apiResponseQueue.async {
+                        self.networkServicePublisher.send(CoversDownloadResponse(movieItemId: request.movieItemId, posterBlobData: posterBlob, backdropBlobData: nil))
+                    }
                 }
             }
         }
@@ -215,8 +211,10 @@ final class NetworkServiceImpl: NetworkService {
             didSet {
                 if let backdropBlob = backdropBlob {
                     print("movieId \(request.movieItemId) backdropBlob count", backdropBlob.count)
-                    // Выход с постером и фоном
-                    networkServicePublisher.send(CoversDownloadResponse(movieItemId: request.movieItemId, posterBlobData: posterBlob, backdropBlobData: backdropBlob))
+                    apiResponseQueue.async {
+                        self.networkServicePublisher.send(CoversDownloadResponse(movieItemId: request.movieItemId, posterBlobData: posterBlob, backdropBlobData: backdropBlob))
+                    }
+                    
                 }
             }
         }
@@ -240,6 +238,7 @@ final class NetworkServiceImpl: NetworkService {
         
         if let backdropPath = request.backdropPath {
             let backdropURLString = "\(tmdbImagesPath)\(posterSize)\(backdropPath)"
+            
             guard let backdropUrl = URL(string: backdropURLString) else { fatalError() }
             
             backdropBlobWorkItem = DispatchWorkItem { self.loadData(from: backdropUrl) { (data, response, error) in
