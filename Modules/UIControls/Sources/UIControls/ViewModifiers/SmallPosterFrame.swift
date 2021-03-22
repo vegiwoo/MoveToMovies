@@ -19,7 +19,7 @@ public struct SmallPosterFrame: ViewModifier, SizeClassAdjustable {
     
     public func body(content: Content) -> some View {
         content
-            .frame(width: isPad ? size.width / 5 :  isPadOrLandscapeMax ? size.height / 3 : size.width / 5.5, height: size.height / 8)
+            .frame(width: isPad ? size.width / 5 :  isPadOrLandscapeMax ? size.height / 3 : size.width / 5.5)
             .padding(.all, 10)
     }
 }

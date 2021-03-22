@@ -33,15 +33,15 @@ public struct MovieCell: View, SizeClassAdjustable {
         GeometryReader {geometry in
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .frame(width: geometry.size.width, height: geometry.size.height / 8, alignment: .leading)
+//
                     .background(Color.gray)
-                    .opacity(0.1)
+                    .opacity(0.05)
                 HStack {
                     // Poster
                     if let image = image {
                         Image(uiImage: image)
                             .resizable()
-                            //.aspectRatio(contentMode: .fit)
+                            .aspectRatio(contentMode: .fit)
                             .scaledToFill()
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .smallPosterFrame(geometrySize: geometry.size)
@@ -52,7 +52,7 @@ public struct MovieCell: View, SizeClassAdjustable {
                             .smallPosterFrame(geometrySize: geometry.size)
                     }
                     // Titles
-                    VStack(alignment: .leading, spacing: geometry.size.width / 65) {
+                    VStack(alignment: .leading, spacing: 12) {
                         // EmptyView
                         Text("")
                             .frame(maxWidth: .infinity)
@@ -82,15 +82,6 @@ public struct MovieCell: View, SizeClassAdjustable {
                             .padding(.trailing)
                             .foregroundColor(.secondary)
                     }
-                    
-                    
-                    //                    ZStack {
-                    //                        Circle().stroke()
-                    //                        if let popularity = movie.voteAverage {
-                    //                            Text("\(popularity, specifier: "%.1f")").font(Font.system(size: 18))
-                    //                        }
-                    //                    }
-                    
                 }
             }
         }

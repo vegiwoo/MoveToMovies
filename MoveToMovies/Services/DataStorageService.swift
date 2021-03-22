@@ -13,7 +13,6 @@ import TmdbAPI
 
 protocol DataStorageService {
     var context: NSManagedObjectContext { get }
-    var fetching: Bool { get }
     var networkResponseQueue: DispatchQueue { get set}
     var networkPublisher: PassthroughSubject<Any, Never> { get set }
     var networkSubscriber: AnyCancellable? { get }
@@ -38,7 +37,7 @@ final class DataStorageServiceImpl: DataStorageService {
         persistentStoreDescriptions.shouldMigrateStoreAutomatically = true
         persistentStoreDescriptions.shouldInferMappingModelAutomatically = true
         
-        var context: NSManagedObjectContext = .init(concurrencyType: .mainQueueConcurrencyType)
+        var context: NSManagedObjectContext = .init(concurrencyType: .privateQueueConcurrencyType)
        
         container.loadPersistentStores { (storeDescription, error)  in
             if let error = error {
@@ -57,9 +56,6 @@ final class DataStorageServiceImpl: DataStorageService {
         operationQueue.qualityOfService = .utility
         return operationQueue
     }()
-    
-    lazy var posterSavedsGroup: DispatchGroup = .init()
-    var posterSavedsItems: [DispatchWorkItem] = .init()
     
     init(networkResponseQueue: DispatchQueue, networkPublisher: PassthroughSubject<Any, Never>, dataStoragePublisher: DataStoragePublisher) {
         self.networkResponseQueue = networkResponseQueue
@@ -115,33 +111,30 @@ final class DataStorageServiceImpl: DataStorageService {
     }
     
     private func removeAll() {
-        
-        ["GenreItem", "MovieItem", "CollectionItem", "PosterItem", "BackdropItem", "ProductionCountryItem", "ProductionCompanyItem", "SpokenLanguageItem"].forEach {
-            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: $0)
-            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-            
-            do {
-                try context.execute(deleteRequest)
-                print("🧹 DataStorageService: Remove all \($0) from DB complete.")
-            } catch {
-                print("🧹🔴 DataStorageService: Remove all \($0) from DB error\n\(error.localizedDescription).")
+        //dataStorageQueue.async(flags: .barrier) {
+            ["GenreItem", "MovieItem", "CollectionItem", "PosterItem", "BackdropItem", "ProductionCountryItem", "ProductionCompanyItem", "SpokenLanguageItem"].forEach {
+                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: $0)
+                let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+
+                do {
+                    try self.context.execute(deleteRequest)
+                    print("🧹 DataStorageService: Remove all \($0) from DB complete.")
+                } catch {
+                    print("🧹🔴 DataStorageService: Remove all \($0) from DB error\n\(error.localizedDescription).")
+                }
             }
-            
-        }
+        //}
     }
     
     func saveContext() {
-        if context.hasChanges {
-            do {
-                fetching = true
-                try context.save()
-                fetching = false
-            } catch {
-                assertionFailure(error.localizedDescription)
-                fetching = true
+        context.perform {
+            if self.context.hasChanges {
+                do {
+                    try self.context.save()
+                } catch {
+                    fatalError(error.localizedDescription)
+                }
             }
-        } else {
-            fetching = false
         }
     }
     
@@ -150,26 +143,25 @@ final class DataStorageServiceImpl: DataStorageService {
 
         let entityName = "GenreItem"
         
-        let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-        let existingGenres = try! self.context.fetch(movieFetchRequest) as! [GenreItem]
+        let genresFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        let existingGenres = try! self.context.fetch(genresFetchRequest) as! [GenreItem]
         if existingGenres.count != genres.count {
-            
-            let group = DispatchGroup()
-            var workItems: [DispatchWorkItem] = .init()
-            
             for genre in genres {
                 guard let id = genre.id, let name = genre.name else { continue }
-                let workItem = DispatchWorkItem {
-                    let newGenre = NSEntityDescription.insertNewObject(forEntityName: "GenreItem", into: self.context) as! GenreItem
+                
+                self.context.perform {
+                    let newGenre = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self.context) as! GenreItem
+                    
                     newGenre.id = Int32(id)
                     newGenre.name = name
-                    self.saveContext()
+                    
+                    do {
+                        try self.context.save()
+                    } catch {
+                        print(error.localizedDescription)
+                    }
                 }
-                workItems.append(workItem)
             }
-            workItems.forEach { dataStorageQueue.async(group: group,execute: $0) }
-            group.notify(queue: dataStorageQueue) { print("💾 Genres saved in DB.") }
-            
         } else {
             print("💾 Info of Genres updated in DB.")
         }
@@ -190,29 +182,32 @@ final class DataStorageServiceImpl: DataStorageService {
     // MARK: Movies
     private func cleanUpStorageFromIrrelevantIdsOfPopularFilms(with actuslIds: [Int]) {
         let entityName = "MovieItem"
-        dataStorageQueue.async(flags: .barrier) {
             let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
             movieFetchRequest.predicate =  NSPredicate(format: "NOT (id IN %@)", actuslIds)
             let irrelevantMovies = try! self.context.fetch(movieFetchRequest) as! [MovieItem]
             
             if irrelevantMovies.count > 0 {
                 for movie in irrelevantMovies {
-                    self.context.delete(movie)
+                    //dataStorageQueue.async(flags: .barrier) {
+                    self.context.perform {
+                        self.context.delete(movie)
+                    }
                     self.saveContext()
+                    //}
                 }
                 print("💾 Database has been cleared of irrelevant popular movie ids.")
             } else {
                 print("💾 There are no popular movie ids in database.")
             }
-        }
     }
     
     private func store(movie: Movie) {
         
         guard let id = movie.id, let title = movie.title else { return }
         
-        dataStorageQueue.async(flags: .barrier) {
             let entityName = "MovieItem"
+        
+        self.context.perform {
             let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
             movieFetchRequest.predicate =  NSPredicate(format: "title == %@", title)
             
@@ -226,82 +221,89 @@ final class DataStorageServiceImpl: DataStorageService {
                 if let tagline = movie.tagline {existingMovie.tagline = tagline}
                 if let voteAverage = movie.voteAverage {existingMovie.voteAverage = voteAverage}
                 if let voteCount = movie.voteCount {existingMovie.voteCount = Int32(voteCount)}
-                
-                self.saveContext()
-                print("💾 Movie with id '\(id)' updated in DB.")
-                
+
+                do {
+                    try self.context.save()
+                    print("💾 Movie with id '\(id)' updated in DB.")
+                } catch {
+                    print(error.localizedDescription)
+                }
+ 
                 self.checkPosterAndBackdropAvailability(posterPath: movie.posterPath, backdropPath: movie.backdropPath, movieItem: existingMovie)
             } else {
                 self.save(movie: movie)
             }
         }
+  
     }
     
     private func save(movie: Movie)  {
         
         let entityName = "MovieItem"
-        let newMovie = NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as! MovieItem
         
-        if let adult = movie.adult {newMovie.adult = adult}
-        if let backdropPath = movie.backdropPath {newMovie.backdropPath = backdropPath}
-        if let budget = movie.budget {newMovie.budget = Int32(budget)}
-        if let homepage = movie.homepage {newMovie.homepage = homepage}
-        if let id = movie.id {newMovie.id = Int32(id)}
-        if let imdbId = movie.imdbId {newMovie.imdbId = imdbId}
-        if let originalTitle = movie.originalTitle {newMovie.originalTitle = originalTitle}
-        if let overview = movie.overview {newMovie.overview = overview}
-        if let popularity = movie.popularity {newMovie.popularity = popularity}
-        if let releaseDateString = movie.releaseDate {newMovie.releaseDate = releaseDateString.toDate()}
-        if let revenue = movie.revenue {newMovie.revenue = Int32(revenue)}
-        if let runtime = movie.runtime {newMovie.runtime = Int32(runtime)}
-        if let originalLanguage = movie.originalLanguage {newMovie.originalLanguage = originalLanguage}
-        if let status = movie.status?.rawValue {newMovie.status = status}
-        if let tagline = movie.tagline {newMovie.tagline = tagline}
-        if let title = movie.title {newMovie.title = title}
-        if let video = movie.video { newMovie.video = video}
-        if let voteAverage = movie.voteAverage {newMovie.voteAverage = voteAverage}
-        if let voteCount = movie.voteCount {newMovie.voteCount = Int32(voteCount)}
-
-        if let collection = movie.belongsToCollection,
-           let collectionItem = self.save(collection: collection) {
-            newMovie.collection = collectionItem
-            saveContext()
+        self.context.perform {
+            
+            let newMovie = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self.context) as! MovieItem
+            
+            if let collection = movie.belongsToCollection,
+               let collectionItem = self.save(collection: collection) {
+                newMovie.collection = collectionItem
+            }
+            
+            if let genres = movie.genres,
+               let genreItems = self.fetchGernes(byIds: genres.compactMap{$0.id}) {
+                newMovie.genres?.adding(genreItems)
+            }
+            
+            if let companies = movie.productionCompanies,
+               let companyItems = self.save(productionCompanies: companies) {
+                newMovie.companies?.adding(companyItems)
+            }
+            
+            if let countries = movie.productionCountries,
+               let countriesItems = self.save(countries: countries) {
+                newMovie.countries?.adding(countriesItems)
+            }
+            
+            if let spokenLanguages = movie.spokenLanguages,
+               let languagesItems = self.save(spokenLanguages: spokenLanguages) {
+                newMovie.languages?.adding(languagesItems)
+            }
+            
+            if let adult = movie.adult {newMovie.adult = adult}
+            if let backdropPath = movie.backdropPath {newMovie.backdropPath = backdropPath}
+            if let budget = movie.budget {newMovie.budget = Int32(budget)}
+            if let homepage = movie.homepage {newMovie.homepage = homepage}
+            if let id = movie.id {newMovie.id = Int32(id)}
+            if let imdbId = movie.imdbId {newMovie.imdbId = imdbId}
+            if let originalTitle = movie.originalTitle {newMovie.originalTitle = originalTitle}
+            if let overview = movie.overview {newMovie.overview = overview}
+            if let popularity = movie.popularity {newMovie.popularity = popularity}
+            if let releaseDateString = movie.releaseDate {newMovie.releaseDate = releaseDateString.toDate()}
+            if let revenue = movie.revenue {newMovie.revenue = Int32(revenue)}
+            if let runtime = movie.runtime {newMovie.runtime = Int32(runtime)}
+            if let originalLanguage = movie.originalLanguage {newMovie.originalLanguage = originalLanguage}
+            if let status = movie.status?.rawValue {newMovie.status = status}
+            if let tagline = movie.tagline {newMovie.tagline = tagline}
+            if let title = movie.title {newMovie.title = title}
+            if let video = movie.video { newMovie.video = video}
+            if let voteAverage = movie.voteAverage {newMovie.voteAverage = voteAverage}
+            if let voteCount = movie.voteCount {newMovie.voteCount = Int32(voteCount)}
+            
+            do {
+                try self.context.save()
+                print("💾 Movie with id '\(movie.id ?? 0)' saved in DB.")
+            } catch {
+                print(error.localizedDescription)
+            }
+            
+            self.checkPosterAndBackdropAvailability(posterPath: movie.posterPath, backdropPath: movie.backdropPath, movieItem: newMovie)
         }
-        
-        if let genres = movie.genres,
-           let genreItems = self.fetchGernes(byIds: genres.compactMap{$0.id}) {
-            newMovie.genres?.adding(genreItems)
-            saveContext()
-        }
-        
-        if let companies = movie.productionCompanies,
-           let companyItems = self.save(productionCompanies: companies) {
-            newMovie.companies?.adding(companyItems)
-            saveContext()
-        }
-        
-        if let countries = movie.productionCountries,
-           let countriesItems = self.save(countries: countries) {
-            newMovie.countries?.adding(countriesItems)
-            saveContext()
-        }
-        
-        if let spokenLanguages = movie.spokenLanguages,
-           let languagesItems = self.save(spokenLanguages: spokenLanguages) {
-            newMovie.languages?.adding(languagesItems)
-            saveContext()
-        }
-        
-        saveContext()
-        print("💾 Movie with id '\(movie.id ?? 0)' saved in DB.")
-        
-        self.checkPosterAndBackdropAvailability(posterPath: movie.posterPath, backdropPath: movie.backdropPath, movieItem: newMovie)
     }
     
     private func fetchMovie(byId id: Int32) -> MovieItem? {
         let entityName = "MovieItem"
         let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-        //movieFetchRequest.predicate = NSPredicate(format: "id == %i AND title == %@", id, title)
         movieFetchRequest.predicate =  NSPredicate(format: "id == %i", id)
         let existingMovies = try! self.context.fetch(movieFetchRequest) as! [MovieItem]
         return existingMovies.first
@@ -320,6 +322,7 @@ final class DataStorageServiceImpl: DataStorageService {
         if let existingCollectionItem = fetchItems.first {
             return existingCollectionItem
         } else {
+
             let newCollectionItem = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self.context) as! CollectionItem
             
             if let collectionid = collection.id { newCollectionItem.id = Int32(collectionid) }
@@ -327,10 +330,16 @@ final class DataStorageServiceImpl: DataStorageService {
             if let posterPath = collection.posterPath { newCollectionItem.posterPath = posterPath }
             if let backdropPath = collection.backdropPath { newCollectionItem.backdropPath = backdropPath }
             
-            self.saveContext()
-            print("💾 Collection with id '\(collection.id ?? 0)' saved in DB.")
+            do {
+                try self.context.save()
+                print("💾 Collection with id '\(collection.id ?? 0)' saved in DB.")
+                return newCollectionItem
+            } catch {
+                print(error.localizedDescription)
+                return nil
+            }
+
             
-            return newCollectionItem
         }
         // TODO: Запрос на загрузку картинок для коллекции
     }
@@ -355,12 +364,17 @@ final class DataStorageServiceImpl: DataStorageService {
                 
                 newCompany.id = Int32(companyId)
                 newCompany.name = name
+                
                 if let logoPath = newCompany.logoPath {newCompany.logoPath = logoPath}
                 if let originCountry = newCompany.originCountry { newCompany.originCountry = originCountry}
                 
-                saveContext()
-                print("💾 Production company '\(name)' saved in DB.")
-                results.append(newCompany)
+                do {
+                    try self.context.save()
+                    print("💾 Production company '\(name)' saved in DB.")
+                    results.append(newCompany)
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
         }
         return NSSet(objects: results)
@@ -369,7 +383,8 @@ final class DataStorageServiceImpl: DataStorageService {
     // MARK: Production Country
     private func getInfoAboutExistingCountries() {
         let entityName = "ProductionCountryItem"
-        dataStorageQueue.async(flags: .barrier) {
+        
+        self.context.perform {
             let countriesFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
             let existingCountries = try! self.context.fetch(countriesFetchRequest) as! [ProductionCountryItem]
             
@@ -381,20 +396,22 @@ final class DataStorageServiceImpl: DataStorageService {
                     
                     existingCountriesDTO.append(ProductionCountyDTO(tag: countrytTag, name: countryName, coordinate: CLLocationCoordinate2D(latitude: country.latitude, longitude: country.longitude)))
                 }
-                self.dataStoragePublisher.publish(request: .getCoordinates(existingCountriesDTO))
+                DispatchQueue.global(qos: .utility).async {
+                    self.dataStoragePublisher.publish(request: .getCoordinates(existingCountriesDTO))
+                }
             }
         }
     }
     
     private func store(country: ProductionCountyDTO) {
         let entityName = "ProductionCountryItem"
-        dataStorageQueue.async(flags: .barrier) {
-            
+        
+        self.context.perform {
             let countryFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
             countryFetchRequest.predicate = NSPredicate(format: "iso31661 == %@", country.tag)
-            let existingCountries = try! self.context.fetch(countryFetchRequest) as! [ProductionCountryItem]
+            let existingCountries = try! self.context.fetch(countryFetchRequest) as? [ProductionCountryItem]
             
-            if let existingCountry = existingCountries.first {
+            if existingCountries != nil, let existingCountry = existingCountries!.first {
                 
                 existingCountry.name = country.name
                 existingCountry.iso31661 = country.tag
@@ -404,8 +421,13 @@ final class DataStorageServiceImpl: DataStorageService {
                     existingCountry.longitude = coordinate.longitude
                 }
                 
-                self.saveContext()
-                print("💾 Country with tag '\(existingCountry.iso31661 ?? "?")' updated in DB.")
+                do {
+                    try self.context.save()
+                    print("💾 Country with tag '\(existingCountry.iso31661 ?? "?")' updated in DB.")
+                } catch {
+                    print(error.localizedDescription)
+                }
+                
             } else {
                 let newCountry = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self.context) as! ProductionCountryItem
                 
@@ -417,8 +439,12 @@ final class DataStorageServiceImpl: DataStorageService {
                     newCountry.longitude = coordinate.longitude
                 }
                 
-                self.saveContext()
-                print("💾 Country with tag '\(newCountry.iso31661 ?? "?")' saved in DB.")
+                do {
+                    try self.context.save()
+                    print("💾 Country with tag '\(newCountry.iso31661 ?? "?")' saved in DB.")
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
         }
     }
@@ -444,9 +470,13 @@ final class DataStorageServiceImpl: DataStorageService {
                 newCountry.name = name
                 newCountry.iso31661 = country.iso31661
                 
-                saveContext()
-                print("💾 Country with tag '\(newCountry.iso31661 ?? "?")' saved in DB.")
-                results.append(newCountry)
+                do {
+                    try self.context.save()
+                    print("💾 Country with tag '\(newCountry.iso31661 ?? "?")' saved in DB.")
+                    results.append(newCountry)
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
         }
         return NSSet(objects: results)
@@ -472,11 +502,14 @@ final class DataStorageServiceImpl: DataStorageService {
                 newLanguage.name = name
                 if let iso6391 = language.iso6391 {newLanguage.iso6391 = iso6391}
                 
-                saveContext()
-                print("💾 Spoken Language '\(newLanguage.name ?? "?")' saved in DB.")
-                results.append(newLanguage)
+                do {
+                    try self.context.save()
+                    print("💾 Spoken Language '\(newLanguage.name ?? "?")' saved in DB.")
+                    results.append(newLanguage)
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
-            
         }
         
         return NSSet(objects: results)
@@ -520,52 +553,56 @@ final class DataStorageServiceImpl: DataStorageService {
             }
             
             if existingCoversDownloadRequest != nil {
-                self.dataStoragePublisher.publish(request: .getCovers(existingCoversDownloadRequest!))
+                DispatchQueue.global(qos: .utility).async {
+                    self.dataStoragePublisher.publish(request: .getCovers(existingCoversDownloadRequest!))
+                }
             }
         }
     }
     
     private func save(coversResponse: CoversDownloadResponse) {
-        
-        guard let movieItem = self.fetchMovie(byId: coversResponse.movieItemId) else {
-            fatalError()
-        }
 
-        if let posterBlobData = coversResponse.posterBlobData, posterBlobData.count > 0 {
+        self.context.perform {
+            guard let movieItem = self.fetchMovie(byId: coversResponse.movieItemId) else {
+                print("No fetch movieItem"); return
+            }
             
-            let workItem = DispatchWorkItem {
+            if let posterBlobData = coversResponse.posterBlobData, posterBlobData.count > 0 {
+
                 let entityName = "PosterItem"
                 let newPosterItem = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self.context) as! PosterItem
                 
                 newPosterItem.blob = posterBlobData
                 movieItem.poster = newPosterItem
-
-                self.saveContext()
-                print("💾 Save poster to movie with id '\(movieItem.id)' in DB.")
-            }
-            posterSavedsItems.append(workItem)
-            
-            if posterSavedsItems.count >= 20 {
-                posterSavedsItems.forEach { dataStorageQueue.async(group: posterSavedsGroup, execute: $0) }
-                posterSavedsGroup.notify(queue: dataStorageQueue) {
-                   //print("🌷  All posters saved in DB.")
+                
+                do {
+                    try self.context.save()
+                    print("💾 Save poster to movie with id '\(movieItem.id)' in DB.")
+                } catch {
+                    print(error.localizedDescription)
                 }
             }
-        }
-        
-        if let backdropBlobData = coversResponse.backdropBlobData, backdropBlobData.count > 0 {
-            dataStorageQueue.async {
+            
+            if let backdropBlobData = coversResponse.backdropBlobData, backdropBlobData.count > 0 {
                 let entityName = "BackdropItem"
                 let newBackdropItem = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self.context) as! BackdropItem
                 
                 newBackdropItem.blob = backdropBlobData
-                
                 movieItem.backdrop = newBackdropItem
                 
-                self.saveContext()
-                print("💾 Save backdrop to movie with id '\(movieItem.id)' in DB.")
+                do {
+                    try self.context.save()
+                    print("💾 Save backdrop to movie with id '\(movieItem.id)' in DB.")
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
         }
+        
+        
+       
+
+       
     }
 }
 

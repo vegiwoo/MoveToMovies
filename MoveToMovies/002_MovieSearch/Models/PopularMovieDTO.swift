@@ -56,7 +56,7 @@ public struct PopularMovieDTO: MovieCellModelProtocol {
             AnyView(
                 ZStack {
                     Circle().stroke()
-                    Text("\(movie.voteAverage, specifier: "%.1f")").font(Font.system(size: 18))
+                    Text("\(movie.voteAverage, specifier: "%.1f")").font(Font.system(size: 16))
             }
                 .padding(.trailing)
                 .foregroundColor(.secondary)
