@@ -10,7 +10,7 @@ info:
     email: vegiwoo@protonmail.com
 
 servers:
-  - url: http://www.omdbapi.com/
+  - url: https://www.omdbapi.com/
     description: Server main address.
 
 components:
@@ -50,6 +50,14 @@ paths:
           description: API key for using the service.
           schema:
             type: string
+        - in: query
+          name: page
+          required: false
+          description: Рage number of the selection of results
+          schema: 
+            type: integer
+            minimum: 1
+            maximum: 100
       responses:
         '200':
           description: Some description.

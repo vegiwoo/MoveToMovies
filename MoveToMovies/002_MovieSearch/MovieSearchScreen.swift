@@ -13,6 +13,8 @@ struct MovieSearchScreen: View, BaseView {
     @Environment(\.managedObjectContext) var managedObjectContext
     @ObservedObject var vm: MovieSearchScreenViewModel = .init()
 
+    private var networkService: NetworkService
+    
     @FetchRequest (entity: MovieItem.entity(), sortDescriptors: [
         NSSortDescriptor(keyPath: \MovieItem.voteAverage, ascending: false)
     ]) var popularMovies: FetchedResults<MovieItem>
@@ -25,8 +27,10 @@ struct MovieSearchScreen: View, BaseView {
     private var segmentes: [String] = ["Search", "Popular"]
     
     @State var searchText: String = ""
+    @State var searchTextLoding: String = ""
 
-    init(actualColor: Color, title: String) {
+    init(networkService: NetworkService, actualColor: Color, title: String) {
+        self.networkService = networkService
         self.actualColor = actualColor
         self.title = title
     }
@@ -49,9 +53,8 @@ struct MovieSearchScreen: View, BaseView {
             if selectSegment == 0 {
                 Group {
                     // Search bar
-                    SearchBar(searchText: $searchText, actualColor: actualColor)
+                    SearchBar(searchText: $searchText, actualColor: actualColor, searchTextLoding: $searchTextLoding)
                     Spacer()
-        
                 }
             } else if selectSegment == 1 {
                 Group {
@@ -64,14 +67,17 @@ struct MovieSearchScreen: View, BaseView {
             }
         }.animation(.easeInOut)
         .onAppear{
-            vm.setup(managedObjectContext)
+            vm.setup(managedObjectContext, networkService: self.networkService)
         }
+        .onChange(of: searchTextLoding, perform: { value in
+            self.vm.getSearchMovieRequest(title: searchTextLoding, page: 1)
+        })
     }
 }
 
 struct SwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
-        MovieSearchScreen(actualColor: Color(UIColor.darkText), title: "Some screen")
+        MovieSearchScreen(networkService: NetworkServiceImpl(apiResponseQueue: DispatchQueue.main, dataStoragePublisher: DataStoragePublisher()), actualColor: Color(UIColor.darkText), title: "Some screen")
     }
 }
 

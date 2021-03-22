@@ -1,6 +1,6 @@
 # DefaultAPI
 
-All URIs are relative to *http://www.omdbapi.com*
+All URIs are relative to *https://www.omdbapi.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -9,7 +9,7 @@ Method | HTTP request | Description
 
 # **rootGet**
 ```swift
-    open class func rootGet(s: String, apikey: String, completion: @escaping (_ data: InlineResponse200?, _ error: Error?) -> Void)
+    open class func rootGet(s: String, apikey: String, page: Int? = nil, completion: @escaping (_ data: InlineResponse200?, _ error: Error?) -> Void)
 ```
 
 Returns the result of a search query by name of movie/tvshow.
@@ -21,9 +21,10 @@ import OmdbAPI
 
 let s = "s_example" // String | Movie title to search for.
 let apikey = "apikey_example" // String | API key for using the service.
+let page = 987 // Int | Рage number of the selection of results (optional)
 
 // Returns the result of a search query by name of movie/tvshow.
-DefaultAPI.rootGet(s: s, apikey: apikey) { (response, error) in
+DefaultAPI.rootGet(s: s, apikey: apikey, page: page) { (response, error) in
     guard error == nil else {
         print(error)
         return
@@ -41,6 +42,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **s** | **String** | Movie title to search for. | 
  **apikey** | **String** | API key for using the service. | 
+ **page** | **Int** | Рage number of the selection of results | [optional] 
 
 ### Return type
 

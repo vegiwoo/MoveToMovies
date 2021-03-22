@@ -9,15 +9,17 @@ import Foundation
 import MapKit
 import Combine
 import TmdbAPI
+import OmdbAPI
 
 public protocol NetworkService {
     var apiRequestQueue: DispatchQueue { get }
     var apiResponseQueue: DispatchQueue { get }
     var networkServicePublisher: PassthroughSubject<Any, Never> { get set }
+    func getSearchMovieRequest(title: String, page: Int)
 }
 
 final class NetworkServiceImpl: NetworkService {
-    
+
     lazy var apiRequestQueue: DispatchQueue = {
         return DispatchQueue(label: Bundle.main.bundleIdentifier != nil ? "\(Bundle.main.bundleIdentifier!).networkServiceRequestQueue" : "networkServiceRequestQueue", qos: .utility)
     }()
@@ -108,6 +110,7 @@ final class NetworkServiceImpl: NetworkService {
         dataStorageSubscriber?.cancel()
     }
     
+    // MARK: Tmdb
     private func loadGenresFromTmdb() {
         apiRequestQueue.async {
             TmdbAPI.DefaultAPI.genreMovieListGet(apiKey: API.tmdbApiKey.description, apiResponseQueue: self.apiResponseQueue) { (response, error) in
@@ -267,18 +270,35 @@ final class NetworkServiceImpl: NetworkService {
     private func loadData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
         URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
     }
+
+    // MARK: Omdb
+    func getSearchMovieRequest(title: String, page: Int) {
+        
+        OmdbAPI.DefaultAPI.rootGet(s: title, apikey: API.omdbApiKey.description) { (response, error) in
+            if let error = error {
+                print("🔴 ERROR NetworkService: \(error.localizedDescription)")
+            }
+            
+            if let objects = response?.search {
+                self.networkServicePublisher.send(objects)
+            }
+        }
+    }
 }
 
 extension NetworkServiceImpl {
     enum API: CustomStringConvertible {
         case tmdbApiKey
         case tmdbImagesPath
+        case omdbApiKey
         var description: String {
             switch self {
             case .tmdbApiKey:
                 return "2e6b2f25124ca8304e9b74fb99176e96"
             case .tmdbImagesPath:
                 return "https://image.tmdb.org/t/p/"
+            case .omdbApiKey:
+                return "90001c5d"
             }
         }
     }

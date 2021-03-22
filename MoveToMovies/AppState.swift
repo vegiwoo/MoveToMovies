@@ -51,6 +51,7 @@ final class AppState: ObservableObject {
                                             )
             case .movies:
                 selectionScreen = AnyView(MovieSearchScreen(
+                                            networkService: AppState.networkService,
                                             actualColor: selectedTab.actualColor,
                                             title: selectedTab.text)
                                             .environment(\.managedObjectContext, AppState.dataStoreService.context))

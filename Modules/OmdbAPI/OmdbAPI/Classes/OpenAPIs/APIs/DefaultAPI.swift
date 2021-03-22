@@ -13,11 +13,12 @@ open class DefaultAPI {
      
      - parameter s: (query) Movie title to search for. 
      - parameter apikey: (query) API key for using the service. 
+     - parameter page: (query) Рage number of the selection of results (optional)
      - parameter apiResponseQueue: The queue on which api response is dispatched.
      - parameter completion: completion handler to receive the data and the error objects
      */
-    open class func rootGet(s: String, apikey: String, apiResponseQueue: DispatchQueue = OmdbAPIAPI.apiResponseQueue, completion: @escaping ((_ data: InlineResponse200?, _ error: Error?) -> Void)) {
-        rootGetWithRequestBuilder(s: s, apikey: apikey).execute(apiResponseQueue) { result -> Void in
+    open class func rootGet(s: String, apikey: String, page: Int? = nil, apiResponseQueue: DispatchQueue = OmdbAPIAPI.apiResponseQueue, completion: @escaping ((_ data: InlineResponse200?, _ error: Error?) -> Void)) {
+        rootGetWithRequestBuilder(s: s, apikey: apikey, page: page).execute(apiResponseQueue) { result -> Void in
             switch result {
             case let .success(response):
                 completion(response.body, nil)
@@ -32,9 +33,10 @@ open class DefaultAPI {
      - GET /
      - parameter s: (query) Movie title to search for. 
      - parameter apikey: (query) API key for using the service. 
+     - parameter page: (query) Рage number of the selection of results (optional)
      - returns: RequestBuilder<InlineResponse200> 
      */
-    open class func rootGetWithRequestBuilder(s: String, apikey: String) -> RequestBuilder<InlineResponse200> {
+    open class func rootGetWithRequestBuilder(s: String, apikey: String, page: Int? = nil) -> RequestBuilder<InlineResponse200> {
         let path = "/"
         let URLString = OmdbAPIAPI.basePath + path
         let parameters: [String: Any]? = nil
@@ -43,6 +45,7 @@ open class DefaultAPI {
         url?.queryItems = APIHelper.mapValuesToQueryItems([
             "s": s.encodeToJSON(),
             "apikey": apikey.encodeToJSON(),
+            "page": page?.encodeToJSON(),
         ])
 
         let nillableHeaders: [String: Any?] = [
