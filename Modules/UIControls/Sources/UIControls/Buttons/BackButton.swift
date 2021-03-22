@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(iOS 13.0, *)
 struct BackButton: View {
     
     let width: CGFloat
@@ -20,7 +21,7 @@ struct BackButton: View {
         } label: {
             HStack {
                 Image(systemName: "chevron.backward")
-                Text(text).font(.title2)
+                Text(text).font(Font.system(size: 36))
             }
             .foregroundColor(color)
             .frame(width: width, alignment: .leading)

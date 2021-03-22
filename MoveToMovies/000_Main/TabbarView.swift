@@ -8,9 +8,12 @@
 import SwiftUI
 import UIControls
 
-struct TabbarView: View {
+struct TabbarView: View, SizeClassAdjustable {
     @Environment(\.verticalSizeClass) var _verticalSizeClass
     @Environment(\.horizontalSizeClass) var _horizontalSizeClass
+    
+    var vsc: UserInterfaceSizeClass? { _verticalSizeClass }
+    var hsc: UserInterfaceSizeClass? { _horizontalSizeClass }
     
     @EnvironmentObject var appState: AppState
     @Binding var selectionScreen: AnyView
@@ -47,10 +50,6 @@ struct TabbarView: View {
     }
 }
 
-extension TabbarView: SizeClassAdjustable {
-    var vsc: UserInterfaceSizeClass? { _verticalSizeClass }
-    var hsc: UserInterfaceSizeClass? { _horizontalSizeClass }
-}
 
 struct TabbarView_Previews: PreviewProvider {
     static var previews: some View {

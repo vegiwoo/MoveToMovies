@@ -5,7 +5,7 @@
 
 #if canImport(SwiftUI)
 import SwiftUI
-
+@available(iOS 13.0, *)
 public struct TabBarItem {
     public let icon : Image
     public let title: String

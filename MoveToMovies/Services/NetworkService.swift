@@ -23,7 +23,7 @@ final class NetworkServiceImpl: NetworkService {
     }()
     var apiResponseQueue: DispatchQueue
     var networkServicePublisher: PassthroughSubject<Any, Never> = .init()
-    var dataStorePublisher: PassthroughSubject<Any, Never>
+    var dataStoragePublisher: DataStoragePublisher
     
     var dataStorageSubscriber: AnyCancellable?
     
@@ -62,9 +62,9 @@ final class NetworkServiceImpl: NetworkService {
         }
     }
     
-    init(apiResponseQueue: DispatchQueue, dataStorePublisher: PassthroughSubject<Any, Never>) {
+    init(apiResponseQueue: DispatchQueue, dataStoragePublisher: DataStoragePublisher) {
         self.apiResponseQueue = apiResponseQueue
-        self.dataStorePublisher = dataStorePublisher
+        self.dataStoragePublisher = dataStoragePublisher
         onAppear()
     }
     
@@ -75,15 +75,21 @@ final class NetworkServiceImpl: NetworkService {
     }
     
     private func subscribe() {
-        dataStorageSubscriber = dataStorePublisher
+        
+        dataStorageSubscriber = dataStoragePublisher.requestPublisher
             .subscribe(on: DispatchQueue.global(qos: .utility))
             .sink(receiveCompletion: { (completion) in
             switch completion {
             case .finished:
                 print("🟢 NetworkService: DataStorePublisher finished in NetworkService.")
             }
-        }, receiveValue: { (value) in
-            if let existingCountries = value as? [ProductionCountyDTO] {
+        }, receiveValue: { request in
+            switch request {
+            case .startUpdatingData:
+                break
+            case .completionUpdatingData:
+                break
+            case .getCoordinates(let existingCountries):
                 for country in existingCountries {
                     if self.existingCountries == nil {
                         self.existingCountries = [String: ProductionCountyDTO]()
@@ -91,11 +97,10 @@ final class NetworkServiceImpl: NetworkService {
                     self.existingCountries?.updateValue(country, forKey: country.tag)
                 }
                 print("🟢 NetworkService: Info about \(existingCountries.count) countries was obtained from database.")
-            }
-            
-            if let coversDownloadRequest = value as? CoversDownloadRequest {
+            case .getCovers(let coversDownloadRequest):
                 self.loadCovers(with: coversDownloadRequest, posterSize: PosterSizes.w500)
             }
+    
         })
     }
     
@@ -142,14 +147,9 @@ final class NetworkServiceImpl: NetworkService {
                             self.popularMoviesInfoList = [Movie]()
                         }
                         self.popularMoviesInfoList!.append(movie)
-                        //self.networkServicePublisher.send(movie)
-                        
-                        // TODO: Запрос по картинкам
                     }
                 }
             }
-            
-            
         }
     }
     

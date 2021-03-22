@@ -8,6 +8,7 @@
 #if canImport(SwiftUI)
 import SwiftUI
 
+@available(iOS 13.0, *)
 public struct TabBarItemView: View {
     
     @Binding var selected : Int
@@ -38,6 +39,7 @@ public struct TabBarItemView: View {
     }
 }
 
+@available(iOS 13.0, *)
 struct TabBarView_Previews: PreviewProvider {
     static var previews: some View {
         TabBarItemView(selected: .constant(0), index: 0, item: TabBarItem(sfSymbolName: "printer.dotmatrix.fill", title: "Printer", color: Color.red))

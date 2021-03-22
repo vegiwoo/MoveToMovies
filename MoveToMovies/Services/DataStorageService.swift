@@ -13,19 +13,23 @@ import TmdbAPI
 
 protocol DataStorageService {
     var context: NSManagedObjectContext { get }
+    var fetching: Bool { get }
     var networkResponseQueue: DispatchQueue { get set}
     var networkPublisher: PassthroughSubject<Any, Never> { get set }
     var networkSubscriber: AnyCancellable? { get }
-    var dataStorePublisher: PassthroughSubject<Any, Never> { get }
+    var dataStoragePublisher: DataStoragePublisher { get }
     func saveContext()
 }
 
 final class DataStorageServiceImpl: DataStorageService {
-   
+    
+    var fetching: Bool = true
+    
     var networkResponseQueue: DispatchQueue
     var networkPublisher: PassthroughSubject<Any, Never>
     var networkSubscriber: AnyCancellable?
-    var dataStorePublisher: PassthroughSubject<Any, Never>
+    var dataStoragePublisher: DataStoragePublisher
+    
     let dataStorageQueue: DispatchQueue = .init(label: Bundle.main.bundleIdentifier != nil ? "\(Bundle.main.bundleIdentifier!).dataStorageQueue" : "dataStorageQueue", qos: .utility)
     
     lazy var context: NSManagedObjectContext = {
@@ -41,29 +45,39 @@ final class DataStorageServiceImpl: DataStorageService {
                 assertionFailure(error.localizedDescription)
             }
             context = container.viewContext
+            context.automaticallyMergesChangesFromParent = true
+            
             print("🟢 Core Data stack has been initialized with description:\n \(storeDescription)")
         }
-        
         return context
     }()
    
-    init(networkResponseQueue: DispatchQueue, networkPublisher: PassthroughSubject<Any, Never>, dataStorePublisher: PassthroughSubject<Any, Never> ) {
+    lazy var operationQueue: OperationQueue = {
+        let operationQueue = OperationQueue()
+        operationQueue.qualityOfService = .utility
+        return operationQueue
+    }()
+    
+    lazy var posterSavedsGroup: DispatchGroup = .init()
+    var posterSavedsItems: [DispatchWorkItem] = .init()
+    
+    init(networkResponseQueue: DispatchQueue, networkPublisher: PassthroughSubject<Any, Never>, dataStoragePublisher: DataStoragePublisher) {
         self.networkResponseQueue = networkResponseQueue
         self.networkPublisher = networkPublisher
-        self.dataStorePublisher = dataStorePublisher
+        self.dataStoragePublisher = dataStoragePublisher
         onAppear()
     }
     
     deinit {
         unsubscribe()
     }
-    
+
     private func onAppear() {
-        //removeAll()
+        removeAll()
         subscribe()
         getInfoAboutExistingCountries()
     }
-    
+
     private func subscribe() {
         networkSubscriber = networkPublisher
             .subscribe(on: networkResponseQueue)
@@ -119,42 +133,45 @@ final class DataStorageServiceImpl: DataStorageService {
     func saveContext() {
         if context.hasChanges {
             do {
+                fetching = true
                 try context.save()
+                fetching = false
             } catch {
                 assertionFailure(error.localizedDescription)
+                fetching = true
             }
-        }
-    }
-    
-    private func sendRequest(with entity: Any) {
-        DispatchQueue.global(qos: .utility).async {
-            self.dataStorePublisher.send(entity)
+        } else {
+            fetching = false
         }
     }
     
     // MARK: Genres
     private func save(genres: [Genre]) {
+
         let entityName = "GenreItem"
-        dataStorageQueue.async(flags: .barrier) {
-            let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-            let existingGenres = try! self.context.fetch(movieFetchRequest) as! [GenreItem]
-            if existingGenres.count != genres.count {
-                for genre in genres {
-                    
-                    guard let id = genre.id, let name = genre.name else {
-                        continue
-                    }
-                    
+        
+        let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        let existingGenres = try! self.context.fetch(movieFetchRequest) as! [GenreItem]
+        if existingGenres.count != genres.count {
+            
+            let group = DispatchGroup()
+            var workItems: [DispatchWorkItem] = .init()
+            
+            for genre in genres {
+                guard let id = genre.id, let name = genre.name else { continue }
+                let workItem = DispatchWorkItem {
                     let newGenre = NSEntityDescription.insertNewObject(forEntityName: "GenreItem", into: self.context) as! GenreItem
                     newGenre.id = Int32(id)
                     newGenre.name = name
-                    
                     self.saveContext()
                 }
-                print("💾 Genres saved in DB.")
-            } else {
-                print("💾 Info of Genres updated in DB.")
+                workItems.append(workItem)
             }
+            workItems.forEach { dataStorageQueue.async(group: group,execute: $0) }
+            group.notify(queue: dataStorageQueue) { print("💾 Genres saved in DB.") }
+            
+        } else {
+            print("💾 Info of Genres updated in DB.")
         }
     }
     
@@ -197,8 +214,8 @@ final class DataStorageServiceImpl: DataStorageService {
         dataStorageQueue.async(flags: .barrier) {
             let entityName = "MovieItem"
             let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-            //movieFetchRequest.predicate = NSPredicate(format: "id == %i AND title == %@", id, title)
             movieFetchRequest.predicate =  NSPredicate(format: "title == %@", title)
+            
             let existingMovies = try! self.context.fetch(movieFetchRequest) as! [MovieItem]
             
             if let existingMovie = existingMovies.first {
@@ -364,7 +381,7 @@ final class DataStorageServiceImpl: DataStorageService {
                     
                     existingCountriesDTO.append(ProductionCountyDTO(tag: countrytTag, name: countryName, coordinate: CLLocationCoordinate2D(latitude: country.latitude, longitude: country.longitude)))
                 }
-                self.sendRequest(with: existingCountriesDTO)
+                self.dataStoragePublisher.publish(request: .getCoordinates(existingCountriesDTO))
             }
         }
     }
@@ -503,10 +520,9 @@ final class DataStorageServiceImpl: DataStorageService {
             }
             
             if existingCoversDownloadRequest != nil {
-                self.sendRequest(with: existingCoversDownloadRequest!)
+                self.dataStoragePublisher.publish(request: .getCovers(existingCoversDownloadRequest!))
             }
         }
-        
     }
     
     private func save(coversResponse: CoversDownloadResponse) {
@@ -516,16 +532,24 @@ final class DataStorageServiceImpl: DataStorageService {
         }
 
         if let posterBlobData = coversResponse.posterBlobData, posterBlobData.count > 0 {
-            dataStorageQueue.async {
+            
+            let workItem = DispatchWorkItem {
                 let entityName = "PosterItem"
                 let newPosterItem = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self.context) as! PosterItem
                 
                 newPosterItem.blob = posterBlobData
-                
                 movieItem.poster = newPosterItem
-                
+
                 self.saveContext()
                 print("💾 Save poster to movie with id '\(movieItem.id)' in DB.")
+            }
+            posterSavedsItems.append(workItem)
+            
+            if posterSavedsItems.count >= 20 {
+                posterSavedsItems.forEach { dataStorageQueue.async(group: posterSavedsGroup, execute: $0) }
+                posterSavedsGroup.notify(queue: dataStorageQueue) {
+                   //print("🌷  All posters saved in DB.")
+                }
             }
         }
         
@@ -565,4 +589,31 @@ struct CoversDownloadResponse {
 
 enum PosterSizes {
     case w92, w154, w185, w342, w500, w780, original
+}
+
+
+class DataStoragePublisher {
+
+    var requestPublisher: AnyPublisher<DataStorageRequest, Never> {
+        self.subject.eraseToAnyPublisher()
+    }
+    private var subject = PassthroughSubject<DataStorageRequest, Never>()
+    private(set) var request: DataStorageRequest? {
+        didSet {
+            if let request = request {
+                subject.send(request)
+            }
+        }
+    }
+    func publish(request: DataStorageRequest) {
+        self.request = request
+    }
+    
+}
+
+enum DataStorageRequest {
+    case startUpdatingData
+    case completionUpdatingData
+    case getCoordinates([ProductionCountyDTO])
+    case getCovers(CoversDownloadRequest)
 }

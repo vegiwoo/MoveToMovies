@@ -12,16 +12,16 @@ import TmdbAPI
 
 final class AppState: ObservableObject {
 
-    static var dataStorePublisher = PassthroughSubject<Any,Never>()
+    static var dataStoragePublisher = DataStoragePublisher()
     
     static var networkService: NetworkService =
-        NetworkServiceImpl(apiResponseQueue: AppState.networkServiceResponseQueue, dataStorePublisher: dataStorePublisher)
+        NetworkServiceImpl(apiResponseQueue: AppState.networkServiceResponseQueue, dataStoragePublisher: dataStoragePublisher)
     
     static var networkServiceResponseQueue: DispatchQueue = DispatchQueue(label: Bundle.main.bundleIdentifier != nil ? "\(Bundle.main.bundleIdentifier!).networkServiceResponseQueue" : "networkServiceResponseQueue", qos: .utility)
 
     
     static var dataStoreService: DataStorageService = {
-        return DataStorageServiceImpl(networkResponseQueue: AppState.networkServiceResponseQueue, networkPublisher: networkService.networkServicePublisher, dataStorePublisher: AppState.dataStorePublisher)
+        return DataStorageServiceImpl(networkResponseQueue: AppState.networkServiceResponseQueue, networkPublisher: networkService.networkServicePublisher, dataStoragePublisher: AppState.dataStoragePublisher)
     }()
     
     @Published var selectTabIndex: Int = TabbarTab.dashboardScreen.rawValue  {
@@ -47,7 +47,8 @@ final class AppState: ObservableObject {
                 selectionScreen = AnyView(DashBoardScreen(
                                             actualColor: selectedTab.actualColor,
                                             title: selectedTab.text)
-                                            .environment(\.managedObjectContext, AppState.dataStoreService.context))
+                                            .environment(\.managedObjectContext, AppState.dataStoreService.context)
+                                            )
             case .movies:
                 selectionScreen = AnyView(MovieSearchScreen(
                                             actualColor: selectedTab.actualColor,

@@ -6,6 +6,7 @@
 #if canImport(SwiftUI)
 import SwiftUI
 
+@available(iOS 13.0, *)
 public struct TabBar: View {
     @Binding public var selectedIndex: Int
     
@@ -45,6 +46,7 @@ public struct TabBar: View {
     }
 }
 
+@available(iOS 13.0, *)
 struct TabBar_Previews: PreviewProvider {
     static var previews: some View {
         TabBar(selectedIndex: .constant(4), tabBarItems: [

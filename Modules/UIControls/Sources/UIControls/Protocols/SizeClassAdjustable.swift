@@ -7,13 +7,16 @@
 
 import SwiftUI
 
-protocol SizeClassAdjustable {
+@available(iOS 13.0, *)
+public protocol SizeClassAdjustable {
     /// Vertical size class
     var vsc: UserInterfaceSizeClass? { get }
     /// Horizontal size class
     var hsc: UserInterfaceSizeClass? { get }
 }
-extension SizeClassAdjustable {
+
+@available(iOS 13.0, *)
+public extension SizeClassAdjustable {
     var isPad: Bool { hsc == .regular && vsc == .regular }
 //    var isPadLandscape: Bool {
 //        isPad && DeviceFeatures.IS_LANDSCAPE

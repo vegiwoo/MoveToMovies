@@ -8,6 +8,7 @@
 import SwiftUI
 import TmdbAPI
 import MapKit
+import UIControls
 
 extension ProductionCountry: Identifiable {
     public var id: UUID {
@@ -42,4 +43,3 @@ struct MovieDetailScreen_Previews: PreviewProvider {
         MovieDetailScreen(movie: Movie(title: "Some movie"), isMapPresented: false)
     }
 }
-;
