@@ -179,6 +179,23 @@ final class DataStorageServiceImpl: DataStorageService {
         return NSSet(objects: fetchingGenres)
     }
     
+    private func fetchGernes01(byIds ids: [Int]?) throws -> [GenreItem]? {
+        guard let ids = ids else { return nil }
+        
+        let entityName = "GenreItem"
+        
+        let genresFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        genresFetchRequest.predicate =  NSPredicate(format: "id IN %@", ids)
+        
+        do {
+            let items = try self.context.fetch(genresFetchRequest) as! [GenreItem]
+            return items
+        } catch {
+            throw error
+        }
+
+    }
+    
     // MARK: Movies
     private func cleanUpStorageFromIrrelevantIdsOfPopularFilms(with actuslIds: [Int]) {
         let entityName = "MovieItem"
@@ -205,7 +222,7 @@ final class DataStorageServiceImpl: DataStorageService {
         
         guard let id = movie.id, let title = movie.title else { return }
         
-            let entityName = "MovieItem"
+        let entityName = "MovieItem"
         
         self.context.perform {
             let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
@@ -250,11 +267,18 @@ final class DataStorageServiceImpl: DataStorageService {
                 newMovie.collection = collectionItem
             }
             
-            if let genres = movie.genres,
-               let genreItems = self.fetchGernes(byIds: genres.compactMap{$0.id}) {
-                newMovie.genres?.adding(genreItems)
+            if let genres = movie.genres {
+                do {
+                    if let genreItems = try self.fetchGernes01(byIds: genres.compactMap{$0.id}) {
+                        for gerne in genreItems {
+                            newMovie.addToGenres(gerne)
+                        }
+                    }
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
-            
+
             if let companies = movie.productionCompanies,
                let companyItems = self.save(productionCompanies: companies) {
                 newMovie.companies?.adding(companyItems)
@@ -627,7 +651,6 @@ struct CoversDownloadResponse {
 enum PosterSizes {
     case w92, w154, w185, w342, w500, w780, original
 }
-
 
 class DataStoragePublisher {
 

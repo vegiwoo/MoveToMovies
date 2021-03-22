@@ -55,7 +55,6 @@ struct MovieSearchScreen: View, BaseView {
                 }
             } else if selectSegment == 1 {
                 Group {
-                    Spacer()
                     List {
                         ForEach(popularMovies, id: \.self) { movie in
                             MovieCell(model: PopularMovieDTO(fromMovieItem: movie)).frame(width: 380, height: 120, alignment: .leading)

@@ -33,30 +33,24 @@ public struct PopularMovieDTO: MovieCellModelProtocol {
             self.image = nil
         }
         self.title = movie.title ?? ""
-        
         self.subtitle01 = ""
-        
-        if let genresSet = movie.genres,
-           let genres = genresSet.allObjects as? [GenreItem] {
-            for (index,value) in genres.enumerated() {
-                if index != genres.endIndex - 1 {
-                    self.subtitle01!.append("\(String(describing: value.name)), ")
-                    if index == 2 { self.subtitle01!.append("\n")
-                    } else {
-                        self.subtitle01!.append("\(String(describing: value.name))")
-                    }
-                    
-                }
-            }
+
+        if let genres = movie.genres, let array = genres.allObjects as? [GenreItem] {
+            self.subtitle01 = PopularMovieDTO.setGenreString(by: array)
         }
         
-        self.subtitle02 = movie.releaseDate != nil ? df.string(from: movie.releaseDate!) : ""
+        self.subtitle02 = ""
+        if let releaseDate = movie.releaseDate{
+            df.dateFormat = "dd.MM.yyyy"
+            self.subtitle02  = df.string(from: releaseDate)
+        }
+
 
         self.rightView =
             AnyView(
                 ZStack {
                     Circle().stroke()
-                    Text("\(movie.voteAverage, specifier: "%.1f")").font(Font.system(size: 16))
+                    Text("\(movie.voteAverage, specifier: "%.1f")").font(Font.system(size: 14))
             }
                 .padding(.trailing)
                 .foregroundColor(.secondary)
@@ -69,5 +63,22 @@ public struct PopularMovieDTO: MovieCellModelProtocol {
         self.subtitle01 = subtitle01
         self.subtitle02 = subtitle02
         self.rightView = rightView
+    }
+    
+    private static func setGenreString(by items:  [GenreItem]) -> String? {
+        var resultString = ""
+        for (index,value) in items.enumerated() {
+            if let name = value.name {
+                if index != items.endIndex - 1 {
+                    resultString.append("\(name), ")
+                    if index == 2 { resultString.append("\n")}
+                    
+                } else {
+                    resultString.append(name)
+                }
+            }
+        }
+        return resultString
+        
     }
 }
