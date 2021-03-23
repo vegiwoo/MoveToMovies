@@ -27,6 +27,8 @@
 		778875CF25FFB3E500B317B1 /* String + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778875CE25FFB3E500B317B1 /* String + Ext.swift */; };
 		778875D225FFC22500B317B1 /* UIImage + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778875D125FFC22500B317B1 /* UIImage + Ext.swift */; };
 		778875D92600CCC800B317B1 /* MappingModelV1toV2.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 778875D82600CCC800B317B1 /* MappingModelV1toV2.xcmappingmodel */; };
+		779067762609F0CC00BB7765 /* Collection + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 779067752609F0CC00BB7765 /* Collection + Ext.swift */; };
+		779067792609F59B00BB7765 /* ClearSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 779067782609F59B00BB7765 /* ClearSearchView.swift */; };
 		77A67F8925F0DC82005CB877 /* MoveToMoviesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A67F8825F0DC82005CB877 /* MoveToMoviesApp.swift */; };
 		77A67F8B25F0DC82005CB877 /* PopularMoviesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A67F8A25F0DC82005CB877 /* PopularMoviesScreen.swift */; };
 		77A67F8D25F0DC83005CB877 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 77A67F8C25F0DC83005CB877 /* Assets.xcassets */; };
@@ -69,6 +71,8 @@
 		778875D425FFD21800B317B1 /* MoveToMoviesModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MoveToMoviesModel 2.xcdatamodel"; sourceTree = "<group>"; };
 		778875D525FFD22200B317B1 /* MoveToMoviesModel 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MoveToMoviesModel 3.xcdatamodel"; sourceTree = "<group>"; };
 		778875D82600CCC800B317B1 /* MappingModelV1toV2.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = MappingModelV1toV2.xcmappingmodel; sourceTree = "<group>"; };
+		779067752609F0CC00BB7765 /* Collection + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection + Ext.swift"; sourceTree = "<group>"; };
+		779067782609F59B00BB7765 /* ClearSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearSearchView.swift; sourceTree = "<group>"; };
 		77A67F8525F0DC82005CB877 /* MoveToMovies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoveToMovies.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		77A67F8825F0DC82005CB877 /* MoveToMoviesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveToMoviesApp.swift; sourceTree = "<group>"; };
 		77A67F8A25F0DC82005CB877 /* PopularMoviesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopularMoviesScreen.swift; sourceTree = "<group>"; };
@@ -133,6 +137,7 @@
 				77B55DAA25FD2A8C00F5B0B2 /* Transition + Ext.swift */,
 				778875CE25FFB3E500B317B1 /* String + Ext.swift */,
 				778875D125FFC22500B317B1 /* UIImage + Ext.swift */,
+				779067752609F0CC00BB7765 /* Collection + Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -281,6 +286,7 @@
 			isa = PBXGroup;
 			children = (
 				77FB1D802606212700C4CD94 /* PopularMovieDTO.swift */,
+				779067782609F59B00BB7765 /* ClearSearchView.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -399,6 +405,7 @@
 				778875D92600CCC800B317B1 /* MappingModelV1toV2.xcmappingmodel in Sources */,
 				77CC324825FE1BDA000A6EA0 /* MovieSearchScreenViewModel.swift in Sources */,
 				7752F94325F3CC9000DBE89B /* MapView.swift in Sources */,
+				779067792609F59B00BB7765 /* ClearSearchView.swift in Sources */,
 				77FBABF025F2856E00282331 /* AboutUsScreen.swift in Sources */,
 				7783BF792608A4AE003EC0F4 /* SearchBar.swift in Sources */,
 				778875D225FFC22500B317B1 /* UIImage + Ext.swift in Sources */,
@@ -419,6 +426,7 @@
 				77B55DAB25FD2A8C00F5B0B2 /* Transition + Ext.swift in Sources */,
 				7752F91925F2B5D300DBE89B /* MainScreen.swift in Sources */,
 				77CC323B25FD3926000A6EA0 /* MovieSearchScreen.swift in Sources */,
+				779067762609F0CC00BB7765 /* Collection + Ext.swift in Sources */,
 				7744382426014EDC0024D53E /* DataStorageService.swift in Sources */,
 				77CC324125FD4E6E000A6EA0 /* Title.swift in Sources */,
 				77FBABE425F2844100282331 /* DashBoardScreen.swift in Sources */,

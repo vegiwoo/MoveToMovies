@@ -9,19 +9,24 @@ import SwiftUI
 
 struct SearchBar: View {
     
-    @Binding var searchText: String
+    @State var searchText: String = ""
     @State private var isEditing = false
     var placeholder: String = "Search movie or TV show ..."
     var actualColor: Color
     
-    @Binding var searchTextLoding: String
+    @Binding var clearSearch: Bool
+    @Binding var searchTextLoading: String
     
     var body: some View {
         HStack {
             TextField(placeholder, text: $searchText) { _ in
                 //print(value)
             } onCommit: {
-                searchTextLoding = searchText
+                if !searchText.isEmpty {
+                    searchTextLoading = searchText
+
+                }
+                keyboardDismiss()
             }
             .padding(7)
             .padding(.horizontal, 25)
@@ -30,28 +35,38 @@ struct SearchBar: View {
             .padding(.horizontal, 16)
             .onTapGesture {
                 self.isEditing = true
+                //self.clearSearch = false
             }.keyboardType(.webSearch)
-            
             
             if isEditing {
                 Button(action: {
                     self.isEditing = false
-                    self.searchText = ""
-                    
+                    //self.clearSearch = true
+                    keyboardDismiss()
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(actualColor)
                 }
                 .padding(.trailing, 36)
                 .transition(.move(edge: .trailing))
-                .animation(.default)
+                .animation(Animation.easeOut(duration: 0.2))
             }
         }
+    }
+    
+    private func keyboardDismiss() {
+        let keyWindow = UIApplication.shared.connectedScenes
+            .filter({$0.activationState == .foregroundActive})
+            .map({$0 as? UIWindowScene})
+            .compactMap({$0})
+            .first?.windows
+            .filter({$0.isKeyWindow}).first
+        keyWindow?.endEditing(true)
     }
 }
 
 struct SearchBar_Previews: PreviewProvider {
     static var previews: some View {
-        SearchBar(searchText: .constant(""), actualColor: .red, searchTextLoding: .constant("Hello world"))
+        SearchBar(actualColor: .red, clearSearch: .constant(false), searchTextLoading: .constant("Hello world"))
     }
 }

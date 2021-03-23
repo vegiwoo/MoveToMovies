@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIControls
+import OmdbAPI
 
 public struct MovieCell: View, SizeClassAdjustable {
     
@@ -27,6 +28,23 @@ public struct MovieCell: View, SizeClassAdjustable {
         self.subtitle01 = model.subtitle01
         self.subtitle02 = model.subtitle02
         self.rightView = model.rightView
+    }
+    
+    init(model: MovieOmdbapiObject) {
+        self.title = model.title ?? ""
+        self.subtitle01 = model.type?.rawValue
+        self.subtitle02 = model.year ?? ""
+
+        // Poster
+        if let imageString = model.poster,
+           let url = URL(string: imageString) {
+            do {
+                let data = try Data(contentsOf: url)
+                self.image = UIImage(data: data)
+            } catch {
+                print("🔴 ERROR: ", error.localizedDescription)
+            }
+        }
     }
     
     public var body: some View {
