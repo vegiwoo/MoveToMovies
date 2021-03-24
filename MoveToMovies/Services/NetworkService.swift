@@ -273,14 +273,22 @@ final class NetworkServiceImpl: NetworkService {
 
     // MARK: Omdb
     func getSearchMovieRequest(title: String, page: Int) {
-        
-        OmdbAPI.DefaultAPI.rootGet(s: title, apikey: API.omdbApiKey.description) { (response, error) in
-            if let error = error {
-                print("🔴 ERROR NetworkService: \(error.localizedDescription)")
-            }
-            
-            if let objects = response?.search {
-                self.networkServicePublisher.send(objects)
+        apiResponseQueue.async(flags: .barrier) {
+            OmdbAPI.DefaultAPI.rootGet(s: title, apikey: API.omdbApiKey.description, page: page) { (response, error) in
+                if let error = error {
+                    print("🔴 ERROR NetworkService: \(error.localizedDescription)")
+                    print(error)
+                }
+                
+                guard let totalResultsString = response?.totalResults,
+                      let totalResults = Int(totalResultsString),
+                      let items = response?.search else {
+                    return
+                }
+                
+                self.apiResponseQueue.async {
+                    self.networkServicePublisher.send((movies: items, totalResults: totalResults))
+                }
             }
         }
     }

@@ -54,6 +54,7 @@ public struct PopularMovieDTO: MovieCellModelProtocol {
             }
                 .padding(.trailing)
                 .foregroundColor(.secondary)
+                .id("movieCell-rightViewZStack-\(UUID().uuidString)")
             )
     }
 

@@ -18,5 +18,6 @@ extension RandomAccessCollection where Self.Element: Identifiable {
         }
         return distance(from: itemIndex, to: endIndex) == 1
     }
+    
 }
 

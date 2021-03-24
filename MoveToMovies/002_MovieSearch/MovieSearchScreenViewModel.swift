@@ -18,65 +18,58 @@ final class MovieSearchScreenViewModel: ObservableObject {
     private var networkServiceSubscriber: AnyCancellable?
     
     @Published private(set) var items: [MovieOmdbapiObject] = .init()
-    @Published private(set) var page: Int = 0
-    @Published var searchTextLoading: String = "" {
-        willSet {
-            if newValue != searchTextLoading {
-                searchText = newValue
-            }
-        }
-    }
     @Published private(set) var isPageLoading: Bool = false
+    private(set) var currentPage: Int = 1
     
-    var searchText: String? {
-        willSet {
-            print("searchText", searchText)
-            loadPage()
-        }
+    var searchText: String?
+
+    deinit {
+        unsubscribe()
     }
-    
-    
+
     func setup(_ context: NSManagedObjectContext, networkService: NetworkService) {
         self.context = context
         self.networkService = networkService
         subscribe()
     }
     
-    var count: Int = 0
-    
     private func subscribe() {
         if let networkService = networkService {
             networkServiceSubscriber = networkService.networkServicePublisher
                 .subscribe(on: networkService.apiResponseQueue)
                 .sink{value in
-                if let movieOmdbapiObjects = value as? [MovieOmdbapiObject] {
-                    self.count += 1
-                    print("Получены данные", self.count)
-                    self.items.append(contentsOf: movieOmdbapiObjects)
-                    self.isPageLoading = false
+                    if let movieOmdbapiObjects = value as? (movies: [MovieOmdbapiObject], totalResults: Int) {
+                        self.currentPage += 1
+                        self.items.append(contentsOf: movieOmdbapiObjects.movies)
+                        self.isPageLoading = false
+                    }
                 }
-            }
         }
     }
     
+    private func unsubscribe() {
+        networkServiceSubscriber?.cancel()
+    }
+    
     func loadPage() {
-        guard let title = searchText, let networkService = self.networkService,
+        guard let searchText = searchText, !searchText.isEmpty,
+              let networkService = self.networkService,
               isPageLoading == false else { return }
         isPageLoading = true
-        page += 1
-        print("value \(title), page \(page)")
-        networkService.getSearchMovieRequest(title: title, page: page)
+        
+        print("value \(searchText), page \(currentPage)")
+        networkService.getSearchMovieRequest(title: searchText, page: currentPage)
     }
     
     func clearSearch() {
-        page = 0
+        currentPage = 1
         //searchTextLoading = ""
         items.removeAll()
     }
 }
 
 extension MovieOmdbapiObject: Identifiable {
-    public var id: UUID { UUID() }
+    public var id: String { imdbID! }
 }
 
 extension MovieOmdbapiObject: Equatable {

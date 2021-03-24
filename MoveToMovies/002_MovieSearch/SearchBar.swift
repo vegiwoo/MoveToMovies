@@ -9,22 +9,22 @@ import SwiftUI
 
 struct SearchBar: View {
     
-    @State var searchText: String = ""
+    @State private var text = ""
+    @Binding var searchText: String
     @State private var isEditing = false
     var placeholder: String = "Search movie or TV show ..."
     var actualColor: Color
     
     @Binding var clearSearch: Bool
-    @Binding var searchTextLoading: String
     
     var body: some View {
         HStack {
-            TextField(placeholder, text: $searchText) { _ in
+            TextField(placeholder, text: $text) { _ in
                 //print(value)
             } onCommit: {
-                if !searchText.isEmpty {
-                    searchTextLoading = searchText
-
+                // Press return buttomn
+                if !text.isEmpty {
+                    searchText = text
                 }
                 keyboardDismiss()
             }
@@ -35,13 +35,16 @@ struct SearchBar: View {
             .padding(.horizontal, 16)
             .onTapGesture {
                 self.isEditing = true
-                //self.clearSearch = false
+                self.clearSearch = false
             }.keyboardType(.webSearch)
             
             if isEditing {
                 Button(action: {
+                    // Tap clear button
                     self.isEditing = false
-                    //self.clearSearch = true
+                    self.text = ""
+                    self.searchText = ""
+                    clearSearch = true
                     keyboardDismiss()
                 }) {
                     Image(systemName: "xmark.circle.fill")
@@ -67,6 +70,6 @@ struct SearchBar: View {
 
 struct SearchBar_Previews: PreviewProvider {
     static var previews: some View {
-        SearchBar(actualColor: .red, clearSearch: .constant(false), searchTextLoading: .constant("Hello world"))
+        SearchBar(searchText: .constant("Hello"), actualColor: .red, clearSearch: .constant(false))
     }
 }

@@ -11,6 +11,8 @@ import OmdbAPI
 
 public struct MovieCell: View, SizeClassAdjustable {
     
+    @EnvironmentObject var vm: MovieSearchScreenViewModel
+    
     @Environment(\.verticalSizeClass) var _verticalSizeClass
     @Environment(\.horizontalSizeClass) var _horizontalSizeClass
     public var vsc: UserInterfaceSizeClass? { _verticalSizeClass }
@@ -22,6 +24,9 @@ public struct MovieCell: View, SizeClassAdjustable {
     var subtitle02: String
     var rightView: AnyView?
     
+    var movieOmdbapiObject: MovieOmdbapiObject?
+    var id: UUID = UUID()
+    
     init(model: MovieCellModelProtocol) {
         self.image = model.image
         self.title = model.title
@@ -30,76 +35,90 @@ public struct MovieCell: View, SizeClassAdjustable {
         self.rightView = model.rightView
     }
     
+    
     init(model: MovieOmdbapiObject) {
         self.title = model.title ?? ""
         self.subtitle01 = model.type?.rawValue
         self.subtitle02 = model.year ?? ""
 
         // Poster
-        if let imageString = model.poster,
-           let url = URL(string: imageString) {
-            do {
-                let data = try Data(contentsOf: url)
-                self.image = UIImage(data: data)
-            } catch {
-                print("🔴 ERROR: ", error.localizedDescription)
-            }
-        }
+        //self.image = UIImage(named: "dummyImage500x500")
+        
+//        if let imageString = model.poster,
+//           let url = URL(string: imageString) {
+//            do {
+//                let data = try Data(contentsOf: url)
+//                self.image = UIImage(data: data)
+//            } catch {
+//                print("🔴 ERROR: ", error.localizedDescription)
+//            }
+//        }
+        
+        movieOmdbapiObject = model
     }
     
     public var body: some View {
         GeometryReader {geometry in
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-//
-                    .background(Color.gray)
-                    .opacity(0.05)
-                HStack {
-                    // Poster
-                    if let image = image {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .scaledToFill()
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .smallPosterFrame(geometrySize: geometry.size)
-                    } else {
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke()
-                            .foregroundColor(.gray)
-                            .smallPosterFrame(geometrySize: geometry.size)
-                    }
-                    // Titles
-                    VStack(alignment: .leading, spacing: 12) {
-                        // EmptyView
-                        Text("")
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 1)
-                        // title
-                        Text(title)
-                            .font(Font.system(size: isPad ? 24 : isPadOrLandscapeMax ? 18 : 14)).fontWeight(.bold)
-                            .lineLimit(2)
-                        // subtitle01
-                        if let subtitle01 = subtitle01 {
-                            Text(subtitle01)
-                                .font(Font.system(size: isPad ? 24 : isPadOrLandscapeMax ? 18 : 14)).fontWeight(.regular)
-                                .lineLimit(2)
-                        }
-                        // subtitle02
-                        if let subtitle02 = subtitle02 {
-                            Text(subtitle02)
-                                .font(Font.system(size: isPad ? 20 : isPadOrLandscapeMax ? 16 : 12)).fontWeight(.semibold)
-                                .lineLimit(1)
-                        }
-                    }.padding([.leading], 10)
+            VStack {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .background(Color.gray)
+                        .opacity(0.05)
                     
-                    // Right view
-                    if let rightView = self.rightView {
-                        rightView
-                            .frame(width: isPad ? geometry.size.width / 12 : isPadOrLandscapeMax ? geometry.size.width / 10 : geometry.size.width / 8)
-                            .padding(.trailing)
-                            .foregroundColor(.secondary)
+                    HStack {
+                        // Poster
+                        if let image = image {
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .scaledToFill()
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .smallPosterFrame(geometrySize: geometry.size)
+                        } else {
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke()
+                                .foregroundColor(.gray)
+                                .smallPosterFrame(geometrySize: geometry.size)
+                        }
+                        // Titles
+                        VStack(alignment: .leading, spacing: 12) {
+                            // EmptyView
+                            Text("")
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 1)
+                               
+                            // title
+                            Text(title)
+                                .font(Font.system(size: isPad ? 24 : isPadOrLandscapeMax ? 18 : 14)).fontWeight(.bold)
+                                .lineLimit(2)
+                                
+                            // subtitle01
+                            if let subtitle01 = subtitle01 {
+                                Text(subtitle01)
+                                    .font(Font.system(size: isPad ? 24 : isPadOrLandscapeMax ? 18 : 14)).fontWeight(.regular)
+                                    .lineLimit(2)
+                                    
+                            }
+                            // subtitle02
+                            if let subtitle02 = subtitle02 {
+                                Text(subtitle02)
+                                    .font(Font.system(size: isPad ? 20 : isPadOrLandscapeMax ? 16 : 12)).fontWeight(.semibold)
+                                    .lineLimit(1)
+                                   
+                            }
+                        }.padding([.leading], 10)
+                        
+                        // Right view
+                        if let rightView = self.rightView {
+                            rightView
+                                .frame(width: isPad ? geometry.size.width / 12 : isPadOrLandscapeMax ? geometry.size.width / 10 : geometry.size.width / 8)
+                                .padding(.trailing)
+                                .foregroundColor(.secondary)
+                        }
                     }
+                }
+                if let vm = vm, vm.isPageLoading, let item = movieOmdbapiObject, vm.items.isLast(item) {
+                    ActivityIndicator(shouldAnimate: .constant(true), style: .medium).frame(width: 30, height: 30, alignment: .center)
                 }
             }
         }

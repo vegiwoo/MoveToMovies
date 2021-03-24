@@ -25,6 +25,7 @@ struct MovieSearchScreen: View, BaseView {
     @State var selectSegment: Int = 0
     private var segmentes: [String] = ["Search", "Popular"]
     
+    @State var searchText: String = ""
     @State var clearSearch: Bool = true
 
     init(networkService: NetworkService, actualColor: Color, title: String) {
@@ -51,27 +52,31 @@ struct MovieSearchScreen: View, BaseView {
             if selectSegment == 0 {
                 Group {
                     // Search bar
-                    SearchBar(actualColor: actualColor, clearSearch: $clearSearch, searchTextLoading: $vm.searchTextLoading)
-                    if clearSearch {
-                        VStack {
-                            Spacer().frame(width: 100, height: 100, alignment: .center)
-                            ClearSearchView()
-                            Spacer()
-                        }
+                    SearchBar(searchText: $searchText, actualColor: actualColor, clearSearch: $clearSearch)
+                    
+                    if vm.items.count == 0 && vm.isPageLoading {
+                        ActivityIndicator(shouldAnimate: .constant(true), style: .large).frame(width: 30, height: 30, alignment: .center)
+                        Spacer()
                     } else {
-                        ScrollView {
-                            ForEach(vm.items, id: \.self) {item in
-                                MovieCell(model: item).frame(width: 380, height: 120, alignment: .leading)
+                        if clearSearch {
+                            VStack {
+                                Spacer().frame(width: 100, height: 100, alignment: .center)
+                                ClearSearchView()
+                                Spacer()
+                            }
+                        } else {
+                            List (vm.items) {item in
+                                MovieCell(model: item)
+                                    .id(UUID())
+                                    .frame(width: 380, height: 120, alignment: .leading)
+                                    .environmentObject(vm)
                                     .onAppear {
-                                        if item == vm.items.last && !vm.isPageLoading {
-                                            vm.loadPage()
-                                        }
+                                        if vm.items.isLast(item) { vm.loadPage() }
                                     }
-                                
                             }
                         }
                     }
-                }.transition(.move(edge: .leading))
+                }.transition(.moveAndFade)
             } else if selectSegment == 1 {
                 Group {
                     List {
@@ -79,7 +84,7 @@ struct MovieSearchScreen: View, BaseView {
                             MovieCell(model: PopularMovieDTO(fromMovieItem: movie)).frame(width: 380, height: 120, alignment: .leading)
                         }
                     }
-                }.transition(.move(edge: .trailing))
+                }.transition(.moveAndFade)
             }
         }.animation(.easeInOut)
         .onAppear{
@@ -88,6 +93,13 @@ struct MovieSearchScreen: View, BaseView {
             if value == 1 {
                 self.clearSearch = true
                 vm.clearSearch()
+            }
+        }.onChange(of: searchText) {value in
+            if value == "" {
+                vm.clearSearch()
+            } else {
+                vm.searchText = value
+                vm.loadPage()
             }
         }
     }
