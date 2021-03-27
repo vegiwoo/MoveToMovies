@@ -67,6 +67,10 @@ struct MovieSearchScreen: View, BaseView {
                         } else {
                             VStack {
                                 List (vm.items) {item in
+       
+                                    
+                                    
+                                    
                                     MovieCell(model: item)
                                         .id(UUID())
                                         .frame(width: 380, height: 120, alignment: .leading)

@@ -1,5 +1,5 @@
 //
-//  MovieDetailScreen.swift
+//  MovieDetailScreen01.swift
 //  MoveToMovies
 //
 //  Created by Dmitry Samartcev on 06.03.2021.
@@ -16,7 +16,7 @@ extension ProductionCountry: Identifiable {
     }
 }
 
-struct MovieDetailScreen: View, SizeClassAdjustable {
+struct MovieDetailScreen01: View, SizeClassAdjustable {
 
     @EnvironmentObject var appState: AppState
     
@@ -38,8 +38,8 @@ struct MovieDetailScreen: View, SizeClassAdjustable {
     }
 }
 
-struct MovieDetailScreen_Previews: PreviewProvider {
+struct MovieDetailScreen01_Previews: PreviewProvider {
     static var previews: some View {
-        MovieDetailScreen(movie: Movie(title: "Some movie"), isMapPresented: false)
+        MovieDetailScreen01(movie: Movie(title: "Some movie"), isMapPresented: false)
     }
 }

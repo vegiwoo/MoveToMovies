@@ -5,11 +5,14 @@
 //  Created by Dmitry Samartcev on 13.03.2021.
 //
 
-import Foundation
+#if canImport(SwiftUI)
 import SwiftUI
 
-struct Title: ViewModifier {
-    func body(content: Content) -> some View {
+@available(iOS 13.0, *)
+
+public struct Title: ViewModifier {
+    
+    public func body(content: Content) -> some View {
         content
             .frame(maxWidth: .infinity, alignment: .leading)
             .font(Font.system(size: 45, weight: .black))
@@ -18,8 +21,10 @@ struct Title: ViewModifier {
     }
 }
 
-extension View {
+@available(iOS 13.0, *)
+public extension View {
     func titleStyle() -> some View {
         self.modifier(Title())
     }
 }
+#endif
