@@ -18,8 +18,8 @@ final class MovieSearchScreenViewModel: ObservableObject {
     private var networkServiceSubscriber: AnyCancellable?
     
     @Published private(set) var items: [MovieOmdbapiObject] = .init()
-    @Published private(set) var isPageLoading: Bool = false
-    private(set) var currentPage: Int = 1
+    @Published var isPageLoading: Bool = false
+    var currentPage: Int = 1
     
     var searchText: String?
 

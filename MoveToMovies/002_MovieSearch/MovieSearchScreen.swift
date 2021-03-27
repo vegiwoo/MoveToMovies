@@ -65,14 +65,17 @@ struct MovieSearchScreen: View, BaseView {
                                 Spacer()
                             }
                         } else {
-                            List (vm.items) {item in
-                                MovieCell(model: item)
-                                    .id(UUID())
-                                    .frame(width: 380, height: 120, alignment: .leading)
-                                    .environmentObject(vm)
-                                    .onAppear {
-                                        if vm.items.isLast(item) { vm.loadPage() }
-                                    }
+                            VStack {
+                                List (vm.items) {item in
+                                    MovieCell(model: item)
+                                        .id(UUID())
+                                        .frame(width: 380, height: 120, alignment: .leading)
+                                        .environmentObject(vm)
+                                        .onAppear {
+                                            if vm.items.isLast(item) { vm.loadPage() }
+                                        }
+                                }
+                                ActivityIndicator(shouldAnimate: $vm.isPageLoading,style: .medium).frame(width: 30, height: 30, alignment: .center).transition(.opacity)
                             }
                         }
                     }

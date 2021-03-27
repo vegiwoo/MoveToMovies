@@ -14,11 +14,14 @@ struct ActivityIndicator: UIViewRepresentable {
     let style : UIActivityIndicatorView.Style
     
     func makeUIView(context: Context) -> UIActivityIndicatorView {
-        return UIActivityIndicatorView(style: style)
+        let view = UIActivityIndicatorView(style: style)
+        view.hidesWhenStopped = true
+        return view
     }
 
     func updateUIView(_ uiView: UIActivityIndicatorView,
                       context: Context) {
+
         if self.shouldAnimate {
             uiView.startAnimating()
         } else {
@@ -62,10 +65,10 @@ struct CustomCell: View {
             Text("\(item.title ?? "")").font(.headline)
             Text("\(item.releaseDate ?? "")").font(.callout)
             
-            if vm.isPageLoading && vm.items.isLast(item) {
-                Divider()
-                ActivityIndicator(shouldAnimate: .constant(true), style: .medium)
-            }
+//            if vm.isPageLoading && vm.items.isLast(item) {
+//                Divider()
+//                ActivityIndicator(shouldAnimate: .constant(true), style: .medium)
+//            }
         }
     }
 }

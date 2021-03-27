@@ -117,9 +117,6 @@ public struct MovieCell: View, SizeClassAdjustable {
                         }
                     }
                 }
-                if let vm = vm, vm.isPageLoading, let item = movieOmdbapiObject, vm.items.isLast(item) {
-                    ActivityIndicator(shouldAnimate: .constant(true), style: .medium).frame(width: 30, height: 30, alignment: .center)
-                }
             }
         }
     }
