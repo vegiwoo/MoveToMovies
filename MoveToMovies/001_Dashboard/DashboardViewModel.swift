@@ -23,8 +23,5 @@ final class DashboardViewModel: ObservableObject {
     func setup(networkService: NetworkService, dataStorageService: DataStorageService) {
         self.networkService = networkService
         self.dataStorageService = dataStorageService
-       
-       
-
     }
 }

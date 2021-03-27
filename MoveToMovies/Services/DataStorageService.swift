@@ -18,6 +18,7 @@ protocol DataStorageService {
     var networkSubscriber: AnyCancellable? { get }
     var dataStoragePublisher: DataStoragePublisher { get }
     func saveContext()
+    func getRendomMovieItem() -> MovieItem? 
 }
 
 final class DataStorageServiceImpl: DataStorageService {
@@ -331,6 +332,18 @@ final class DataStorageServiceImpl: DataStorageService {
         movieFetchRequest.predicate =  NSPredicate(format: "id == %i", id)
         let existingMovies = try! self.context.fetch(movieFetchRequest) as! [MovieItem]
         return existingMovies.first
+    }
+    
+    func getRendomMovieItem() -> MovieItem? {
+        let entityName = "MovieItem"
+        let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        let existingMovies = try! self.context.fetch(movieFetchRequest) as! [MovieItem]
+        
+        if let randomIndex = existingMovies.indices.randomElement() {
+            return existingMovies[randomIndex]
+        } else {
+            return nil
+        }
     }
     
     // MARK: Collection

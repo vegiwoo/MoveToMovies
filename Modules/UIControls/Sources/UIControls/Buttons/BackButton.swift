@@ -8,24 +8,50 @@
 import SwiftUI
 
 @available(iOS 13.0, *)
-struct BackButton: View {
+public struct BackButton: View {
     
-    let width: CGFloat
-    let text: String
-    let color: Color
-    let action: () -> Void
+    public let width: CGFloat
+    public let text: String
+    public let color: Color
+    public let action: (() -> Void)?
     
-    var body: some View {
+    public init(width: CGFloat, text: String, color: Color, action: (() -> Void)? = nil )  {
+        self.width = width
+        self.text = text
+        self.color = color
+        self.action = action
+    }
+    
+    public var body: some View {
         Button {
-            action()
-        } label: {
-            HStack {
-                Image(systemName: "chevron.backward")
-                Text(text).font(Font.system(size: 36))
+            if let existingAction = action {
+                existingAction()
             }
-            .foregroundColor(color)
-            .frame(width: width, alignment: .leading)
-            .padding(.bottom)
+        } label: {
+            BackButtonLabel(text: text, color: color, width: width)
         }
+    }
+}
+
+@available(iOS 13.0, *)
+public struct BackButtonLabel: View {
+    
+    public let text: String
+    public let color: Color
+    public let width: CGFloat
+    
+    public init(text: String, color: Color, width: CGFloat) {
+        self.text = text
+        self.color = color
+        self.width = width
+    }
+    
+    public var body: some View {
+        HStack {
+            Image(systemName: "chevron.backward")
+            Text(text).multilineTextAlignment(.leading)
+        }
+        .foregroundColor(color)
+        .frame(width: width, alignment: .leading)
     }
 }

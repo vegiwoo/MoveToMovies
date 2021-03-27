@@ -10,12 +10,17 @@ import CoreData
 import Combine
 import TmdbAPI
 import OmdbAPI
+import Navigation
 
 final class MovieSearchScreenViewModel: ObservableObject {
 
     private var context: NSManagedObjectContext?
     private var networkService: NetworkService?
+    private var dataStorageService: DataStorageService?
     private var networkServiceSubscriber: AnyCancellable?
+    
+    private var ncViewModel: NavCoordinatorViewModel?
+    
     
     @Published private(set) var items: [MovieOmdbapiObject] = .init()
     @Published var isPageLoading: Bool = false
@@ -27,9 +32,11 @@ final class MovieSearchScreenViewModel: ObservableObject {
         unsubscribe()
     }
 
-    func setup(_ context: NSManagedObjectContext, networkService: NetworkService) {
+    func setup(_ context: NSManagedObjectContext, networkService: NetworkService, dataStorageService: DataStorageService, ncViewModel: NavCoordinatorViewModel) {
         self.context = context
         self.networkService = networkService
+        self.dataStorageService = dataStorageService
+        self.ncViewModel = ncViewModel
         subscribe()
     }
     
@@ -65,6 +72,14 @@ final class MovieSearchScreenViewModel: ObservableObject {
         currentPage = 1
         //searchTextLoading = ""
         items.removeAll()
+    }
+    
+    func getRandomMovie() -> MovieItem? {
+        dataStorageService?.getRendomMovieItem()
+    }
+    
+    func navigationPop(destination: PopDestination) {
+        self.ncViewModel?.pop(to: destination)
     }
 }
 

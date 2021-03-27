@@ -10,20 +10,16 @@ public struct NavPopButton<Label>: View where Label: View {
     @EnvironmentObject var vm: NavCoordinatorViewModel
 
     private let destination: PopDestination
-    private let action: () -> Void
     private let label: () -> Label
     
     public init (destination: PopDestination = .previous,
-                 action:  @escaping () -> Void,
                  @ViewBuilder label: @escaping () -> Label) {
         self.destination = destination
-        self.action = action
         self.label = label
     }
     
     public var body: some View {
         label().onTapGesture {
-            action()
             vm.pop(to: destination)
         }
     }
@@ -37,8 +33,8 @@ public struct NavPopButton_Previews: PreviewProvider {
     }
 
     public static var previews: some View {
-        NavPopButton(action: stubFunction) {
-            Text("")
+        NavPopButton{
+            Text("Hrllo NavPopButton")
         }
     }
 }
