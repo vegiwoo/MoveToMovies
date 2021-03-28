@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Navigation
+import UIControls
 
 struct MovieSearchScreenContent: View, BaseView {
     
@@ -61,7 +62,7 @@ struct MovieSearchScreenContent: View, BaseView {
                         SearchBar(searchText: $searchText, actualColor: actualColor, clearSearch: $clearSearch)
                         
                         if vm.items.count == 0 && vm.isPageLoading {
-                            ActivityIndicator(shouldAnimate: .constant(true), style: .large).frame(width: 30, height: 30, alignment: .center)
+                            ActivityIndicator(style: .large, shouldAnimate: .constant(true)).frame(width: 30, height: 30, alignment: .center)
                             Spacer()
                         } else {
                             if clearSearch {
@@ -81,7 +82,7 @@ struct MovieSearchScreenContent: View, BaseView {
                                                 if vm.items.isLast(item) { vm.loadPage() }
                                             }
                                     }
-                                    ActivityIndicator(shouldAnimate: $vm.isPageLoading,style: .medium).frame(width: 30, height: 30, alignment: .center).transition(.opacity)
+                                    ActivityIndicator(style: .medium, shouldAnimate: $vm.isPageLoading).frame(width: 30, height: 30, alignment: .center).transition(.opacity)
                                 }
                             }
                         }

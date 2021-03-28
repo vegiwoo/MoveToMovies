@@ -18,7 +18,8 @@ protocol DataStorageService {
     var networkSubscriber: AnyCancellable? { get }
     var dataStoragePublisher: DataStoragePublisher { get }
     func saveContext()
-    func getRendomMovieItem() -> MovieItem? 
+    func getRendomMovieItem() -> MovieItem?
+    var completionUpdatingData: Bool { get }
 }
 
 final class DataStorageServiceImpl: DataStorageService {
@@ -56,6 +57,8 @@ final class DataStorageServiceImpl: DataStorageService {
         return operationQueue
     }()
     
+    var completionUpdatingData: Bool = false
+    
     init(networkResponseQueue: DispatchQueue, networkPublisher: PassthroughSubject<Any, Never>, dataStoragePublisher: DataStoragePublisher) {
         
         self.networkResponseQueue = networkResponseQueue
@@ -69,11 +72,12 @@ final class DataStorageServiceImpl: DataStorageService {
     }
 
     private func onAppear() {
-        //removeAll()
+        removeAll()
         subscribe()
         getInfoAboutExistingCountries()
         
         if let existingPosters = self.fetchPosters(), existingPosters.count == 20 { self.dataStoragePublisher.publish(request: .completionUpdatingData)
+            completionUpdatingData = true
         }
     }
 
@@ -627,6 +631,7 @@ final class DataStorageServiceImpl: DataStorageService {
                     
                     if let existingPosters = self.fetchPosters(), existingPosters.count == 20 {
                         self.dataStoragePublisher.publish(request: .completionUpdatingData)
+                        self.completionUpdatingData = true
                     }
                 } catch {
                     print(error.localizedDescription)
@@ -656,6 +661,11 @@ final class DataStorageServiceImpl: DataStorageService {
         return try! self.context.fetch(posterFetchRequest) as! [PosterItem]
     }
 }
+
+extension ProductionCountry: Identifiable {
+    public var id: UUID { UUID()}
+}
+
 
 struct ProductionCountyDTO {
     var tag: String

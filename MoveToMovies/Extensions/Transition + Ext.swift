@@ -1,13 +1,6 @@
-//
 //  Transition + Ext.swift
 //  MoveToMovies
-//
-<<<<<<< HEAD
-//  Created by Dmitry Samartcev on 10.03.2021.
-=======
 //  Created by Dmitry Samartcev on 13.03.2021.
->>>>>>> dev
-//
 
 import SwiftUI
 
@@ -19,7 +12,3 @@ extension AnyTransition {
         return .asymmetric(insertion: insertion, removal: removal)
     }
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> dev

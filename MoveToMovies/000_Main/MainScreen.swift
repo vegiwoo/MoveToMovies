@@ -12,11 +12,7 @@ struct MainScreen: View {
     @EnvironmentObject var appState: AppState
        
     var body: some View {
-<<<<<<< HEAD:MoveToMovies/Modules/MainModule/MainScreen.swift
-        TabbarView(selectionScreen: $appState.selectionScreen)
-=======
         TabbarView(selectionScreen: $appState.selectionScreen, vm: TabbarViewModel())
->>>>>>> dev:MoveToMovies/000_Main/MainScreen.swift
     }
 }
 

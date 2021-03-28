@@ -11,9 +11,6 @@ import Combine
 import TmdbAPI
 
 final class AppState: ObservableObject {
-<<<<<<< HEAD
-=======
-
     static var dataStoragePublisher = DataStoragePublisher()
     
     static var networkService: NetworkService =
@@ -26,7 +23,6 @@ final class AppState: ObservableObject {
         return DataStorageServiceImpl(networkResponseQueue: AppState.networkServiceResponseQueue, networkPublisher: networkService.networkServicePublisher, dataStoragePublisher: AppState.dataStoragePublisher)
     }()
     
->>>>>>> dev
     @Published var selectTabIndex: Int = TabbarTab.dashboardScreen.rawValue  {
         didSet {
             selectedTabHandler()
@@ -35,33 +31,21 @@ final class AppState: ObservableObject {
     @Published var appViewModel: AppViewModel = .init()
     @Published var isQuickLink: Bool = false {
         didSet {
-<<<<<<< HEAD
-            //selectionTab = .popularMoviesScreen
-            randomMovie = isQuickLink == true ? appViewModel.getRandomMovie() : nil
-=======
             if isQuickLink {
                 selectTabIndex = TabbarTab.movies.rawValue
             }
->>>>>>> dev
         }
     }
 
     
-<<<<<<< HEAD
-    @Published var selectionScreen: AnyView = AnyView(DashBoardScreen())
-=======
+
     @Published var selectionScreen: AnyView = AnyView(DashBoardScreen(actualColor: TabbarTab.dashboardScreen.actualColor, title: TabbarTab.dashboardScreen.text))
->>>>>>> dev
+
     
     private func selectedTabHandler() {
         if let selectedTab = TabbarTab.allCases.first(where: {$0.rawValue == selectTabIndex}) {
             switch selectedTab {
             case .dashboardScreen:
-<<<<<<< HEAD
-                selectionScreen = AnyView(DashBoardScreen())
-            case .popularMoviesScreen:
-                selectionScreen = AnyView(PopularMoviesScreen())
-=======
                 selectionScreen = AnyView(DashBoardScreen(
                                             actualColor: selectedTab.actualColor,
                                             title: selectedTab.text)
@@ -75,7 +59,6 @@ final class AppState: ObservableObject {
                                             title: selectedTab.text)
                                             .environment(\.managedObjectContext, AppState.dataStoreService.context)
                                             .environmentObject(self))
->>>>>>> dev
             case .aboutUSScreen:
                 selectionScreen = AnyView(AboutUsScreen())
             }

@@ -213,7 +213,7 @@ final class NetworkServiceImpl: NetworkService {
         var backdropBlob: Data? {
             didSet {
                 if let backdropBlob = backdropBlob {
-                    print("movieId \(request.movieItemId) backdropBlob count", backdropBlob.count)
+                    //print("movieId \(request.movieItemId) backdropBlob count", backdropBlob.count)
                     apiResponseQueue.async {
                         self.networkServicePublisher.send(CoversDownloadResponse(movieItemId: request.movieItemId, posterBlobData: posterBlob, backdropBlobData: backdropBlob))
                     }

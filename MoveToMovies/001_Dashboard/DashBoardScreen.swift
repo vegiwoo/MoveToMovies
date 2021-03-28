@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import UIControls
 
 struct DashBoardScreen: View, BaseView {
     
@@ -17,7 +18,7 @@ struct DashBoardScreen: View, BaseView {
 
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject var appState: AppState
-    @ObservedObject var vm: DashboardViewModel = .init()
+    //@ObservedObject var vm: DashboardViewModel = .init()
     
     init(actualColor: Color, title: String) {
         self.actualColor = actualColor
@@ -43,13 +44,15 @@ struct DashBoardScreen: View, BaseView {
                         appState.selectTabIndex = 1
                     }
                 } else {
-                    ActivityIndicator(shouldAnimate: .constant(true), style: .large)
+                    ActivityIndicator(style: .large, shouldAnimate: .constant(true))
                 }
             }.frame(width: 150, height: 150, alignment: .center)
 
             Spacer()
         }.onAppear {
-            vm.setup(networkService: AppState.networkService, dataStorageService: AppState.dataStoreService)
+            completionUpdatingData = AppState.dataStoreService.completionUpdatingData
+            
+//            vm.setup(networkService: AppState.networkService, dataStorageService: AppState.dataStoreService)
             appState.isQuickLink = false
         }.onReceive(AppState.dataStoreService.dataStoragePublisher.requestPublisher) { (request) in
             switch request {

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Navigation
 
 struct AboutUsScreen: View {
     var body: some View {
