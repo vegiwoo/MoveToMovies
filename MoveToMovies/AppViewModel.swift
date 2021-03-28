@@ -18,7 +18,7 @@ struct ProductionCountryDTO {
 
 final class AppViewModel: ObservableObject {
     
-    let apikey = API.apiKey.description
+    let apikey = ""
     
     @Published var genres: [Genre] = .init()
     private var popularMoviesList: [MovieListResultObject] = .init()
@@ -30,6 +30,7 @@ final class AppViewModel: ObservableObject {
     
     var subscriber: AnyCancellable?
     
+<<<<<<< HEAD
     init() {
         getGenres()
         getPopularMovies()
@@ -165,6 +166,9 @@ extension AppViewModel {
             }
         }
     }
+=======
+    init() {}
+>>>>>>> dev
 }
 
 extension AppViewModel {
@@ -221,7 +225,3 @@ extension AppViewModel {
 
 extension Genre: Identifiable {}
 extension Movie: Identifiable {}
-
-enum PosterSizes {
-    case w92, w154, w185, w342, w500, w780, original
-}

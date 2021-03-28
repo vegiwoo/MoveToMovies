@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20D91" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="BackdropItemv01">
+    <entity name="BackdropItem" representedClassName="BackdropItem" syncable="YES" codeGenerationType="class">
+        <attribute name="blob" optional="YES" attributeType="Binary"/>
+        <relationship name="movie" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MovieItem" inverseName="backdrop" inverseEntity="MovieItem"/>
+    </entity>
+    <entity name="CollectionItem" representedClassName="CollectionItem" syncable="YES" codeGenerationType="class">
+        <attribute name="backdropPath" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="posterPath" optional="YES" attributeType="String"/>
+        <relationship name="movie" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MovieItem" inverseName="collection" inverseEntity="MovieItem"/>
+    </entity>
+    <entity name="GenreItem" representedClassName="GenreItem" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="movies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MovieItem" inverseName="genres" inverseEntity="MovieItem"/>
+    </entity>
+    <entity name="MovieItem" representedClassName="MovieItem" syncable="YES" codeGenerationType="class">
+        <attribute name="adult" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="backdropPath" optional="YES" attributeType="String"/>
+        <attribute name="budget" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="homepage" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="imdbId" optional="YES" attributeType="String"/>
+        <attribute name="originalLanguage" optional="YES" attributeType="String"/>
+        <attribute name="originalTitle" optional="YES" attributeType="String"/>
+        <attribute name="overview" optional="YES" attributeType="String"/>
+        <attribute name="popularity" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="releaseDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="revenue" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="runtime" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="tagline" optional="YES" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="video" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="voteAverage" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="voteCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="backdrop" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BackdropItem" inverseName="movie" inverseEntity="BackdropItem"/>
+        <relationship name="collection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CollectionItem" inverseName="movie" inverseEntity="CollectionItem"/>
+        <relationship name="companies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ProductionCompanyItem" inverseName="movies" inverseEntity="ProductionCompanyItem"/>
+        <relationship name="countries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ProductionCountryItem" inverseName="movies" inverseEntity="ProductionCountryItem"/>
+        <relationship name="genres" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GenreItem" inverseName="movies" inverseEntity="GenreItem"/>
+        <relationship name="languages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SpokenLanguageItem" inverseName="movies" inverseEntity="SpokenLanguageItem"/>
+        <relationship name="poster" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PosterItem" inverseName="movie" inverseEntity="PosterItem"/>
+    </entity>
+    <entity name="PosterItem" representedClassName="PosterItem" syncable="YES" codeGenerationType="class">
+        <attribute name="blob" optional="YES" attributeType="Binary"/>
+        <relationship name="movie" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MovieItem" inverseName="poster" inverseEntity="MovieItem"/>
+    </entity>
+    <entity name="ProductionCompanyItem" representedClassName="ProductionCompanyItem" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="logoPath" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="originCountry" optional="YES" attributeType="String"/>
+        <relationship name="movies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MovieItem" inverseName="companies" inverseEntity="MovieItem"/>
+    </entity>
+    <entity name="ProductionCountryItem" representedClassName="ProductionCountryItem" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="iso31661" optional="YES" attributeType="String"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="movies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MovieItem" inverseName="countries" inverseEntity="MovieItem"/>
+    </entity>
+    <entity name="SpokenLanguageItem" representedClassName="SpokenLanguageItem" syncable="YES" codeGenerationType="class">
+        <attribute name="iso6391" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="movies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MovieItem" inverseName="languages" inverseEntity="MovieItem"/>
+    </entity>
+    <elements>
+        <element name="BackdropItem" positionX="-18" positionY="153" width="128" height="59"/>
+        <element name="CollectionItem" positionX="18" positionY="198" width="128" height="104"/>
+        <element name="GenreItem" positionX="-63" positionY="-18" width="128" height="74"/>
+        <element name="MovieItem" positionX="-54" positionY="9" width="128" height="419"/>
+        <element name="PosterItem" positionX="-27" positionY="144" width="128" height="59"/>
+        <element name="ProductionCompanyItem" positionX="9" positionY="189" width="128" height="104"/>
+        <element name="ProductionCountryItem" positionX="0" positionY="180" width="128" height="119"/>
+        <element name="SpokenLanguageItem" positionX="-27" positionY="162" width="128" height="74"/>
+    </elements>
+</model>

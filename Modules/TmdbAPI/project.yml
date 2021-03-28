@@ -1,0 +1,14 @@
+name: TmdbAPI
+targets:
+  TmdbAPI:
+    type: framework
+    platform: iOS
+    deploymentTarget: "9.0"
+    sources: [TmdbAPI]
+    info:
+      path: ./Info.plist
+      version: 0.0.21
+    settings:
+      APPLICATION_EXTENSION_API_ONLY: true
+    scheme: {}
+    
