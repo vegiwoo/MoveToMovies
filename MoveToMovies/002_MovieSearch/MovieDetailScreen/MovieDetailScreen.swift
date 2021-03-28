@@ -20,7 +20,10 @@ struct MovieDetailScreen: View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
             StretchyHeaderScreen(imageData: movie.poster!.blob!,
                                  title: movie.title!,
-                                 content: AnyView( MovieView(movie: movie, actualColor: .orange)))
+                                 content: AnyView(
+                                    MovieView(movie: movie, actualColor: .orange)
+                                        .environmentObject(vm))
+            )
             HStack{
                 Spacer()
                 ZStack{

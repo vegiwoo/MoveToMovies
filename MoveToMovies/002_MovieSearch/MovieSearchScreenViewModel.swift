@@ -78,9 +78,19 @@ final class MovieSearchScreenViewModel: ObservableObject {
         dataStorageService?.getRendomMovieItem()
     }
     
+    // Navigation
     func navigationPop(destination: PopDestination) {
         self.ncViewModel?.pop(to: destination)
     }
+    
+    func navigationPush(destination: AnyView) {
+        self.ncViewModel?.push(destination)
+    }
+    
+    func navigationStackCount() -> Int? {
+        ncViewModel?.navigationSequenceCount
+    }
+    
 }
 
 extension MovieOmdbapiObject: Identifiable {

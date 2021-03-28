@@ -7,6 +7,8 @@ import SwiftUI
 
 struct MovieView: View {
     
+    @EnvironmentObject var vm: MovieSearchScreenViewModel
+    
     private var movie: MovieItem
     private var actualColor: Color
     
@@ -73,6 +75,15 @@ struct MovieView: View {
                         .frame(maxWidth: .infinity)
                 }
             }
+            
+            VStack {
+                Button(action: {
+                    vm.navigationPush(destination: AnyView(PosterAndBackDropScreen(posterData: movie.poster?.blob, backdropData: movie.backdrop?.blob).environmentObject(vm)))
+                }, label: {
+                    Text("Poster && BackDrop")
+                })
+            }
+            
         }
         .padding(.horizontal)
         .padding(.top, 16)
