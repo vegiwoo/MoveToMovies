@@ -12,6 +12,7 @@ import Navigation
 struct MovieDetailScreen: View {
 
     @EnvironmentObject var vm: MovieSearchScreenViewModel
+    @EnvironmentObject var appState: AppState
     
     var movie: MovieItem
     @State var posterData: Data = UIImage(named: "dummyImage500x500")!.pngData()!
@@ -24,23 +25,20 @@ struct MovieDetailScreen: View {
                                     MovieView(movie: movie, actualColor: .orange)
                                         .environmentObject(vm))
             )
-            HStack{
-                Spacer()
-                ZStack{
-                    Circle()
-                        .frame(width: 80, height: 80, alignment: .trailing)
-                        .foregroundColor(.white)
-                        .shadow(radius: 5)
-                        .onTapGesture {
-                            vm.navigationPop(destination: .previous)
-                        }
-                    Image(systemName: "arrow.backward").foregroundColor(.blue).font(.title)
-                }
+            
+            
+            
+            
+            NavPopButton(destination: PopDestination.previous, action: zeroingQuickLook) {
+                CircleBackButtonLabel()
             }
-            .frame(maxWidth: .infinity)
-            .padding(.trailing, 32)
-            .padding(.bottom, 16)
+        }.onAppear{
+            print(vm.navigationStackCount())
         }
+    }
+    
+    private func zeroingQuickLook () {
+        appState.isQuickLink = false
     }
 }
 

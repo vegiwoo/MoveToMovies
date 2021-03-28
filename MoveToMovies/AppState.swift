@@ -32,11 +32,12 @@ final class AppState: ObservableObject {
     @Published var appViewModel: AppViewModel = .init()
     @Published var isQuickLink: Bool = false {
         didSet {
-            //selectionTab = .popularMoviesScreen
-            randomMovie = isQuickLink == true ? appViewModel.getRandomMovie() : nil
+            if isQuickLink {
+                selectTabIndex = TabbarTab.movies.rawValue
+            }
         }
     }
-    @Published var randomMovie: Movie?
+
     
     @Published var selectionScreen: AnyView = AnyView(DashBoardScreen(actualColor: TabbarTab.dashboardScreen.actualColor, title: TabbarTab.dashboardScreen.text))
     
@@ -55,7 +56,8 @@ final class AppState: ObservableObject {
                                             dataStorageService: AppState.dataStoreService,
                                             actualColor: selectedTab.actualColor,
                                             title: selectedTab.text)
-                                            .environment(\.managedObjectContext, AppState.dataStoreService.context))
+                                            .environment(\.managedObjectContext, AppState.dataStoreService.context)
+                                            .environmentObject(self))
             case .aboutUSScreen:
                 selectionScreen = AnyView(AboutUsScreen())
             }

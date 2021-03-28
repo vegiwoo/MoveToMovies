@@ -20,16 +20,24 @@ struct DashBoardScreen: View, BaseView {
         self.actualColor = actualColor
         self.title = title
     }
-
+    
     var body: some View {
         VStack {
-            Button(action: {
+            Spacer()
+            VStack{
+                ZStack {
+                    Circle().foregroundColor(.gray)
+                    Text("Get\nrandom movie").multilineTextAlignment(.center).foregroundColor(.white)
+                }
+            }.frame(width: 150, height: 150, alignment: .center)
+            .onTapGesture {
                 appState.isQuickLink = true
-            }, label: {
-                Text("Get random movie")
-            })
+                appState.selectTabIndex = 1
+            }
+            Spacer()
         }.onAppear {
             vm.setup(networkService: AppState.networkService, dataStorageService: AppState.dataStoreService)
+            appState.isQuickLink = false
         }
     }
 }
