@@ -18,39 +18,33 @@ struct MovieDetailScreen: View {
     
     var body: some View {
         GeometryReader{geometry in
-            VStack(alignment: .leading, spacing: 16) {
-                
-                BackButtonLabel(text: "Back", color: Color.blue, width: geometry.size.width - 36)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .font(Font.system(.title2))
-                    .padding([.leading, .top])
-                    .onTapGesture{
-                        vm.navigationPop(destination: .previous)
+            ZStack(alignment: Alignment(horizontal: .leading, vertical: .bottom)) {
+                ScrollView {
+                    ForEach(0..<99) {index in
+                        Text("Some indexes in indexes in indexes\(index) \(index) \(index)")
                     }
-                
-//                Group {
-//                    if let data = posterData {
-//                        Image(uiImage: UIImage(data: data)!)
-//                            .resizable()
-//                            .aspectRatio(1, contentMode: .fill)
-//                    } else {
-//                        Image(uiImage: UIImage(named: "dummyImage500x500")!)
-//                            .resizable()
-//                            .aspectRatio(1, contentMode: .fill)
-//                    }
-//                }
-//                .frame(width: geometry.size.width, height: geometry.size.height / 5, alignment: .center)
-//                .clipShape(Rectangle())
-//
-                
-                
-                
-                
                     
+                }.frame(width: geometry.size.width, height: geometry.size.height, alignment: .leading)
+                HStack{
+                    Spacer()
+                    ZStack{
+                        Circle()
+                            .frame(width: 80, height: 80, alignment: .trailing)
+                            .foregroundColor(.white)
+                            .shadow(radius: 5)
+                            .onTapGesture {
+                                vm.navigationPop(destination: .previous)
+                            }
+                        Image(systemName: "arrow.backward").foregroundColor(.blue).font(.title)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.trailing, 32)
+                .padding(.bottom, 16)
+ 
                 
                 Spacer()
-            }
+            }.padding()
         }.onAppear {
            posterData = movie.poster?.blob
         }

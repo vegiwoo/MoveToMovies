@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIControls
 
 struct MainScreen: View {
     @EnvironmentObject var appState: AppState

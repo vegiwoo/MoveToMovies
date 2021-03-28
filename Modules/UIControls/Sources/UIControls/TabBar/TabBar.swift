@@ -47,8 +47,8 @@ public struct TabBar: View {
 }
 
 @available(iOS 13.0, *)
-struct TabBar_Previews: PreviewProvider {
-    static var previews: some View {
+public struct TabBar_Previews: PreviewProvider {
+    public static var previews: some View {
         TabBar(selectedIndex: .constant(4), tabBarItems: [
             TabBarItem(sfSymbolName: "printer.dotmatrix.fill",
                        title: "Printer", color: .red),

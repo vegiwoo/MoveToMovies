@@ -18,6 +18,12 @@ public struct TabBarItemView: View {
     var isSelected: Bool {
         selected == index
     }
+    
+    public init (selected: Binding<Int>,index: Int, item: TabBarItem) {
+        self._selected = selected
+        self.index = index
+        self.item = item
+    }
 
     public var body: some View {
         HStack {

@@ -32,9 +32,7 @@ struct TabbarView: View, SizeClassAdjustable {
                                 ? (geometry.size.height / 6) * 5
                                 : (geometry.size.height / 12) * 11)
                     .transition(.moveAndFade)
-                TabBar(selectedIndex: $appState.selectTabIndex,
-                       tabBarItems: vm.tabBarItems,
-                       animanion: .easeInOut)
+                TabBar(selectedIndex: $appState.selectTabIndex, tabBarItems: vm.tabBarItems, animanion: .easeInOut)
                     .frame(width: isPad
                                 ? geometry.size.width / 2
                                 : isLandscape
@@ -45,6 +43,7 @@ struct TabbarView: View, SizeClassAdjustable {
                             : isPadOrLandscapeMax
                                 ? geometry.size.height / 6
                             : geometry.size.height / 12)
+                    .padding(.top, 10)
             }
         }
     }
