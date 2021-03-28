@@ -75,14 +75,10 @@ struct MovieView: View {
                     Text("Revenue $\(revenue)")
                         .frame(maxWidth: .infinity)
                 }
-            }
-            
-           
+            }           
             NavPushButton(destination: PosterAndBackDropScreen(posterData: movie.poster?.blob, backdropData: movie.backdrop?.blob).environmentObject(vm)) {
                 Text("Poster && BackDrop").foregroundColor(.blue)
             }
-            
-            
         }
         .padding(.horizontal)
         .padding(.top, 16)

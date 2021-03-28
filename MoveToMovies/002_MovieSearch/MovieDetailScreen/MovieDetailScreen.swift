@@ -11,7 +11,6 @@ import Navigation
 
 struct MovieDetailScreen: View {
 
-    @Binding var selectSegment: Int
     @EnvironmentObject var vm: MovieSearchScreenViewModel
     
     var movie: MovieItem
@@ -25,15 +24,28 @@ struct MovieDetailScreen: View {
                                     MovieView(movie: movie, actualColor: .orange)
                                         .environmentObject(vm))
             )
-            NavPopButton(destination: PopDestination.previous) {
-                CircleBackButtonLabel()
+            HStack{
+                Spacer()
+                ZStack{
+                    Circle()
+                        .frame(width: 80, height: 80, alignment: .trailing)
+                        .foregroundColor(.white)
+                        .shadow(radius: 5)
+                        .onTapGesture {
+                            vm.navigationPop(destination: .previous)
+                        }
+                    Image(systemName: "arrow.backward").foregroundColor(.blue).font(.title)
+                }
             }
+            .frame(maxWidth: .infinity)
+            .padding(.trailing, 32)
+            .padding(.bottom, 16)
         }
     }
 }
 
 struct MovieDetailScreen_Previews: PreviewProvider {
     static var previews: some View {
-        MovieDetailScreen(selectSegment: .constant(1), movie: AppState.dataStoreService.getRendomMovieItem() ?? MovieItem())
+        MovieDetailScreen(movie: AppState.dataStoreService.getRendomMovieItem() ?? MovieItem())
     }
 }

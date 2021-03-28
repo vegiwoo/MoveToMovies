@@ -8,7 +8,6 @@
 import SwiftUI
 import Navigation
 
-
 struct MovieSearchScreenContent: View, BaseView {
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject var ncViewModel: NavCoordinatorViewModel
@@ -87,7 +86,7 @@ struct MovieSearchScreenContent: View, BaseView {
                 Group {
                     List {
                         ForEach(popularMovies, id: \.self) { movie in
-                            NavPushButton(destination: MovieDetailScreen(selectSegment: $selectSegment, movie: movie).environmentObject(vm)) {
+                            NavPushButton(destination: MovieDetailScreen(movie: movie).environmentObject(vm)) {
                                 MovieCell(model: PopularMovieDTO(fromMovieItem: movie))
                             }
                             .frame(width: 380, height: 120, alignment: .leading)

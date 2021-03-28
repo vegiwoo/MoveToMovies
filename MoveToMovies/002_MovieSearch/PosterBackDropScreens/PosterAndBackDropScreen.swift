@@ -9,6 +9,7 @@ import SwiftUI
 import UIControls
 import Navigation
 
+
 struct PosterAndBackDropScreen: View {
     
     @EnvironmentObject var vm: MovieSearchScreenViewModel
@@ -29,6 +30,7 @@ struct PosterAndBackDropScreen: View {
                     HStack {
                         VStack {
                             if let posterData = posterData {
+
                                 NavPushButton(destination: PosterOrBackDropScreen(data: posterData).environmentObject(vm)) {
                                     
                                     Image(uiImage: UIImage(data: posterData)!)
@@ -37,10 +39,12 @@ struct PosterAndBackDropScreen: View {
                                         .clipShape(Circle())
                                         .frame(width: 150, height: 150)
                                 }
+
                             } else {
                                 Circle()
                             }
                             Text("Poster")
+
                         }
                         VStack {
                             if let backdropData = backdropData {
@@ -52,6 +56,7 @@ struct PosterAndBackDropScreen: View {
                                         .clipShape(Circle())
                                         .frame(width: 150, height: 150)
                                 }
+
                             } else {
                                 Circle()
                             }
@@ -69,6 +74,7 @@ struct PosterAndBackDropScreen: View {
                     CircleBackButtonLabel()
                 }
             }
+
         }
         .frame(alignment: .center)
         .onAppear{

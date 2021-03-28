@@ -9,6 +9,7 @@ import SwiftUI
 import UIControls
 import Navigation
 
+
 struct PosterOrBackDropScreen: View {
     
     private var data: Data?
@@ -31,11 +32,13 @@ struct PosterOrBackDropScreen: View {
                     Text("No data to preview")
                         .frame(width: geometry.size.width, height: geometry.size.height)
                 }
+
                 
                 NavPopButton(destination: PopDestination.previous) {
                     CircleBackButtonLabel()
                 }
             }
+
         }.ignoresSafeArea()
         
     }
