@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
+import Combine
 
 struct DashBoardScreen: View, BaseView {
     
     var actualColor: Color
     var title: String
+    
+    @State var completionUpdatingData: Bool = false
 
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject var appState: AppState
@@ -24,20 +27,41 @@ struct DashBoardScreen: View, BaseView {
     var body: some View {
         VStack {
             Spacer()
-            VStack{
-                ZStack {
-                    Circle().foregroundColor(.gray)
-                    Text("Get\nrandom movie").multilineTextAlignment(.center).foregroundColor(.white)
+            Group {
+                if completionUpdatingData {
+                    VStack{
+                        ZStack {
+                            Circle()
+                                .foregroundColor(.gray)
+                            Text("Get\nrandom movie")
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .onTapGesture {
+                        appState.isQuickLink = true
+                        appState.selectTabIndex = 1
+                    }
+                } else {
+                    ActivityIndicator(shouldAnimate: .constant(true), style: .large)
                 }
             }.frame(width: 150, height: 150, alignment: .center)
-            .onTapGesture {
-                appState.isQuickLink = true
-                appState.selectTabIndex = 1
-            }
+
             Spacer()
         }.onAppear {
             vm.setup(networkService: AppState.networkService, dataStorageService: AppState.dataStoreService)
             appState.isQuickLink = false
+        }.onReceive(AppState.dataStoreService.dataStoragePublisher.requestPublisher) { (request) in
+            switch request {
+            case .startUpdatingData:
+                break
+            case .completionUpdatingData:
+                completionUpdatingData = true
+            case .getCoordinates(_):
+                break
+            case .getCovers(_):
+                break
+            }
         }
     }
 }

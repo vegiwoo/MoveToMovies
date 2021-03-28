@@ -22,9 +22,7 @@ protocol DataStorageService {
 }
 
 final class DataStorageServiceImpl: DataStorageService {
-    
-    var fetching: Bool = true
-    
+        
     var networkResponseQueue: DispatchQueue
     var networkPublisher: PassthroughSubject<Any, Never>
     var networkSubscriber: AnyCancellable?
@@ -59,6 +57,7 @@ final class DataStorageServiceImpl: DataStorageService {
     }()
     
     init(networkResponseQueue: DispatchQueue, networkPublisher: PassthroughSubject<Any, Never>, dataStoragePublisher: DataStoragePublisher) {
+        
         self.networkResponseQueue = networkResponseQueue
         self.networkPublisher = networkPublisher
         self.dataStoragePublisher = dataStoragePublisher
@@ -73,6 +72,9 @@ final class DataStorageServiceImpl: DataStorageService {
         //removeAll()
         subscribe()
         getInfoAboutExistingCountries()
+        
+        if let existingPosters = self.fetchPosters(), existingPosters.count == 20 { self.dataStoragePublisher.publish(request: .completionUpdatingData)
+        }
     }
 
     private func subscribe() {
@@ -622,6 +624,10 @@ final class DataStorageServiceImpl: DataStorageService {
                 do {
                     try self.context.save()
                     print("💾 Save poster to movie with id '\(movieItem.id)' in DB.")
+                    
+                    if let existingPosters = self.fetchPosters(), existingPosters.count == 20 {
+                        self.dataStoragePublisher.publish(request: .completionUpdatingData)
+                    }
                 } catch {
                     print(error.localizedDescription)
                 }
@@ -642,11 +648,12 @@ final class DataStorageServiceImpl: DataStorageService {
                 }
             }
         }
-        
-        
-       
-
-       
+    }
+    
+    private func fetchPosters() -> Array<PosterItem>? {
+        let entityName = "PosterItem"
+        let posterFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        return try! self.context.fetch(posterFetchRequest) as! [PosterItem]
     }
 }
 

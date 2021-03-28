@@ -63,7 +63,7 @@ final class NetworkServiceImpl: NetworkService {
             }
         }
     }
-    
+
     init(apiResponseQueue: DispatchQueue, dataStoragePublisher: DataStoragePublisher) {
         self.apiResponseQueue = apiResponseQueue
         self.dataStoragePublisher = dataStoragePublisher
