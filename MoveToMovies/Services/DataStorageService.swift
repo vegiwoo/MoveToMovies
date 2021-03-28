@@ -279,15 +279,22 @@ final class DataStorageServiceImpl: DataStorageService {
                     print(error.localizedDescription)
                 }
             }
-
+            
             if let companies = movie.productionCompanies,
-               let companyItems = self.save(productionCompanies: companies) {
-                newMovie.companies?.adding(companyItems)
+                let companiesArray = self.save(productionCompanies: companies) {
+            
+                for company in companiesArray {
+                    newMovie.addToCompanies(company)
+                }
+                
             }
             
             if let countries = movie.productionCountries,
-               let countriesItems = self.save(countries: countries) {
-                newMovie.countries?.adding(countriesItems)
+               let countriesArray = self.save(countries: countries) {
+                
+                for country in countriesArray {
+                    newMovie.addToCountries(country)
+                }
             }
             
             if let spokenLanguages = movie.spokenLanguages,
@@ -381,8 +388,8 @@ final class DataStorageServiceImpl: DataStorageService {
         // TODO: Запрос на загрузку картинок для коллекции
     }
     
-    // MARK: Producrion Company
-    private func save(productionCompanies: [ProductionCompany]) -> NSSet? {
+    // MARK: Production Company
+    private func save(productionCompanies: [ProductionCompany]) -> Array<ProductionCompanyItem>? {
         
         let entityName = "ProductionCompanyItem"
         var results: [ProductionCompanyItem] = .init()
@@ -414,7 +421,7 @@ final class DataStorageServiceImpl: DataStorageService {
                 }
             }
         }
-        return NSSet(objects: results)
+        return results
     }
     
     // MARK: Production Country
@@ -486,7 +493,7 @@ final class DataStorageServiceImpl: DataStorageService {
         }
     }
     
-    private func save(countries: [ProductionCountry]) -> NSSet? {
+    private func save(countries: [ProductionCountry]) -> Array<ProductionCountryItem>? {
         
         let entityName = "ProductionCountryItem"
         var results: [ProductionCountryItem] = .init()
@@ -516,7 +523,7 @@ final class DataStorageServiceImpl: DataStorageService {
                 }
             }
         }
-        return NSSet(objects: results)
+        return results
     }
     
     // MARK: SpokenLanguage

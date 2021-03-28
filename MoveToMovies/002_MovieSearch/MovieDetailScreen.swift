@@ -17,79 +17,27 @@ struct MovieDetailScreen: View {
     @State var posterData: Data = UIImage(named: "dummyImage500x500")!.pngData()!
 
     var body: some View {
-        StretchyHeader(imageData: movie.poster!.blob!,
-                       title: movie.title!,
-                       content: AnyView(
-                        ZStack(alignment: Alignment(horizontal: .leading, vertical: .bottom)) {
-                            VStack {
-                                ForEach(0..<50) {index in
-                                    Text("Hello \(index)")
-                                }
-                            }
-                            HStack{
-                                Spacer()
-                                ZStack{
-                                    Circle()
-                                        .frame(width: 80, height: 80, alignment: .trailing)
-                                        .foregroundColor(.white)
-                                        .shadow(radius: 5)
-                                        .onTapGesture {
-                                            vm.navigationPop(destination: .previous)
-                                        }
-                                    Image(systemName: "arrow.backward").foregroundColor(.blue).font(.title)
-                                }
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.trailing, 32)
-                            .padding(.bottom, 16)
+        ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
+            StretchyHeaderScreen(imageData: movie.poster!.blob!,
+                                 title: movie.title!,
+                                 content: AnyView( MovieView(movie: movie, actualColor: .orange)))
+            HStack{
+                Spacer()
+                ZStack{
+                    Circle()
+                        .frame(width: 80, height: 80, alignment: .trailing)
+                        .foregroundColor(.white)
+                        .shadow(radius: 5)
+                        .onTapGesture {
+                            vm.navigationPop(destination: .previous)
                         }
-                        
-                        
-                        
-                        
-        ))
-        
-        
-        
-        
-//        GeometryReader{geometry in
-//            ZStack(alignment: Alignment(horizontal: .leading, vertical: .bottom)) {
-//                ScrollView {
-//                    StretchyHeader(geometry: geometry, data: posterData, maxHeight: 200)
-//                        .frame(maxHeight: 200)
-//                    ForEach(0..<50) {index in
-//                        Text("\(index)").font(Font.system(.title2))
-//                    }
-//                }
-//                .edgesIgnoringSafeArea(.top)
-//                .frame(width: geometry.size.width, height: geometry.size.height, alignment: .leading)
-//
-//                HStack{
-//                    Spacer()
-//                    ZStack{
-//                        Circle()
-//                            .frame(width: 80, height: 80, alignment: .trailing)
-//                            .foregroundColor(.white)
-//                            .shadow(radius: 5)
-//                            .onTapGesture {
-//                                vm.navigationPop(destination: .previous)
-//                            }
-//                        Image(systemName: "arrow.backward").foregroundColor(.blue).font(.title)
-//                    }
-//                }
-//                .frame(maxWidth: .infinity)
-//                .padding(.trailing, 32)
-//                .padding(.bottom, 16)
-//
-//
-//                Spacer()
-//            }.padding()
-//        }
-//        .onAppear {
-//            if let blob = movie.poster?.blob {
-//                posterData = blob
-//            }
-//        }
+                    Image(systemName: "arrow.backward").foregroundColor(.blue).font(.title)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.trailing, 32)
+            .padding(.bottom, 16)
+        }
     }
 }
 
@@ -98,5 +46,3 @@ struct MovieDetailScreen_Previews: PreviewProvider {
         MovieDetailScreen(movie: AppState.dataStoreService.getRendomMovieItem() ?? MovieItem())
     }
 }
-
-

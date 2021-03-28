@@ -5,9 +5,9 @@
 import SwiftUI
 
 @available(iOS 13.0, *)
-public struct StretchyHeader: View {
+public struct StretchyHeaderScreen: View {
     
-    private let imageHeight: CGFloat = 300
+    private let imageHeight: CGFloat = 500
     private let collapsedImageHeight: CGFloat = 75
     
     private let title: String
@@ -26,11 +26,13 @@ public struct StretchyHeader: View {
     
     public var body: some View {
         ScrollView{
+            // Screen content
             VStack {
                 VStack {
-                    // Текстовый заголовок
-                    Text(title).background(GeometryGetter(rect: self.$titleRect))
-                    // Основное содержание
+                    // Text title of screen
+                    Text(title)
+                        .background(GeometryGetter(rect: self.$titleRect))
+                    // Мain content of screen
                     content
                 }
                 .padding(.horizontal)
@@ -38,7 +40,7 @@ public struct StretchyHeader: View {
             }
             .offset(y: imageHeight + 16)
             .background(GeometryGetter(rect: $articleContent.frame))
-            
+
             GeometryReader { geometry in
                 ZStack(alignment: .bottom) {
                     Image(uiImage: UIImage(data: imageData)!)
@@ -56,14 +58,15 @@ public struct StretchyHeader: View {
                 }
                 .clipped()
                 .offset(x: 0, y: self.getOffsetForHeaderImage(geometry))
-            }.frame(height: imageHeight)
+            }
+            .frame(height: imageHeight)
             .offset(x: 0, y: -(articleContent.startingRect?.maxY ?? UIScreen.main.bounds.height))
         }
     }
 }
 
 @available(iOS 13.0, *)
-extension StretchyHeader {
+extension StretchyHeaderScreen {
     func getScrollOffset(_ geometry: GeometryProxy) -> CGFloat {
            geometry.frame(in: .global).minY
     }
@@ -90,16 +93,13 @@ extension StretchyHeader {
         if offset > 0 {
             return imageHeight + offset
         }
-        
         return imageHeight
     }
     
     func getBlurRadiusForImage(_ geometry: GeometryProxy) -> CGFloat {
         let offset = geometry.frame(in: .global).maxY
-        
         let height = geometry.size.height
         let blur = (height - max(offset, 0)) / height
-        
         return blur * 6
     }
     
