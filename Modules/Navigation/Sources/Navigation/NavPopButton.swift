@@ -11,15 +11,21 @@ public struct NavPopButton<Label>: View where Label: View {
 
     private let destination: PopDestination
     private let label: () -> Label
+    private let action: (() -> Void)?
     
     public init (destination: PopDestination = .previous,
+                 action: (() -> Void)? = nil,
                  @ViewBuilder label: @escaping () -> Label) {
         self.destination = destination
         self.label = label
+        self.action = action
     }
     
     public var body: some View {
         label().onTapGesture {
+            if let existingAction = action {
+                existingAction()
+            }
             vm.pop(to: destination)
         }
     }

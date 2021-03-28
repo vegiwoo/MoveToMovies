@@ -4,8 +4,11 @@
 //  Created by Dmitry Samartcev on 28.03.2021.
 
 import SwiftUI
+import Navigation
 
 struct MovieView: View {
+    
+    @EnvironmentObject var vm: MovieSearchScreenViewModel
     
     private var movie: MovieItem
     private var actualColor: Color
@@ -73,6 +76,13 @@ struct MovieView: View {
                         .frame(maxWidth: .infinity)
                 }
             }
+            
+           
+            NavPushButton(destination: PosterAndBackDropScreen(posterData: movie.poster?.blob, backdropData: movie.backdrop?.blob).environmentObject(vm)) {
+                Text("Poster && BackDrop").foregroundColor(.blue)
+            }
+            
+            
         }
         .padding(.horizontal)
         .padding(.top, 16)

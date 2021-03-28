@@ -87,10 +87,11 @@ struct MovieSearchScreenContent: View, BaseView {
                 Group {
                     List {
                         ForEach(popularMovies, id: \.self) { movie in
-                            NavPushButton(destination: MovieDetailScreen(movie: movie).environmentObject(vm)) {
+                            NavPushButton(destination: MovieDetailScreen(selectSegment: $selectSegment, movie: movie).environmentObject(vm)) {
                                 MovieCell(model: PopularMovieDTO(fromMovieItem: movie))
                             }
                             .frame(width: 380, height: 120, alignment: .leading)
+                          
                         }
                     }
                 }.transition(.moveAndFade)
@@ -98,6 +99,11 @@ struct MovieSearchScreenContent: View, BaseView {
         }.animation(.easeInOut)
         .onAppear{
             vm.setup(managedObjectContext, networkService: self.networkService, dataStorageService: dataStorageService, ncViewModel: ncViewModel)
+            
+            if let selectSegment = UserDefaults.standard.value(forKey: "selectSegment") as? Int {
+                self.selectSegment = selectSegment
+                UserDefaults.standard.removeObject(forKey: "selectSegment")
+            }
         }.onChange(of: selectSegment) { value in
             if value == 1 {
                 self.clearSearch = true
@@ -110,6 +116,8 @@ struct MovieSearchScreenContent: View, BaseView {
                 vm.searchText = value
                 vm.loadPage()
             }
+        }.onDisappear{
+            UserDefaults.standard.setValue(selectSegment, forKey: "selectSegment")
         }
     }
 }

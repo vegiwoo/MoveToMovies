@@ -21,7 +21,6 @@ final class MovieSearchScreenViewModel: ObservableObject {
     
     private var ncViewModel: NavCoordinatorViewModel?
     
-    
     @Published private(set) var items: [MovieOmdbapiObject] = .init()
     @Published var isPageLoading: Bool = false
     var currentPage: Int = 1
@@ -78,9 +77,19 @@ final class MovieSearchScreenViewModel: ObservableObject {
         dataStorageService?.getRendomMovieItem()
     }
     
+    // Navigation
     func navigationPop(destination: PopDestination) {
         self.ncViewModel?.pop(to: destination)
     }
+    
+    func navigationPush(destination: AnyView) {
+        self.ncViewModel?.push(destination)
+    }
+    
+    func navigationStackCount() -> Int? {
+        ncViewModel?.navigationSequenceCount
+    }
+    
 }
 
 extension MovieOmdbapiObject: Identifiable {
