@@ -36,23 +36,15 @@ public struct MovieCell: View, SizeClassAdjustable {
     }
     
     
-    init(model: MovieOmdbapiObject) {
+    init(model: MovieOmdbapiObject, poster: Data?) {
         self.title = model.title ?? ""
         self.subtitle01 = model.type?.rawValue
         self.subtitle02 = model.year ?? ""
 
         // Poster
-        //self.image = UIImage(named: "dummyImage500x500")
-        
-//        if let imageString = model.poster,
-//           let url = URL(string: imageString) {
-//            do {
-//                let data = try Data(contentsOf: url)
-//                self.image = UIImage(data: data)
-//            } catch {
-//                print("🔴 ERROR: ", error.localizedDescription)
-//            }
-//        }
+        if let data = poster, let image = UIImage(data: data) {
+            self.image = image
+        }
         
         movieOmdbapiObject = model
     }

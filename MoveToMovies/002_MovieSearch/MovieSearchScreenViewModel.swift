@@ -21,11 +21,14 @@ final class MovieSearchScreenViewModel: ObservableObject {
     
     private var ncViewModel: NavCoordinatorViewModel?
     
-    @Published private(set) var items: [MovieOmdbapiObject] = .init()
+    @Published private(set) var searchMovies: [MovieOmdbapiObject] = .init()
+    @Published private(set) var searchMoviePosters: [String : Data] = .init()
     @Published var isPageLoading: Bool = false
     var currentPage: Int = 1
     
     var searchText: String?
+    
+    var bag: Set<AnyCancellable> = .init()
 
     deinit {
         unsubscribe()
@@ -46,8 +49,9 @@ final class MovieSearchScreenViewModel: ObservableObject {
                 .sink{value in
                     if let movieOmdbapiObjects = value as? (movies: [MovieOmdbapiObject], totalResults: Int) {
                         self.currentPage += 1
-                        self.items.append(contentsOf: movieOmdbapiObjects.movies)
+                        self.searchMovies.append(contentsOf: movieOmdbapiObjects.movies)
                         self.isPageLoading = false
+                        self.loadPostersForSearch(movies: movieOmdbapiObjects.movies)
                     }
                 }
         }
@@ -55,8 +59,9 @@ final class MovieSearchScreenViewModel: ObservableObject {
     
     private func unsubscribe() {
         networkServiceSubscriber?.cancel()
+        clearSearch()
     }
-    
+
     func loadPage() {
         guard let searchText = searchText, !searchText.isEmpty,
               let networkService = self.networkService,
@@ -67,10 +72,32 @@ final class MovieSearchScreenViewModel: ObservableObject {
         networkService.getSearchMovieRequest(title: searchText, page: currentPage)
     }
     
+    private func loadPostersForSearch(movies: [MovieOmdbapiObject]) {
+        for movie in movies {
+            if let posterString = movie.poster,
+               let posterURL = URL(string: posterString) {
+                let cancellable: AnyCancellable = URLSession.shared.dataTaskPublisher(for: posterURL)
+                    .sink { (completion) in
+                    switch completion {
+                    case .finished:
+                        break
+                    case .failure(let error):
+                        print("🔴 ERROR: Load poster for search movie failure\n\(error.localizedDescription)")
+                    }
+                } receiveValue: { (data, _) in
+                    self.searchMoviePosters.updateValue(data, forKey: movie.id)
+                }
+                cancellable.store(in: &bag)
+            }
+        }
+    }
+    
     func clearSearch() {
         currentPage = 1
         //searchTextLoading = ""
-        items.removeAll()
+        searchMovies.removeAll()
+        searchMoviePosters.removeAll()
+        bag.forEach{$0.cancel()}
     }
     
     func getRandomMovie() -> MovieItem? {

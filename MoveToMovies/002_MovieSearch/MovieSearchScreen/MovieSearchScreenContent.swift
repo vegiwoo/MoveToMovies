@@ -61,7 +61,7 @@ struct MovieSearchScreenContent: View, BaseView {
                         // Search bar
                         SearchBar(searchText: $searchText, actualColor: actualColor, clearSearch: $clearSearch)
                         
-                        if vm.items.count == 0 && vm.isPageLoading {
+                        if vm.searchMovies.count == 0 && vm.isPageLoading {
                             ActivityIndicator(style: .large, shouldAnimate: .constant(true)).frame(width: 30, height: 30, alignment: .center)
                             Spacer()
                         } else {
@@ -73,13 +73,13 @@ struct MovieSearchScreenContent: View, BaseView {
                                 }
                             } else {
                                 VStack {
-                                    List (vm.items) {item in
-                                        MovieCell(model: item)
+                                    List (vm.searchMovies) {item in
+                                        MovieCell(model: item, poster: vm.searchMoviePosters[item.id])
                                             .id(UUID())
                                             .frame(width: 380, height: 120, alignment: .leading)
                                             .environmentObject(vm)
                                             .onAppear {
-                                                if vm.items.isLast(item) { vm.loadPage() }
+                                                if vm.searchMovies.isLast(item) { vm.loadPage() }
                                             }
                                     }
                                     ActivityIndicator(style: .medium, shouldAnimate: $vm.isPageLoading).frame(width: 30, height: 30, alignment: .center).transition(.opacity)
