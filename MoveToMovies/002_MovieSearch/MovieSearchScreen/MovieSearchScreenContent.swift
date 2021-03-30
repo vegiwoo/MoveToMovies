@@ -74,13 +74,18 @@ struct MovieSearchScreenContent: View, BaseView {
                             } else {
                                 VStack {
                                     List (vm.searchMovies) {item in
-                                        MovieCell(model: item, poster: vm.searchMoviePosters[item.id])
-                                            .id(UUID())
-                                            .frame(width: 380, height: 120, alignment: .leading)
-                                            .environmentObject(vm)
-                                            .onAppear {
-                                                if vm.searchMovies.isLast(item) { vm.loadPage() }
-                                            }
+                                        NavPushButton(destination: MovieDetailScreen(searchMovie: (item, vm.searchMoviePosters[item.id]))
+                                                        .environmentObject(vm)
+                                                        .environmentObject(appState)
+                                        ) {
+                                            MovieCell(model: item, poster: vm.searchMoviePosters[item.id])
+                                                .id(UUID())
+                                                .environmentObject(vm)
+                                                .onAppear {
+                                                    if vm.searchMovies.isLast(item) { vm.loadPage() }
+                                                }
+                                        }
+                                        .frame(width: 380, height: 120, alignment: .leading)
                                     }
                                     ActivityIndicator(style: .medium, shouldAnimate: $vm.isPageLoading).frame(width: 30, height: 30, alignment: .center).transition(.opacity)
                                 }
@@ -91,7 +96,7 @@ struct MovieSearchScreenContent: View, BaseView {
                     Group {
                         List {
                             ForEach(popularMovies, id: \.self) { movie in
-                                NavPushButton(destination: MovieDetailScreen(movie: movie)
+                                NavPushButton(destination: MovieDetailScreen(popularMovie: movie)
                                                 .environmentObject(vm)
                                                 .environmentObject(appState)
                                 ) {
@@ -119,7 +124,7 @@ struct MovieSearchScreenContent: View, BaseView {
             }
             
             if appState.isQuickLink, let randomMovie = vm.getRandomMovie() {
-                vm.navigationPush(destination: AnyView(MovieDetailScreen(movie: randomMovie)
+                vm.navigationPush(destination: AnyView(MovieDetailScreen(popularMovie: randomMovie)
                                                         .environmentObject(vm)
                                                         .environmentObject(appState)))
                 self.selectSegment = 1
