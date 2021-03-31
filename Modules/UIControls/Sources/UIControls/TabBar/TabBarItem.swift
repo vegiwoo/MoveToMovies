@@ -9,15 +9,15 @@ import SwiftUI
 public struct TabBarItem {
     public let icon : Image
     public let title: String
-    public let color: Color
+    public let color: UIColor
     
-    public init(icon: Image, title: String, color: Color){
+    public init(icon: Image, title: String, color: UIColor){
         self.icon = icon
         self.title = title
         self.color = color
     }
     
-    public init(sfSymbolName: String, title: String, color: Color) {
+    public init(sfSymbolName: String, title: String, color: UIColor) {
         self.icon = Image(systemName: sfSymbolName)
         self.title = title
         self.color = color

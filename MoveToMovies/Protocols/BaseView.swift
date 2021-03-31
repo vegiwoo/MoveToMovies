@@ -8,6 +8,6 @@
 import SwiftUI
 
 protocol BaseView {
-    var actualColor: Color { get }
+    var actualColor: UIColor { get }
     var title: String { get }
 }

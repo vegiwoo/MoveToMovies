@@ -9,16 +9,21 @@ import SwiftUI
 public struct NavPushButton<Label, Destination>: View where Label: View, Destination: View {
     @EnvironmentObject var vm: NavCoordinatorViewModel
     
-    private let label: () -> Label
     private let destination: Destination
+    private let action: (() -> Void)?
+    private let label: () -> Label
     
-    public init (destination: Destination, @ViewBuilder label: @escaping () -> Label) {
+    public init (destination: Destination, action: (() -> Void)? = nil, @ViewBuilder label: @escaping () -> Label) {
         self.destination = destination
+        self.action = action
         self.label = label
     }
     
     public var body: some View {
         label().onTapGesture {
+            if let existingAction = action {
+                existingAction()
+            }
             vm.push(destination)
         }
     }

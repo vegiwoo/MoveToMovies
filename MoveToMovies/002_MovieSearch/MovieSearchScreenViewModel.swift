@@ -30,8 +30,13 @@ final class MovieSearchScreenViewModel: ObservableObject {
     
     var bag: Set<AnyCancellable> = .init()
 
+    init() {
+        print("⬆️ MovieSearchScreenViewModel init")
+    }
+    
     deinit {
         unsubscribe()
+        print("⬇️ MovieSearchScreenViewModel deinit")
     }
 
     func setup(_ context: NSManagedObjectContext, networkService: NetworkService, dataStorageService: DataStorageService, ncViewModel: NavCoordinatorViewModel) {
@@ -40,6 +45,7 @@ final class MovieSearchScreenViewModel: ObservableObject {
         self.dataStorageService = dataStorageService
         self.ncViewModel = ncViewModel
         subscribe()
+        print("🔄 MovieSearchScreenViewModel setup")
     }
     
     private func subscribe() {
@@ -86,6 +92,7 @@ final class MovieSearchScreenViewModel: ObservableObject {
                     }
                 } receiveValue: { (data, _) in
                     self.searchMoviePosters.updateValue(data, forKey: movie.id)
+                    self.objectWillChange.send()
                 }
                 cancellable.store(in: &bag)
             }
@@ -116,7 +123,6 @@ final class MovieSearchScreenViewModel: ObservableObject {
     func navigationStackCount() -> Int? {
         ncViewModel?.navigationSequenceCount
     }
-    
 }
 
 extension MovieOmdbapiObject: Identifiable {

@@ -72,7 +72,7 @@ final class DataStorageServiceImpl: DataStorageService {
     }
 
     private func onAppear() {
-        removeAll()
+        //removeAll()
         subscribe()
         getInfoAboutExistingCountries()
         

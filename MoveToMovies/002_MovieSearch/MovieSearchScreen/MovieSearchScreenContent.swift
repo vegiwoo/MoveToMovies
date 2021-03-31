@@ -14,7 +14,7 @@ struct MovieSearchScreenContent: View, BaseView {
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var ncViewModel: NavCoordinatorViewModel
-    @ObservedObject var vm: MovieSearchScreenViewModel = .init()
+    @StateObject var vm: MovieSearchScreenViewModel = .init()
    
     private var networkService: NetworkService
     private var dataStorageService: DataStorageService
@@ -23,7 +23,7 @@ struct MovieSearchScreenContent: View, BaseView {
                     NSSortDescriptor(keyPath: \MovieItem.voteAverage, ascending: false) ]
     ) var popularMovies: FetchedResults<MovieItem>
 
-    var actualColor: Color
+    var actualColor: UIColor
     var title: String
     
     @State var selectSegment: Int = 0
@@ -32,7 +32,7 @@ struct MovieSearchScreenContent: View, BaseView {
     @State var searchText: String = ""
     @State var clearSearch: Bool = true
 
-    init(networkService: NetworkService, dataStorageService: DataStorageService, actualColor: Color, title: String) {
+    init(networkService: NetworkService, dataStorageService: DataStorageService, actualColor: UIColor, title: String) {
         self.networkService = networkService
         self.dataStorageService = dataStorageService
         self.actualColor = actualColor
@@ -46,7 +46,7 @@ struct MovieSearchScreenContent: View, BaseView {
                 // Title
                 Text(title)
                     .titleStyle()
-                    .foregroundColor(actualColor)
+                    .foregroundColor(Color(actualColor))
                 // Segment control
                 Picker("", selection: $selectSegment) {
                     ForEach(0..<segmentes.count) {
@@ -59,8 +59,9 @@ struct MovieSearchScreenContent: View, BaseView {
                 if selectSegment == 0 {
                     Group {
                         // Search bar
-                        SearchBar(searchText: $searchText, actualColor: actualColor, clearSearch: $clearSearch)
+                        SearchBar(placeholder: "Search movie or TV Show...", actualColor: actualColor, searchText: $searchText, clearSearch: $clearSearch)
                         
+                        // Initial load indicator
                         if vm.searchMovies.count == 0 && vm.isPageLoading {
                             ActivityIndicator(style: .large, shouldAnimate: .constant(true)).frame(width: 30, height: 30, alignment: .center)
                             Spacer()
@@ -73,6 +74,7 @@ struct MovieSearchScreenContent: View, BaseView {
                                 }
                             } else {
                                 VStack {
+                                    // Search results list
                                     List (vm.searchMovies) {item in
                                         NavPushButton(destination: MovieDetailScreen(searchMovie: (item, vm.searchMoviePosters[item.id]))
                                                         .environmentObject(vm)
@@ -111,9 +113,6 @@ struct MovieSearchScreenContent: View, BaseView {
             } else {
                 EmptyView()
             }
-            
-            
-            
         }.animation(.easeInOut)
         .onAppear{
             vm.setup(managedObjectContext, networkService: self.networkService, dataStorageService: dataStorageService, ncViewModel: ncViewModel)
@@ -130,7 +129,13 @@ struct MovieSearchScreenContent: View, BaseView {
                 self.selectSegment = 1
             }
             
+            if let searchText = UserDefaults.standard.value(forKey: "searchText") as? String {
+                self.searchText = searchText
+                print("vm.searchMovies count", vm.searchMovies.count)
+                
+            }
             
+            print("⬆️ MovieSearchScreenContent onAppear")
         }.onChange(of: selectSegment) { value in
             if value == 1 {
                 self.clearSearch = true
@@ -144,7 +149,13 @@ struct MovieSearchScreenContent: View, BaseView {
                 vm.loadPage()
             }
         }.onDisappear{
+            UserDefaults.standard.setValue(searchText, forKey: "searchText")
             UserDefaults.standard.setValue(selectSegment, forKey: "selectSegment")
+            print("⬇️ MovieSearchScreenContent onDisappear")
         }
+    }
+    
+    private func stub() {
+        
     }
 }

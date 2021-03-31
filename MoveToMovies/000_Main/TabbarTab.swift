@@ -12,11 +12,11 @@ enum TabbarTab: Hashable, CaseIterable {
     case movies
     case aboutUSScreen
     
-    var actualColor: Color {
+    var actualColor: UIColor {
         switch self {
-        case .dashboardScreen: return Color(UIColor.systemIndigo)
-        case .movies: return Color(UIColor.systemPurple)
-        case .aboutUSScreen: return  Color(UIColor.systemOrange)
+        case .dashboardScreen: return UIColor.systemIndigo
+        case .movies: return UIColor.systemPurple
+        case .aboutUSScreen: return UIColor.systemOrange
         }
     }
     

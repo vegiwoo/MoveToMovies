@@ -29,11 +29,11 @@ public struct TabBarItemView: View {
         HStack {
             item.icon
                 .imageScale(.large)
-                .foregroundColor(isSelected ? item.color : .primary)
+                .foregroundColor(isSelected ? Color(item.color) : .primary)
             
             if isSelected {
                 Text(item.title)
-                    .foregroundColor(item.color)
+                    .foregroundColor(Color(item.color))
                     .font(.caption)
                     .fontWeight(.bold)
                     .transition(.scale)
@@ -41,14 +41,14 @@ public struct TabBarItemView: View {
         }
         .padding()
         .background(
-            Capsule().fill(isSelected ? item.color.opacity(0.2) : Color.clear))
+            Capsule().fill(isSelected ? Color(item.color).opacity(0.2) : Color.clear))
     }
 }
 
 @available(iOS 13.0, *)
 struct TabBarView_Previews: PreviewProvider {
     static var previews: some View {
-        TabBarItemView(selected: .constant(0), index: 0, item: TabBarItem(sfSymbolName: "printer.dotmatrix.fill", title: "Printer", color: Color.red))
+        TabBarItemView(selected: .constant(0), index: 0, item: TabBarItem(sfSymbolName: "printer.dotmatrix.fill", title: "Printer", color: .red))
     }
 }
 #endif

@@ -15,7 +15,7 @@ struct MovieSearchScreen: View {
     
     var networkService: NetworkService
     var dataStorageService: DataStorageService
-    var actualColor: Color
+    var actualColor: UIColor
     var title: String
     
     var body: some View {

@@ -11,7 +11,7 @@ import UIControls
 
 struct DashBoardScreen: View, BaseView {
     
-    var actualColor: Color
+    var actualColor: UIColor
     var title: String
     
     @State var completionUpdatingData: Bool = false
@@ -20,7 +20,7 @@ struct DashBoardScreen: View, BaseView {
     @EnvironmentObject var appState: AppState
     //@ObservedObject var vm: DashboardViewModel = .init()
     
-    init(actualColor: Color, title: String) {
+    init(actualColor: UIColor, title: String) {
         self.actualColor = actualColor
         self.title = title
     }

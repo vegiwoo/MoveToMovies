@@ -54,15 +54,7 @@ final class NetworkServiceImpl: NetworkService {
         }
     }
     
-    private var existingCountries: [String: ProductionCountyDTO]? {
-        willSet {
-            if let newValue = newValue {
-                if existingCountries?.count != newValue.count {
-                    
-                }
-            }
-        }
-    }
+    private var existingCountries: [String: ProductionCountyDTO]? 
 
     init(apiResponseQueue: DispatchQueue, dataStoragePublisher: DataStoragePublisher) {
         self.apiResponseQueue = apiResponseQueue
