@@ -12,6 +12,7 @@ import Navigation
 struct MovieSearchScreen: View {
     
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var viewModel: MovieSearchScreenViewModel
     
     var networkService: NetworkService
     var dataStorageService: DataStorageService
@@ -20,7 +21,9 @@ struct MovieSearchScreen: View {
     
     var body: some View {
         NavCoordinatorView {
-            MovieSearchScreenContent(networkService: networkService, dataStorageService: dataStorageService, actualColor: actualColor, title: title).environmentObject(appState)
+            MovieSearchScreenContent(networkService: networkService, dataStorageService: dataStorageService, actualColor: actualColor, title: title)
+                .environmentObject(appState)
+                .environmentObject(viewModel)
         }
     }
 }

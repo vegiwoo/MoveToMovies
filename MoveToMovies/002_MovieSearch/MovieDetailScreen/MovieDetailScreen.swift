@@ -12,7 +12,7 @@ import OmdbAPI
 
 struct MovieDetailScreen: View {
 
-    @EnvironmentObject var vm: MovieSearchScreenViewModel
+    //@EnvironmentObject var vm: MovieSearchScreenViewModel
     @EnvironmentObject var appState: AppState
     
     var movie: MovieItem?
@@ -36,7 +36,7 @@ struct MovieDetailScreen: View {
                                      title: movie.title!,
                                      content: AnyView(
                                         MovieView(popularMovie: movie, actualColor: .orange)
-                                            .environmentObject(vm))
+                                            .environmentObject(appState.movieSearchVM))
                 )
                 NavPopButton(destination: PopDestination.previous, action: zeroingQuickLook) {
                     CircleBackButtonLabel()
@@ -46,7 +46,7 @@ struct MovieDetailScreen: View {
                                      title: searchMovie.0.title!,
                                      content: AnyView(
                                         MovieView(searchMovie: searchMovie, actualColor: .orange)
-                                            .environmentObject(vm))
+                                            .environmentObject(appState.movieSearchVM))
                 )
                 NavPopButton(destination: PopDestination.previous, action: zeroingQuickLook) {
                     CircleBackButtonLabel()

@@ -18,7 +18,6 @@ struct DashBoardScreen: View, BaseView {
 
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject var appState: AppState
-    //@ObservedObject var vm: DashboardViewModel = .init()
     
     init(actualColor: UIColor, title: String) {
         self.actualColor = actualColor

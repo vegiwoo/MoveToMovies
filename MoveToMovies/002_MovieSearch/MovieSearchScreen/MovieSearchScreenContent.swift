@@ -14,7 +14,7 @@ struct MovieSearchScreenContent: View, BaseView {
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var ncViewModel: NavCoordinatorViewModel
-    @StateObject var vm: MovieSearchScreenViewModel = .init()
+    @EnvironmentObject var vm: MovieSearchScreenViewModel
    
     private var networkService: NetworkService
     private var dataStorageService: DataStorageService
@@ -41,7 +41,6 @@ struct MovieSearchScreenContent: View, BaseView {
     
     var body: some View {
         VStack (spacing: 20){
-            
             if !appState.isQuickLink {
                 // Title
                 Text(title)
@@ -57,6 +56,7 @@ struct MovieSearchScreenContent: View, BaseView {
                 .padding([.leading, .trailing])
                 // Search
                 if selectSegment == 0 {
+                    
                     Group {
                         // Search bar
                         SearchBar(placeholder: "Search movie or TV Show...", actualColor: actualColor, searchText: $searchText, clearSearch: $clearSearch)
@@ -77,7 +77,6 @@ struct MovieSearchScreenContent: View, BaseView {
                                     // Search results list
                                     List (vm.searchMovies) {item in
                                         NavPushButton(destination: MovieDetailScreen(searchMovie: (item, vm.searchMoviePosters[item.id]))
-                                                        .environmentObject(vm)
                                                         .environmentObject(appState)
                                         ) {
                                             MovieCell(model: item, poster: vm.searchMoviePosters[item.id])
@@ -93,19 +92,19 @@ struct MovieSearchScreenContent: View, BaseView {
                                 }
                             }
                         }
-                    }.transition(.moveAndFade)
+                    }
+                    .transition(.moveAndFade)
+                    
                 } else if selectSegment == 1 {
                     Group {
                         List {
                             ForEach(popularMovies, id: \.self) { movie in
                                 NavPushButton(destination: MovieDetailScreen(popularMovie: movie)
-                                                .environmentObject(vm)
                                                 .environmentObject(appState)
                                 ) {
                                     MovieCell(model: PopularMovieDTO(fromMovieItem: movie))
                                 }
                                 .frame(width: 380, height: 120, alignment: .leading)
-                                
                             }
                         }
                     }.transition(.moveAndFade)
@@ -115,7 +114,7 @@ struct MovieSearchScreenContent: View, BaseView {
             }
         }.animation(.easeInOut)
         .onAppear{
-            vm.setup(managedObjectContext, networkService: self.networkService, dataStorageService: dataStorageService, ncViewModel: ncViewModel)
+            vm.setup(ncViewModel: ncViewModel)
 
             if let selectSegment = UserDefaults.standard.value(forKey: "selectSegment") as? Int {
                 self.selectSegment = selectSegment
@@ -123,18 +122,9 @@ struct MovieSearchScreenContent: View, BaseView {
             }
             
             if appState.isQuickLink, let randomMovie = vm.getRandomMovie() {
-                vm.navigationPush(destination: AnyView(MovieDetailScreen(popularMovie: randomMovie)
-                                                        .environmentObject(vm)
-                                                        .environmentObject(appState)))
+                vm.navigationPush(destination: AnyView(MovieDetailScreen(popularMovie: randomMovie).environmentObject(appState)))
                 self.selectSegment = 1
             }
-            
-            if let searchText = UserDefaults.standard.value(forKey: "searchText") as? String {
-                self.searchText = searchText
-                print("vm.searchMovies count", vm.searchMovies.count)
-                
-            }
-            
             print("⬆️ MovieSearchScreenContent onAppear")
         }.onChange(of: selectSegment) { value in
             if value == 1 {
@@ -148,14 +138,19 @@ struct MovieSearchScreenContent: View, BaseView {
                 vm.searchText = value
                 vm.loadPage()
             }
-        }.onDisappear{
+   
+        }
+        .onDisappear{
             UserDefaults.standard.setValue(searchText, forKey: "searchText")
             UserDefaults.standard.setValue(selectSegment, forKey: "selectSegment")
             print("⬇️ MovieSearchScreenContent onDisappear")
         }
     }
-    
-    private func stub() {
-        
+}
+
+struct MovieSearchScreenContent_Previews: PreviewProvider {
+    static var previews: some View {
+        MovieSearchScreenContent(networkService: AppState.networkService, dataStorageService: AppState.dataStoreService, actualColor: .orange, title: "Hello")
+       
     }
 }

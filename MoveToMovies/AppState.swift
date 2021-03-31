@@ -11,6 +11,9 @@ import Combine
 import TmdbAPI
 
 final class AppState: ObservableObject {
+    
+    @StateObject var movieSearchVM: MovieSearchScreenViewModel = .init(AppState.dataStoreService.context, networkService: AppState.networkService, dataStorageService: AppState.dataStoreService)
+    
     static var dataStoragePublisher = DataStoragePublisher()
     
     static var networkService: NetworkService =
@@ -37,11 +40,8 @@ final class AppState: ObservableObject {
         }
     }
 
-    
-
     @Published var selectionScreen: AnyView = AnyView(DashBoardScreen(actualColor: TabbarTab.dashboardScreen.actualColor, title: TabbarTab.dashboardScreen.text))
 
-    
     private func selectedTabHandler() {
         if let selectedTab = TabbarTab.allCases.first(where: {$0.rawValue == selectTabIndex}) {
             switch selectedTab {
@@ -58,7 +58,10 @@ final class AppState: ObservableObject {
                                             actualColor: selectedTab.actualColor,
                                             title: selectedTab.text)
                                             .environment(\.managedObjectContext, AppState.dataStoreService.context)
-                                            .environmentObject(self))
+                                            .environmentObject(self)
+                                            .environmentObject(movieSearchVM)
+                )
+                   
             case .aboutUSScreen:
                 selectionScreen = AnyView(AboutUsScreen())
             }

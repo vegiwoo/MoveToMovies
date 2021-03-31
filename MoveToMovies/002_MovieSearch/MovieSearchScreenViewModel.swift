@@ -30,7 +30,11 @@ final class MovieSearchScreenViewModel: ObservableObject {
     
     var bag: Set<AnyCancellable> = .init()
 
-    init() {
+    init(_ context: NSManagedObjectContext, networkService: NetworkService, dataStorageService: DataStorageService) {
+        self.context = context
+        self.networkService = networkService
+        self.dataStorageService = dataStorageService
+    
         print("⬆️ MovieSearchScreenViewModel init")
     }
     
@@ -39,10 +43,7 @@ final class MovieSearchScreenViewModel: ObservableObject {
         print("⬇️ MovieSearchScreenViewModel deinit")
     }
 
-    func setup(_ context: NSManagedObjectContext, networkService: NetworkService, dataStorageService: DataStorageService, ncViewModel: NavCoordinatorViewModel) {
-        self.context = context
-        self.networkService = networkService
-        self.dataStorageService = dataStorageService
+    func setup(ncViewModel: NavCoordinatorViewModel) {
         self.ncViewModel = ncViewModel
         subscribe()
         print("🔄 MovieSearchScreenViewModel setup")
