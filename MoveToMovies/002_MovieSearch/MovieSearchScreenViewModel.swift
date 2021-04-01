@@ -125,24 +125,3 @@ final class MovieSearchScreenViewModel: ObservableObject {
         ncViewModel?.navigationSequenceCount
     }
 }
-
-extension MovieOmdbapiObject: Identifiable {
-    public var id: String { imdbID! }
-}
-
-extension MovieOmdbapiObject: Equatable {
-    public static func == (lhs: MovieOmdbapiObject, rhs: MovieOmdbapiObject) -> Bool {
-        lhs.title == rhs.title
-    }
-}
-
-extension MovieOmdbapiObject: Hashable {
-    public func hash (into hasher: inout Hasher) {
-        hasher.combine (title)
-    }
-    public var hashValue: Int {
-        var hasher = Hasher ()
-        self.hash (into: &hasher)
-        return hasher.finalize ()
-    }
-}

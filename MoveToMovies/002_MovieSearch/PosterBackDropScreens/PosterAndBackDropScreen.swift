@@ -85,7 +85,7 @@ struct PosterAndBackDropScreen: View {
 
 struct PosterAndBackDropScreen_Previews: PreviewProvider {
     
-    static let movie = AppState.dataStoreService.getRendomMovieItem()
+    static let movie = AppStating.dataStoreService.getRendomMovieItem()
     static let posterData = movie?.poster?.blob
     static let backdropData = movie?.backdrop?.blob
     

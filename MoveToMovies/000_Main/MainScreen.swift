@@ -7,12 +7,22 @@
 
 import SwiftUI
 import UIControls
+import OmdbAPI
 
 struct MainScreen: View {
-    @EnvironmentObject var appState: AppState
-       
+    @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
     var body: some View {
-        TabbarView(selectionScreen: $appState.selectionScreen, vm: TabbarViewModel())
+        
+        Button(action: {
+            appStore.send(AppAction.searchMovies(action: SearchMoviesAction.loadSearchMovies(query: "Hello", page: 1)))
+        }, label: {Text("Fetch!")})
+        
+        if appStore.state.searchMovies.foundFilms.count > 0 {
+            ForEach(appStore.state.searchMovies.foundFilms) {movie in
+                Text("\(movie.title ?? "")")
+            }
+        }
+        //TabbarView(selectionScreen: $appState.selectionScreen, vm: TabbarViewModel())
     }
 }
 

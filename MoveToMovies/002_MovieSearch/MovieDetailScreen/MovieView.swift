@@ -121,7 +121,7 @@ struct MovieView: View {
 struct MovieView_Previews: PreviewProvider {
     static var previews: some View {
         
-       let movie = AppState.dataStoreService.getRendomMovieItem()
+       let movie = AppStating.dataStoreService.getRendomMovieItem()
         MovieView(popularMovie: movie ?? MovieItem(), actualColor: .blue).environmentObject(movie ?? MovieItem())
     }
 }

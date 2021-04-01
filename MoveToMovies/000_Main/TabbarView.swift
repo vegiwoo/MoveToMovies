@@ -15,7 +15,7 @@ struct TabbarView: View, SizeClassAdjustable {
     var vsc: UserInterfaceSizeClass? { _verticalSizeClass }
     var hsc: UserInterfaceSizeClass? { _horizontalSizeClass }
     
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var appState: AppStating
     @Binding var selectionScreen: AnyView
     //@State var selectionIndex: Int = 0
     

@@ -13,7 +13,7 @@ import OmdbAPI
 struct MovieDetailScreen: View {
 
     //@EnvironmentObject var vm: MovieSearchScreenViewModel
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var appState: AppStating
     
     var movie: MovieItem?
     var searchMovie: (MovieOmdbapiObject, Data?)?
@@ -62,6 +62,6 @@ struct MovieDetailScreen: View {
 
 struct MovieDetailScreen_Previews: PreviewProvider {
     static var previews: some View {
-        MovieDetailScreen(popularMovie: AppState.dataStoreService.getRendomMovieItem() ?? MovieItem())
+        MovieDetailScreen(popularMovie: AppStating.dataStoreService.getRendomMovieItem() ?? MovieItem())
     }
 }

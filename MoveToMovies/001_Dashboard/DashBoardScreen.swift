@@ -17,7 +17,7 @@ struct DashBoardScreen: View, BaseView {
     @State var completionUpdatingData: Bool = false
 
     @Environment(\.managedObjectContext) var managedObjectContext
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var appState: AppStating
     
     init(actualColor: UIColor, title: String) {
         self.actualColor = actualColor
@@ -49,11 +49,11 @@ struct DashBoardScreen: View, BaseView {
 
             Spacer()
         }.onAppear {
-            completionUpdatingData = AppState.dataStoreService.completionUpdatingData
+            completionUpdatingData = AppStating.dataStoreService.completionUpdatingData
             
 //            vm.setup(networkService: AppState.networkService, dataStorageService: AppState.dataStoreService)
             appState.isQuickLink = false
-        }.onReceive(AppState.dataStoreService.dataStoragePublisher.requestPublisher) { (request) in
+        }.onReceive(AppStating.dataStoreService.dataStoragePublisher.requestPublisher) { (request) in
             switch request {
             case .startUpdatingData:
                 break

@@ -10,20 +10,20 @@ import CoreData
 import Combine
 import TmdbAPI
 
-final class AppState: ObservableObject {
+final class AppStating: ObservableObject {
     
-    @StateObject var movieSearchVM: MovieSearchScreenViewModel = .init(AppState.dataStoreService.context, networkService: AppState.networkService, dataStorageService: AppState.dataStoreService)
+    @StateObject var movieSearchVM: MovieSearchScreenViewModel = .init(AppStating.dataStoreService.context, networkService: AppStating.networkService, dataStorageService: AppStating.dataStoreService)
     
     static var dataStoragePublisher = DataStoragePublisher()
     
     static var networkService: NetworkService =
-        NetworkServiceImpl(apiResponseQueue: AppState.networkServiceResponseQueue, dataStoragePublisher: dataStoragePublisher)
+        NetworkServiceImpl(apiResponseQueue: AppStating.networkServiceResponseQueue, dataStoragePublisher: dataStoragePublisher)
     
     static var networkServiceResponseQueue: DispatchQueue = DispatchQueue(label: Bundle.main.bundleIdentifier != nil ? "\(Bundle.main.bundleIdentifier!).networkServiceResponseQueue" : "networkServiceResponseQueue", qos: .utility)
 
     
     static var dataStoreService: DataStorageService = {
-        return DataStorageServiceImpl(networkResponseQueue: AppState.networkServiceResponseQueue, networkPublisher: networkService.networkServicePublisher, dataStoragePublisher: AppState.dataStoragePublisher)
+        return DataStorageServiceImpl(networkResponseQueue: AppStating.networkServiceResponseQueue, networkPublisher: networkService.networkServicePublisher, dataStoragePublisher: AppStating.dataStoragePublisher)
     }()
     
     @Published var selectTabIndex: Int = TabbarTab.dashboardScreen.rawValue  {
@@ -49,15 +49,15 @@ final class AppState: ObservableObject {
                 selectionScreen = AnyView(DashBoardScreen(
                                             actualColor: selectedTab.actualColor,
                                             title: selectedTab.text)
-                                            .environment(\.managedObjectContext, AppState.dataStoreService.context)
+                                            .environment(\.managedObjectContext, AppStating.dataStoreService.context)
                                             )
             case .movies:
                 selectionScreen = AnyView(MovieSearchScreen(
-                                            networkService: AppState.networkService,
-                                            dataStorageService: AppState.dataStoreService,
+                                            networkService: AppStating.networkService,
+                                            dataStorageService: AppStating.dataStoreService,
                                             actualColor: selectedTab.actualColor,
                                             title: selectedTab.text)
-                                            .environment(\.managedObjectContext, AppState.dataStoreService.context)
+                                            .environment(\.managedObjectContext, AppStating.dataStoreService.context)
                                             .environmentObject(self)
                                             .environmentObject(movieSearchVM)
                 )

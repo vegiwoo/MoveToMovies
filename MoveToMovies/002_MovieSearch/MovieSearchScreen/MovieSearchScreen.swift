@@ -11,7 +11,7 @@ import Navigation
 
 struct MovieSearchScreen: View {
     
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var appState: AppStating
     @EnvironmentObject var viewModel: MovieSearchScreenViewModel
     
     var networkService: NetworkService

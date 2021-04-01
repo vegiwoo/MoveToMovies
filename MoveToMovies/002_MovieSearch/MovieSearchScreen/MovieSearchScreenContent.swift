@@ -12,7 +12,7 @@ import UIControls
 struct MovieSearchScreenContent: View, BaseView {
     
     @Environment(\.managedObjectContext) var managedObjectContext
-    @EnvironmentObject var appState: AppState
+    @EnvironmentObject var appState: AppStating
     @EnvironmentObject var ncViewModel: NavCoordinatorViewModel
     @EnvironmentObject var vm: MovieSearchScreenViewModel
    
@@ -150,7 +150,7 @@ struct MovieSearchScreenContent: View, BaseView {
 
 struct MovieSearchScreenContent_Previews: PreviewProvider {
     static var previews: some View {
-        MovieSearchScreenContent(networkService: AppState.networkService, dataStorageService: AppState.dataStoreService, actualColor: .orange, title: "Hello")
+        MovieSearchScreenContent(networkService: AppStating.networkService, dataStorageService: AppStating.dataStoreService, actualColor: .orange, title: "Hello")
        
     }
 }
