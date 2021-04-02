@@ -10,12 +10,11 @@ import Architecture
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        //print(">> your code here !!")
         return true
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
-        UserDefaults.standard.removeObject(forKey: "searchText")
+        print("App is terminate")
     }
 }
 
@@ -25,23 +24,17 @@ struct MoveToMoviesApp: App {
     @Environment(\.scenePhase) var scenePhase
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
+    let appStore:  AppStore<AppState, AppAction, AppEnvironment>
+
     init() {
         ContainerHolder.container = Container()
+        self.appStore = MoveToMoviesApp.createStore()
     }
     
     var body: some Scene {
-
-        let appStore = AppStore(initialState: .init(
-                                    searchMovies: SearchMoviesState.init(foundFilms: []),
-                                    popularMovies: PopularMoviesState.init()),
-                                reducer: appReducer,
-                                environment: AppEnvironment(
-                                    container: ContainerHolder.container,
-                                    args: ()))
         WindowGroup {
-            MainScreen()
+            MainScreenContainerView(tabbarSelectedIndex: appStore.state.tabBar.selectedIndex, selectedView: appStore.state.tabBar.selectedView)
                 .environmentObject(appStore)
-                //.environmentObject(appState)
                 //.environment(\.managedObjectContext, AppStating.dataStoreService.context)
         }.onChange(of: scenePhase) { newScenePhase in
             switch newScenePhase {
@@ -57,5 +50,18 @@ struct MoveToMoviesApp: App {
                 print("App is in ...?")
             }
         }
+    }
+    
+    static func createStore() -> AppStore<AppState, AppAction, AppEnvironment> {
+        return AppStore(initialState: .init(
+                            tabBar: TabBarState(
+                                selectedIndex: 0),
+                            searchMovies: SearchMoviesState.init(
+                                foundFilms: []),
+                            popularMovies: PopularMoviesState.init()),
+                        reducer: appReducer,
+                        environment: AppEnvironment(
+                            container: ContainerHolder.container,
+                            args: ()))
     }
 }

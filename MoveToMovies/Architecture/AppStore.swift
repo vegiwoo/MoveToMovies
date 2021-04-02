@@ -34,23 +34,3 @@ final class AppStore<State, Action, Environment>: ObservableObject {
               .store(in: &cancellables)
     }
 }
-
-////    func derived<DerivedState: Equatable, ExtractedAction>(
-////        deriveState: @escaping (State) -> DerivedState,
-////        embedAction: @escaping (ExtractedAction) -> Action
-////    ) -> Store<DerivedState, ExtractedAction> {
-////        let store = Store<DerivedState, ExtractedAction>(
-////            initialState: deriveState(state),
-////            reducer: Reducer { _, action, _ in
-////                self.send(embedAction(action))
-////                return Empty().eraseToAnyPublisher()
-////            },
-////            environment: ()
-////        )
-////        $state
-////            .map(deriveState)
-////            .removeDuplicates()
-////            .receive(on: DispatchQueue.main)
-////            .assign(to: &store.$state)
-////        return store
-////    }

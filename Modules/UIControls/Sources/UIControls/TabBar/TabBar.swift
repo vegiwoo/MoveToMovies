@@ -8,13 +8,13 @@ import SwiftUI
 
 @available(iOS 13.0, *)
 public struct TabBar: View {
-    @Binding public var selectedIndex: Int
+    @Binding public var tabbarSelectedIndex: Int 
     
     public let tabBarItems: [TabBarItem]
     public let animanion: Animation
     
-    public init (selectedIndex: Binding<Int>, tabBarItems: [TabBarItem], animanion: Animation) {
-        self._selectedIndex = selectedIndex
+    public init (tabbarSelectedIndex: Binding<Int>, tabBarItems: [TabBarItem], animanion: Animation) {
+        self._tabbarSelectedIndex = tabbarSelectedIndex
         self.tabBarItems = tabBarItems
         self.animanion = animanion
     }
@@ -22,10 +22,10 @@ public struct TabBar: View {
     func itemView(at index: Int) -> some View {
         Button(action: {
             withAnimation(animanion){
-                self.selectedIndex = index
+                self.tabbarSelectedIndex = index
             }
         }) {
-            TabBarItemView(selected: $selectedIndex,
+            TabBarItemView(selected: $tabbarSelectedIndex,
                            index: index,
                            item: tabBarItems[index])
         }
@@ -49,7 +49,7 @@ public struct TabBar: View {
 @available(iOS 13.0, *)
 public struct TabBar_Previews: PreviewProvider {
     public static var previews: some View {
-        TabBar(selectedIndex: .constant(4), tabBarItems: [
+        TabBar(tabbarSelectedIndex: .constant(4), tabBarItems: [
             TabBarItem(sfSymbolName: "printer.dotmatrix.fill",
                        title: "Printer", color: .red),
             TabBarItem(sfSymbolName: "scanner.fill",

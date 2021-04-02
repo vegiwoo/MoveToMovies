@@ -11,7 +11,14 @@ import Combine
 typealias Reducer<State, Action, Environment> = (inout State, Action, Environment) -> AnyPublisher<Action, Never>
 
 // MARK: Contextual reducers
-//func appReducer(state: inout AppState, action: AppAction, environment: World) -> AnyPublisher<AppAction, Never>
+func tabbarReducer(state: inout TabBarState, action: TabbarAction, environment: AppEnvironment) -> AnyPublisher<TabbarAction, Never> {
+    switch action {
+    case let .indexChange(index):
+        state.selectedIndex = index
+    }
+    return Empty().eraseToAnyPublisher()
+}
+
 func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAction, environment: AppEnvironment) -> AnyPublisher<SearchMoviesAction, Never> {
     
     switch action {
@@ -29,9 +36,14 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
 /// Description of app reduser in structure composition
 func appReducer(state: inout AppState, action: AppAction, environment: AppEnvironment) -> AnyPublisher<AppAction, Never>{
     switch action {
+    case let .tabbar(action):
+        return tabbarReducer(state: &state.tabBar, action: action, environment: environment)
+            .map(AppAction.tabbar)
+            .eraseToAnyPublisher()
     case let .searchMovies(action):
         return searchMoviesReducer(state: &state.searchMovies, action: action, environment: environment)
             .map(AppAction.searchMovies)
             .eraseToAnyPublisher()
+    
     }
 }

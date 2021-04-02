@@ -61,7 +61,6 @@ final class AppStating: ObservableObject {
                                             .environmentObject(self)
                                             .environmentObject(movieSearchVM)
                 )
-                   
             case .aboutUSScreen:
                 selectionScreen = AnyView(AboutUsScreen())
             }
