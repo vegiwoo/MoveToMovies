@@ -25,11 +25,11 @@ struct MainScreenRenderView: View, SizeClassAdjustable {
             VStack {
                 selectedView
                     .frame(width: geometry.size.width,
-                                   height: isPad
-                                    ? (geometry.size.height / 11) * 10
-                                    : isPadOrLandscapeMax
-                                        ? (geometry.size.height / 6) * 5
-                                        : (geometry.size.height / 12) * 11)
+                           height: isPad
+                            ? (geometry.size.height / 11) * 10
+                            : isPadOrLandscapeMax
+                            ? (geometry.size.height / 6) * 5
+                            : (geometry.size.height / 12) * 11)
                     .transition(.moveAndFade)
                 TabBar(tabbarSelectedIndex: $selectedIndex, tabBarItems: appStore.state.tabBar.tabBarItems, animanion: Animation.easeInOut(duration: 0.4))
                     .frame(width: isPad
@@ -53,8 +53,7 @@ struct MainScreenRenderView_Previews: PreviewProvider {
     static let appStore = MoveToMoviesApp.createStore()
     static var previews: some View {
         MainScreenRenderView(
-            selectedIndex: .constant(0),
-            selectedView: .constant(AnyView(EmptyView()))
+            selectedIndex: .constant(0), selectedView: .constant(AnyView(EmptyView()))
         ).environmentObject(appStore)
     }
 }

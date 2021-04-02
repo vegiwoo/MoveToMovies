@@ -24,7 +24,7 @@ struct MoveToMoviesApp: App {
     @Environment(\.scenePhase) var scenePhase
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
-    let appStore:  AppStore<AppState, AppAction, AppEnvironment>
+    let appStore: AppStore<AppState, AppAction, AppEnvironment>
 
     init() {
         ContainerHolder.container = Container()
@@ -33,7 +33,7 @@ struct MoveToMoviesApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MainScreenContainerView(tabbarSelectedIndex: appStore.state.tabBar.selectedIndex, selectedView: appStore.state.tabBar.selectedView)
+            MainScreenContainerView()
                 .environmentObject(appStore)
                 //.environment(\.managedObjectContext, AppStating.dataStoreService.context)
         }.onChange(of: scenePhase) { newScenePhase in
@@ -54,8 +54,7 @@ struct MoveToMoviesApp: App {
     
     static func createStore() -> AppStore<AppState, AppAction, AppEnvironment> {
         return AppStore(initialState: .init(
-                            tabBar: TabBarState(
-                                selectedIndex: 0),
+                            tabBar: TabBarState(),
                             searchMovies: SearchMoviesState.init(
                                 foundFilms: []),
                             popularMovies: PopularMoviesState.init()),

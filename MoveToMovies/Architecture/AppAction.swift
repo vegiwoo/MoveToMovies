@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 import OmdbAPI
 
 /// Description of app action in structure composition

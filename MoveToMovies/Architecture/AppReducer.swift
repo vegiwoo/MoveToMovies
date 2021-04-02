@@ -15,6 +15,7 @@ func tabbarReducer(state: inout TabBarState, action: TabbarAction, environment: 
     switch action {
     case let .indexChange(index):
         state.selectedIndex = index
+        state.selectedView = TabBarState.setActualScreen(for: index)
     }
     return Empty().eraseToAnyPublisher()
 }
@@ -29,7 +30,6 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
     case let .setSearchMovies(movies):
         state.foundFilms = movies
     }
-
     return Empty().eraseToAnyPublisher()
 }
 

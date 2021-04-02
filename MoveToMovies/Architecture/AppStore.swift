@@ -34,3 +34,20 @@ final class AppStore<State, Action, Environment>: ObservableObject {
               .store(in: &cancellables)
     }
 }
+
+extension AppStore {
+    func binding<Value>(for keyPath: KeyPath<State, Value>,
+                        toAction: @escaping (Value) -> Action) -> Binding<Value> {
+        Binding<Value>(
+            get: {self.state[keyPath: keyPath]},
+            set: {self.send(toAction($0))}
+        )
+    }
+    
+    func binding<Value>(for keyPath: KeyPath<State, Value>) -> Binding<Value> {
+        Binding<Value>(
+            get: {self.state[keyPath: keyPath]},
+            set: {self.state = $0 as! State}
+        )
+    }
+}

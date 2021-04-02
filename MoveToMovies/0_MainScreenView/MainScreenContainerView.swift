@@ -10,23 +10,22 @@ import SwiftUI
 struct MainScreenContainerView: View {
     
     @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
-    @State var tabbarSelectedIndex: Int
-    @State var selectedView: AnyView
-   
+    
+    private var tabbarSelectedIndex: Binding<Int> {
+        appStore.binding(for: \.tabBar.selectedIndex) {AppAction.tabbar(action: TabbarAction.indexChange($0))}
+    }
+    private var tabbarSelectedView: Binding<AnyView> {
+        appStore.binding(for: \.tabBar.selectedView)
+    }
+    
     var body: some View {
-        MainScreenRenderView(selectedIndex: $tabbarSelectedIndex, selectedView: $selectedView)
+        MainScreenRenderView(selectedIndex: tabbarSelectedIndex, selectedView: tabbarSelectedView)
             .environmentObject(appStore)
-            .onChange(of: tabbarSelectedIndex) { value in
-                appStore.send(AppAction.tabbar(action: TabbarAction.indexChange(value)))
-                withAnimation(Animation.easeInOut(duration: 0.4)) {
-                    selectedView = appStore.state.tabBar.selectedView
-                }
-            }
     }
 }
 
 struct MainScreenContainerView_Previews: PreviewProvider {
     static var previews: some View {
-        MainScreenContainerView(tabbarSelectedIndex: 2, selectedView: AnyView(EmptyView()))
+        MainScreenContainerView()
     }
 }

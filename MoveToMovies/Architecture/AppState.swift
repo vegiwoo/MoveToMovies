@@ -25,12 +25,8 @@ struct TabBarState {
             TabBarItem(sfSymbolName: "info", title: "About us", color: TabbarTab.aboutUSScreen.actualColor),
         ]
     }
-    var selectedIndex: Int = 0 {
-        didSet {
-            selectedView = TabBarState.setActualScreen(for: selectedIndex)
-        }
-    }
-    var selectedView: AnyView = TabBarState.setActualScreen(for: 0) 
+    var selectedIndex: Int = 1
+    var selectedView: AnyView = TabBarState.setActualScreen(for: 1)
     
     static func setActualScreen(for index: Int) -> AnyView {
         if let selectedTabbarTab = TabbarTab.allCases.first(where: { $0.rawValue == index }) {
