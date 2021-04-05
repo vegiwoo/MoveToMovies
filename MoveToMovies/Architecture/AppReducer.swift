@@ -32,12 +32,18 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
             return Empty().eraseToAnyPublisher()
         }
     case let .addFoundMovies(query, movies):
+        
+        state.needForFurtherLoad = false
+        
         if movies.count > 0 {
             if state.searchQuery != query {
                 state.foundMovies.removeAll()
                 state.searchQuery = query
             }
+            
             state.foundMovies.append(contentsOf: movies)
+            state.searchPage += 1
+            
             return Just(SearchMoviesAction.changeStatusMovieSearch(.getResults))
                 .eraseToAnyPublisher()
         } else {
@@ -59,7 +65,6 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
         case .typing:
             state.infoMessage = ("", "")
         case .search:
-            print("search")
             state.infoMessage = ("", "")
         case .getResults:
             state.infoMessage = ("", "")

@@ -20,6 +20,7 @@ struct MovieSearchRenderView: View {
     @Binding var searchQuery: String
     @Binding var infoMessage: (symbol: String, message: String)
     @Binding var foundMovies: [MovieOmdbapiObject]
+    @Binding var needForFurtherLoad: Bool
     
     init(title: String,
          accentColor: UIColor,
@@ -27,7 +28,8 @@ struct MovieSearchRenderView: View {
          movieSearchStatus: Binding<MovieSearchStatus>,
          searchQuery: Binding<String>,
          infoMessage: Binding<(symbol: String, message: String)>,
-         foundMovies: Binding<[MovieOmdbapiObject]>
+         foundMovies: Binding<[MovieOmdbapiObject]>,
+         needForFurtherLoad: Binding<Bool>
          ) {
         self.title = title
         self.accentColor = accentColor
@@ -36,6 +38,7 @@ struct MovieSearchRenderView: View {
         self._searchQuery = searchQuery
         self._infoMessage = infoMessage
         self._foundMovies = foundMovies
+        self._needForFurtherLoad = needForFurtherLoad
     }
     
     var body: some View {
@@ -56,8 +59,13 @@ struct MovieSearchRenderView: View {
                     SearchBar(placeholder: "Search movie or TV Show...", actualColor: accentColor, searchText: $searchQuery,  movieSearchStatus: $movieSearchStatus)
                     
                     if movieSearchStatus == .getResults {
-                        List (foundMovies, id: \.self) {movie in
-                            Text(movie.title!).padding().id(UUID())
+                        List(foundMovies, id: \.self) {movie in
+                            Text(movie.title!).padding().id(UUID()).onAppear {
+                                if foundMovies.isLast(movie) {
+                                    print("Last movie \(movie.title!)")
+                                    needForFurtherLoad = true
+                                }
+                            }
                         }
                     } else {
                         Spacer().frame(width: 100, height: 100, alignment: .center)
@@ -92,7 +100,7 @@ struct MovieSearchRenderView_Previews: PreviewProvider {
                               searchQuery: .constant(""),
                               infoMessage: .constant((symbol: "magnifyingglass",
                                                       message: "Find your favorite\nmovie or TV series")),
-                              foundMovies: .constant([])
+                              foundMovies: .constant([]), needForFurtherLoad: .constant(false)
                     )
     }
 }

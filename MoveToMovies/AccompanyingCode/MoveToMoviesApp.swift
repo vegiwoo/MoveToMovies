@@ -57,7 +57,8 @@ struct MoveToMoviesApp: App {
         return AppStore(initialState: .init(
                             tabBar: TabBarState(),
                             searchMovies: SearchMoviesState.init(
-                                foundMovies: []),
+                                foundMovies: [],
+                                needForFurtherLoad: false),
                             popularMovies: PopularMoviesState.init()),
                         reducer: appReducer,
                         environment: AppEnvironment(
