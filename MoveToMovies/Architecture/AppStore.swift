@@ -46,8 +46,21 @@ extension AppStore {
     
     func binding<Value>(for keyPath: KeyPath<State, Value>) -> Binding<Value> {
         Binding<Value>(
-            get: {self.state[keyPath: keyPath]},
-            set: {self.state = $0 as! State}
+            get: {
+                self.state[keyPath: keyPath]},
+            set: {
+                print($0)
+                self.state = $0 as! State
+            }
         )
     }
 }
+
+/*
+ let binding = Binding(
+             get: { self.selection },
+             set: { self.selection = $0 }
+         )
+ 
+ 
+ */

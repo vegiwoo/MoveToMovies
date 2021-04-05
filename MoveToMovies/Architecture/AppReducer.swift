@@ -23,12 +23,27 @@ func tabbarReducer(state: inout TabBarState, action: TabbarAction, environment: 
 func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAction, environment: AppEnvironment) -> AnyPublisher<SearchMoviesAction, Never> {
     
     switch action {
+    case let .clearSearchResults(value):
+        if value {
+            state.foundMovies = []
+            state.searchPage = 1
+            state.searchQuery = ""
+            state.infoMessage = ("magnifyingglass", "Find your favorite\nmovie or TV series")
+        } else {
+            state.infoMessage = ("", "")
+        }
     case let .loadSearchMovies(query,page):
         return (environment.networkProvider.loadMovieRequest(query: query, page: page)?
-                    .map{SearchMoviesAction.setSearchMovies(movies: $0.search)}
+                    .map{SearchMoviesAction.addFoundMovies(movies: $0.search)}
                     .eraseToAnyPublisher())!
-    case let .setSearchMovies(movies):
-        state.foundFilms = movies
+    case let .addFoundMovies(movies):
+        if movies.count > 0 {
+            state.foundMovies.append(contentsOf: movies)
+        } else {
+            state.infoMessage = ("xmark.octagon", "Not found\nTry changing your search")
+        }
+    case let .assignIndexSegmentControl(index):
+        state.selectedIndexSegmentControl = index
     }
     return Empty().eraseToAnyPublisher()
 }

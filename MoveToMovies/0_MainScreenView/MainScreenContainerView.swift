@@ -19,7 +19,7 @@ struct MainScreenContainerView: View {
     }
     
     var body: some View {
-        MainScreenRenderView(selectedIndex: tabbarSelectedIndex, selectedView: tabbarSelectedView)
+        MainScreenRenderView(selectedIndex: tabbarSelectedIndex, selectedView: tabbarSelectedView, visibleTabbar: true)
             .environmentObject(appStore)
     }
 }

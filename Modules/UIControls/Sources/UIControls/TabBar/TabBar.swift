@@ -35,11 +35,9 @@ public struct TabBar: View {
         HStack(alignment: .bottom) {
             ForEach(0..<tabBarItems.count) {index in
                 itemView(at: index)
-                
                 if index != tabBarItems.count - 1 {
                     Spacer()
                 }
-                
             }
         }
         .padding()

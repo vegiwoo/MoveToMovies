@@ -69,7 +69,7 @@ struct MovieSearchScreenContent: View, BaseView {
                             if clearSearch {
                                 VStack {
                                     Spacer().frame(width: 100, height: 100, alignment: .center)
-                                    ClearSearchView()
+                                   // ClearSearchView()
                                     Spacer()
                                 }
                             } else {

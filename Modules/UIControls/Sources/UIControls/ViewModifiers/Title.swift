@@ -17,7 +17,8 @@ public struct Title: ViewModifier {
             .frame(maxWidth: .infinity, alignment: .leading)
             .font(Font.system(size: 45, weight: .black))
             .lineLimit(1)
-            .padding([.leading, .top, .trailing])
+            .padding(.horizontal, 16)
+            .padding(.top, 44)
     }
 }
 

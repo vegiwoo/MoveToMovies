@@ -29,7 +29,6 @@ public struct SearchBar: View {
         self.actualColor = actualColor
         self._clearSearch = clearSearch
         self._searchText = searchText
-        //self.searchBarState = .initial
     }
     
     public var body: some View {

@@ -17,8 +17,10 @@ enum AppAction {
 
 // MARK: Context actions
 enum SearchMoviesAction {
+    case assignIndexSegmentControl(Int)
+    case clearSearchResults(Bool)
     case loadSearchMovies(query: String, page: Int)
-    case setSearchMovies(movies: [MovieOmdbapiObject])
+    case addFoundMovies(movies: [MovieOmdbapiObject])
 }
 
 enum TabbarAction {
