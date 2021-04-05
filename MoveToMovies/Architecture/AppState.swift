@@ -52,6 +52,8 @@ struct SearchMoviesState {
     var infoMessage: (symbol: String, message: String) = ("magnifyingglass", "Find your favorite\nmovie or TV series")
     var foundMovies: [MovieOmdbapiObject]
     var needForFurtherLoad: Bool
+    var progressLoad: Float = 0.0
+    
 }
 
 struct PopularMoviesState {

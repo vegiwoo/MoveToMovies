@@ -46,7 +46,6 @@ struct MainScreenRenderView: View, SizeClassAdjustable {
                                 : isPadOrLandscapeMax
                                     ? geometry.size.height / 6
                                 : geometry.size.height / 12)
-                        .padding(.top, 10)
                 }
             }
         }

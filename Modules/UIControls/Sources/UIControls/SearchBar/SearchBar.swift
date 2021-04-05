@@ -39,7 +39,7 @@ public struct SearchBar: View {
                 // Tap search button
                 if !typingText.isEmpty {
                     searchText = typingText
-                    self.movieSearchStatus = .search
+                    self.movieSearchStatus = .loading
                     //keyboardDismiss()
                 } else {
                     self.movieSearchStatus = .initial
@@ -107,5 +107,5 @@ public struct SearchBar_Previews: PreviewProvider {
 #endif
 
 public enum MovieSearchStatus {
-    case initial, typing, search, getResults, error
+    case initial, typing, loading, getResults, error
 }

@@ -21,6 +21,7 @@ struct MovieSearchRenderView: View {
     @Binding var infoMessage: (symbol: String, message: String)
     @Binding var foundMovies: [MovieOmdbapiObject]
     @Binding var needForFurtherLoad: Bool
+    @Binding var progressLoad: Float
     
     init(title: String,
          accentColor: UIColor,
@@ -29,7 +30,8 @@ struct MovieSearchRenderView: View {
          searchQuery: Binding<String>,
          infoMessage: Binding<(symbol: String, message: String)>,
          foundMovies: Binding<[MovieOmdbapiObject]>,
-         needForFurtherLoad: Binding<Bool>
+         needForFurtherLoad: Binding<Bool>,
+         progressLoad: Binding<Float>
          ) {
         self.title = title
         self.accentColor = accentColor
@@ -39,6 +41,7 @@ struct MovieSearchRenderView: View {
         self._infoMessage = infoMessage
         self._foundMovies = foundMovies
         self._needForFurtherLoad = needForFurtherLoad
+        self._progressLoad = progressLoad
     }
     
     var body: some View {
@@ -57,15 +60,15 @@ struct MovieSearchRenderView: View {
                 // Search movies
                 if selectedIndexSegmentControl == 0 {
                     SearchBar(placeholder: "Search movie or TV Show...", actualColor: accentColor, searchText: $searchQuery,  movieSearchStatus: $movieSearchStatus)
-                    
-                    if movieSearchStatus == .getResults {
+
+                    if movieSearchStatus == .getResults || movieSearchStatus == .loading  {
                         List(foundMovies, id: \.self) {movie in
-                            Text(movie.title!).padding().id(UUID()).onAppear {
-                                if foundMovies.isLast(movie) {
-                                    print("Last movie \(movie.title!)")
-                                    needForFurtherLoad = true
+                            Text(movie.title!).padding()
+                                .onAppear {
+                                    if foundMovies.isLast(movie) {
+                                        needForFurtherLoad = true
+                                    }
                                 }
-                            }
                         }
                     } else {
                         Spacer().frame(width: 100, height: 100, alignment: .center)
@@ -82,6 +85,13 @@ struct MovieSearchRenderView: View {
                         .transition(.opacity)
                         Spacer()
                     }
+                    
+                    if movieSearchStatus == .loading {
+                        ProgressView("", value: progressLoad, total: 100)
+                            .frame(width: geometry.size.width, height: 3, alignment: .center)
+                        
+                    }
+
                 // Popular movies
                 } else if selectedIndexSegmentControl == 1 {
                     
@@ -100,7 +110,7 @@ struct MovieSearchRenderView_Previews: PreviewProvider {
                               searchQuery: .constant(""),
                               infoMessage: .constant((symbol: "magnifyingglass",
                                                       message: "Find your favorite\nmovie or TV series")),
-                              foundMovies: .constant([]), needForFurtherLoad: .constant(false)
+                              foundMovies: .constant([]), needForFurtherLoad: .constant(false), progressLoad: .constant(50.9)
                     )
     }
 }

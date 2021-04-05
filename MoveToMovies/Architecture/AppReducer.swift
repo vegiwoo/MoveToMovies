@@ -24,6 +24,9 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
     
     switch action {
     case let .loadSearchMovies(query,page):
+        
+        state.movieSearchStatus = .loading
+        
         if !query.isEmpty {
             return (environment.networkProvider.loadMovieRequest(query: query.trimmingCharacters(in: .whitespacesAndNewlines), page: page)?
                         .map{SearchMoviesAction.addFoundMovies(query: query, movies: $0.search)}
@@ -46,6 +49,8 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
             
             return Just(SearchMoviesAction.changeStatusMovieSearch(.getResults))
                 .eraseToAnyPublisher()
+            
+            
         } else {
             return Just(SearchMoviesAction.changeStatusMovieSearch(.error))
                 .eraseToAnyPublisher()
@@ -59,17 +64,40 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
         switch newStatus {
         case .initial:
             state.infoMessage = ("magnifyingglass", "Find your favorite\nmovie or TV series")
-            state.foundMovies = []
+            state.foundMovies.removeAll()
             state.searchPage = 1
             state.searchQuery = ""
+            state.needForFurtherLoad = false
         case .typing:
             state.infoMessage = ("", "")
-        case .search:
+        case .loading:
             state.infoMessage = ("", "")
+            
+            state.progressLoad = 0.00
+            
+            var initValue: Float = state.progressLoad
+            let publisher = PassthroughSubject<Float, Never>()
+
+            Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
+                if initValue < 100.00 {
+                    initValue += 1
+                    publisher.send(initValue)
+                } else {
+                    timer.invalidate()
+                }
+            }.fire()
+            
+            return publisher
+                .map{SearchMoviesAction.changeProgressMovieSearch($0)}
+                .eraseToAnyPublisher()
         case .getResults:
             state.infoMessage = ("", "")
         case .error:
             state.infoMessage = ("xmark.octagon", "Not found\nTry changing your search")
+        }
+    case let .changeProgressMovieSearch(progress):
+        if progress < 100 {
+            state.progressLoad = progress
         }
     }
     return Empty().eraseToAnyPublisher()
@@ -89,5 +117,4 @@ func appReducer(state: inout AppState, action: AppAction, environment: AppEnviro
     
     }
 }
-
 

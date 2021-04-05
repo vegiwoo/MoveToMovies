@@ -58,7 +58,7 @@ struct MoveToMoviesApp: App {
                             tabBar: TabBarState(),
                             searchMovies: SearchMoviesState.init(
                                 foundMovies: [],
-                                needForFurtherLoad: false),
+                                needForFurtherLoad: false, progressLoad: 0),
                             popularMovies: PopularMoviesState.init()),
                         reducer: appReducer,
                         environment: AppEnvironment(

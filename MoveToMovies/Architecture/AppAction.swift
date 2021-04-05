@@ -22,6 +22,7 @@ enum SearchMoviesAction {
     case changeStatusMovieSearch(MovieSearchStatus)
     case loadSearchMovies(query: String, page: Int)
     case addFoundMovies(query: String, movies: [MovieOmdbapiObject])
+    case changeProgressMovieSearch(Float)
 }
 
 enum TabbarAction {

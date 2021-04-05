@@ -36,10 +36,14 @@ extension MovieSearchContainerView {
         appStore.binding(for: \.searchMovies.foundMovies)
     }
     
-    private var lastItemFound: Binding<Bool> {
+    private var needForFurtherLoad: Binding<Bool> {
         appStore.binding(for: \.searchMovies.needForFurtherLoad) {_ in 
             AppAction.searchMovies(action: SearchMoviesAction.loadSearchMovies(query: appStore.state.searchMovies.searchQuery, page: appStore.state.searchMovies.searchPage))
         }
+    }
+    
+    private var progressLoad: Binding<Float> {
+        appStore.binding(for: \.searchMovies.progressLoad)
     }
     
 }
@@ -56,7 +60,8 @@ struct MovieSearchContainerView: View {
                                   movieSearchStatus: movieSearchStatus,
                                   searchQuery: searchQuery,
                                   infoMessage: infoMessage,
-                                  foundMovies: foundMovies, needForFurtherLoad: lastItemFound)
+                                  foundMovies: foundMovies,
+                                  needForFurtherLoad: needForFurtherLoad, progressLoad: progressLoad)
         }
     }
 }
