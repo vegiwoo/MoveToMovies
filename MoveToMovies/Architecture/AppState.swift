@@ -46,12 +46,14 @@ struct TabBarState {
 
 struct SearchMoviesState {
     var selectedIndexSegmentControl: Int = 0
+    var movieSearchStatus: MovieSearchStatus = .initial
     var searchQuery: String = ""
     var searchPage: Int = 1
-    var clearSearch: Bool = true
     var infoMessage: (symbol: String, message: String) = ("magnifyingglass", "Find your favorite\nmovie or TV series")
     var foundMovies: [MovieOmdbapiObject] 
 }
+
+
 
 struct PopularMoviesState {
     

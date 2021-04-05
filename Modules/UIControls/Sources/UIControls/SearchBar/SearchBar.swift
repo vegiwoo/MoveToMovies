@@ -14,36 +14,37 @@ public struct SearchBar: View {
 
     @State private var typingText = ""
     @Binding var searchText: String
-    @State var searchBarState: SearchBarState = .initial {
+    
+    @Binding var movieSearchStatus: MovieSearchStatus {
         didSet {
-            if searchBarState == .initial {
+            if movieSearchStatus == .initial {
                 typingText = ""
             }
         }
     }
+    @State var isClearButton: Bool = false
     
-    @Binding var clearSearch: Bool
-    
-    public init(placeholder: String,  actualColor: UIColor,searchText: Binding<String>, clearSearch: Binding<Bool>) {
+    public init(placeholder: String,  actualColor: UIColor,searchText: Binding<String>,  movieSearchStatus: Binding<MovieSearchStatus>) {
         self.placeholder = placeholder
         self.actualColor = actualColor
-        self._clearSearch = clearSearch
         self._searchText = searchText
+        self._movieSearchStatus = movieSearchStatus
     }
     
     public var body: some View {
-        HStack {
+        HStack (spacing: 16) {
             TextField(placeholder, text: $typingText) { onEditionChanged in
                 // Handle edition changed
             } onCommit: {
                 // Tap search button
                 if !typingText.isEmpty {
                     searchText = typingText
-                    self.searchBarState = .search
+                    self.movieSearchStatus = .search
+                    //keyboardDismiss()
                 } else {
-                    self.searchBarState = .initial
+                    self.movieSearchStatus = .initial
                 }
-                keyboardDismiss()
+                
             }
             .padding(7)
             .padding(.horizontal, 25)
@@ -51,47 +52,60 @@ public struct SearchBar: View {
             .cornerRadius(8)
             .padding(.horizontal, 16)
             .onTapGesture {
-                searchBarState = .typing
-                clearSearch = false
-            }.keyboardType(.webSearch)
-            
-            if searchBarState == .typing {
-                Button(action: {
-                    // Tap clear button
-                    searchBarState = .initial
-                    typingText = ""; searchText = ""
-                    clearSearch = true
-                    keyboardDismiss()
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(Color(actualColor))
+                movieSearchStatus = .typing
+                withAnimation {
+                    isClearButton = true
                 }
-                .padding(.trailing, 36)
-                .transition(.move(edge: .trailing))
-                .animation(Animation.easeOut(duration: 0.2))
+            }
+            .keyboardType(.webSearch)
+            .animation(Animation.easeOut(duration: 0.1))
+            
+            if isClearButton {
+                Group {
+                    Button(action: {
+                        // Tap clear button
+                        movieSearchStatus = .initial
+                        typingText = ""; searchText = ""
+                        //keyboardDismiss()
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(Color(actualColor))
+                    }
+                    .padding(.trailing, 36)
+                    .transition(.move(edge: .trailing))
+                    .animation(Animation.easeOut(duration: 0.1))
+                    
+                }.frame(width: 15, height: 15, alignment: .center)
+            }
+        }
+        .onReceive(NotificationCenter.Publisher(center: NotificationCenter.default, name: UIResponder.keyboardWillHideNotification)) { _ in
+            if typingText.isEmpty {
+                isClearButton = false
+                movieSearchStatus = .initial
+                
             }
         }
     }
     
-    private func keyboardDismiss() {
-        let keyWindow = UIApplication.shared.connectedScenes
-            .filter({$0.activationState == .foregroundActive})
-            .map({$0 as? UIWindowScene})
-            .compactMap({$0})
-            .first?.windows
-            .filter({$0.isKeyWindow}).first
-        keyWindow?.endEditing(true)
-    }
+//    private func keyboardDismiss() {
+//        let keyWindow = UIApplication.shared.connectedScenes
+//            .filter({$0.activationState == .foregroundActive})
+//            .map({$0 as? UIWindowScene})
+//            .compactMap({$0})
+//            .first?.windows
+//            .filter({$0.isKeyWindow}).first
+//        keyWindow?.endEditing(true)
+//    }
 }
 
 @available(iOS 13.0, *)
 public struct SearchBar_Previews: PreviewProvider {
     public static var previews: some View {
-        SearchBar(placeholder: "Search something...", actualColor: .red, searchText: .constant("Some string"), clearSearch: .constant(false))
+        SearchBar(placeholder: "Search something...", actualColor: .red, searchText: .constant("Some string"), movieSearchStatus: .constant(.initial))
     }
 }
 #endif
 
-enum SearchBarState {
-    case initial, typing, search
+public enum MovieSearchStatus {
+    case initial, typing, search, getResults, error
 }

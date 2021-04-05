@@ -43,7 +43,7 @@ struct DashBoardScreen: View, BaseView {
                         appState.selectTabIndex = 1
                     }
                 } else {
-                    ActivityIndicator(style: .large, shouldAnimate: .constant(true))
+                    //ActivityIndicator(style: .large, shouldAnimate: .constant(true))
                 }
             }.frame(width: 150, height: 150, alignment: .center)
 

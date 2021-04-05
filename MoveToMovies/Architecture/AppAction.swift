@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import OmdbAPI
+import UIControls
 
 /// Description of app action in structure composition
 enum AppAction {
@@ -18,9 +19,9 @@ enum AppAction {
 // MARK: Context actions
 enum SearchMoviesAction {
     case assignIndexSegmentControl(Int)
-    case clearSearchResults(Bool)
+    case changeStatusMovieSearch(MovieSearchStatus)
     case loadSearchMovies(query: String, page: Int)
-    case addFoundMovies(movies: [MovieOmdbapiObject])
+    case addFoundMovies(query: String, movies: [MovieOmdbapiObject])
 }
 
 enum TabbarAction {

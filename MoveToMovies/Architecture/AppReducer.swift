@@ -23,27 +23,49 @@ func tabbarReducer(state: inout TabBarState, action: TabbarAction, environment: 
 func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAction, environment: AppEnvironment) -> AnyPublisher<SearchMoviesAction, Never> {
     
     switch action {
-    case let .clearSearchResults(value):
-        if value {
-            state.foundMovies = []
-            state.searchPage = 1
-            state.searchQuery = ""
-            state.infoMessage = ("magnifyingglass", "Find your favorite\nmovie or TV series")
-        } else {
-            state.infoMessage = ("", "")
-        }
     case let .loadSearchMovies(query,page):
-        return (environment.networkProvider.loadMovieRequest(query: query, page: page)?
-                    .map{SearchMoviesAction.addFoundMovies(movies: $0.search)}
-                    .eraseToAnyPublisher())!
-    case let .addFoundMovies(movies):
-        if movies.count > 0 {
-            state.foundMovies.append(contentsOf: movies)
+        if !query.isEmpty {
+            return (environment.networkProvider.loadMovieRequest(query: query.trimmingCharacters(in: .whitespacesAndNewlines), page: page)?
+                        .map{SearchMoviesAction.addFoundMovies(query: query, movies: $0.search)}
+                        .eraseToAnyPublisher())!
         } else {
-            state.infoMessage = ("xmark.octagon", "Not found\nTry changing your search")
+            return Empty().eraseToAnyPublisher()
+        }
+    case let .addFoundMovies(query, movies):
+        if movies.count > 0 {
+            if state.searchQuery != query {
+                state.foundMovies.removeAll()
+                state.searchQuery = query
+            }
+            state.foundMovies.append(contentsOf: movies)
+            return Just(SearchMoviesAction.changeStatusMovieSearch(.getResults))
+                .eraseToAnyPublisher()
+        } else {
+            return Just(SearchMoviesAction.changeStatusMovieSearch(.error))
+                .eraseToAnyPublisher()
         }
     case let .assignIndexSegmentControl(index):
         state.selectedIndexSegmentControl = index
+    case let .changeStatusMovieSearch(newStatus):
+        
+        state.movieSearchStatus = newStatus
+        
+        switch newStatus {
+        case .initial:
+            state.infoMessage = ("magnifyingglass", "Find your favorite\nmovie or TV series")
+            state.foundMovies = []
+            state.searchPage = 1
+            state.searchQuery = ""
+        case .typing:
+            state.infoMessage = ("", "")
+        case .search:
+            print("search")
+            state.infoMessage = ("", "")
+        case .getResults:
+            state.infoMessage = ("", "")
+        case .error:
+            state.infoMessage = ("xmark.octagon", "Not found\nTry changing your search")
+        }
     }
     return Empty().eraseToAnyPublisher()
 }
@@ -62,3 +84,5 @@ func appReducer(state: inout AppState, action: AppAction, environment: AppEnviro
     
     }
 }
+
+

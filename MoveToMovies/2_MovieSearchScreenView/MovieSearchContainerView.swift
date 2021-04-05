@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+import OmdbAPI
 import Navigation
+import UIControls
 
 extension MovieSearchContainerView {
     private var selectedIndexSegmentControl: Binding<Int> {
@@ -14,14 +16,15 @@ extension MovieSearchContainerView {
             AppAction.searchMovies(action: SearchMoviesAction.assignIndexSegmentControl($0))
         }
     }
+    private var movieSearchStatus: Binding<MovieSearchStatus> {
+        appStore.binding(for: \.searchMovies.movieSearchStatus) {
+            AppAction.searchMovies(action: SearchMoviesAction.changeStatusMovieSearch($0))
+        }
+    }
+    
     private var searchQuery: Binding<String> {
         appStore.binding(for: \.searchMovies.searchQuery) {
             AppAction.searchMovies(action: SearchMoviesAction.loadSearchMovies(query: $0, page: 1))
-        }
-    }
-    private var clearSearch: Binding<Bool> {
-        appStore.binding(for: \.searchMovies.clearSearch) {
-            AppAction.searchMovies(action: SearchMoviesAction.clearSearchResults($0))
         }
     }
     
@@ -29,8 +32,11 @@ extension MovieSearchContainerView {
         appStore.binding(for: \.searchMovies.infoMessage)
     }
     
+    private var foundMovies: Binding<[MovieOmdbapiObject]> {
+        appStore.binding(for: \.searchMovies.foundMovies)
+    }
+    
 }
-
 
 struct MovieSearchContainerView: View {
     
@@ -41,9 +47,10 @@ struct MovieSearchContainerView: View {
             MovieSearchRenderView(title: TabbarTab.movies.text,
                                   accentColor: TabbarTab.movies.actualColor,
                                   selectedIndexSegmentControl: selectedIndexSegmentControl,
+                                  movieSearchStatus: movieSearchStatus,
                                   searchQuery: searchQuery,
-                                  clearSearch: clearSearch,
-                                  infoMessage: infoMessage)
+                                  infoMessage: infoMessage,
+                                  foundMovies: foundMovies)
         }
     }
 }

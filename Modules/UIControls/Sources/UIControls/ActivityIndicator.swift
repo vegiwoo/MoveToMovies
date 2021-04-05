@@ -8,13 +8,13 @@ import SwiftUI
 @available(iOS 13.0, *)
 public struct ActivityIndicator: UIViewRepresentable {
     
-    // ActivityIndicator(shouldAnimate: .constant(true), style: .large)
-    
+    public var color: UIColor
     public var style: UIActivityIndicatorView.Style
     @Binding var shouldAnimate: Bool
     
     
-    public init(style: UIActivityIndicatorView.Style, shouldAnimate: Binding<Bool>) {
+    public init(color: UIColor, style: UIActivityIndicatorView.Style, shouldAnimate: Binding<Bool>) {
+        self.color = color
         self.style = style
         self._shouldAnimate = shouldAnimate
     }
@@ -22,6 +22,7 @@ public struct ActivityIndicator: UIViewRepresentable {
     public func makeUIView(context: UIViewRepresentableContext<ActivityIndicator>) -> UIActivityIndicatorView {
         
         let view = UIActivityIndicatorView()
+        view.color = color
         view.style = .large
         view.hidesWhenStopped = true
         return view
@@ -41,7 +42,7 @@ public struct ActivityIndicator: UIViewRepresentable {
 public struct ActivityIndicator_Previews: PreviewProvider {
     public static var previews: some View {
         VStack {
-            ActivityIndicator(style: .medium, shouldAnimate: .constant(true))
+            ActivityIndicator(color: .red, style: .medium, shouldAnimate: .constant(true))
         }
     }
 }

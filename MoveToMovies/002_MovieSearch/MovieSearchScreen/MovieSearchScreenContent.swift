@@ -57,44 +57,44 @@ struct MovieSearchScreenContent: View, BaseView {
                 // Search
                 if selectSegment == 0 {
                     
-                    Group {
-                        // Search bar
-                        SearchBar(placeholder: "Search movie or TV Show...", actualColor: actualColor, searchText: $searchText, clearSearch: $clearSearch)
-                        
-                        // Initial load indicator
-                        if vm.searchMovies.count == 0 && vm.isPageLoading {
-                            ActivityIndicator(style: .large, shouldAnimate: .constant(true)).frame(width: 30, height: 30, alignment: .center)
-                            Spacer()
-                        } else {
-                            if clearSearch {
-                                VStack {
-                                    Spacer().frame(width: 100, height: 100, alignment: .center)
-                                   // ClearSearchView()
-                                    Spacer()
-                                }
-                            } else {
-                                VStack {
-                                    // Search results list
-                                    List (vm.searchMovies) {item in
-                                        NavPushButton(destination: MovieDetailScreen(searchMovie: (item, vm.searchMoviePosters[item.id]))
-                                                        .environmentObject(appState)
-                                        ) {
-                                            MovieCell(model: item, poster: vm.searchMoviePosters[item.id])
-                                                .id(UUID())
-                                                .environmentObject(vm)
-                                                .onAppear {
-                                                    if vm.searchMovies.isLast(item) { vm.loadPage() }
-                                                }
-                                        }
-                                        .frame(width: 380, height: 120, alignment: .leading)
-                                    }
-                                    ActivityIndicator(style: .medium, shouldAnimate: $vm.isPageLoading).frame(width: 30, height: 30, alignment: .center).transition(.opacity)
-                                }
-                            }
-                        }
-                    }
-                    .transition(.moveAndFade)
-                    
+//                    Group {
+//                        // Search bar
+////                        SearchBar(placeholder: "Search movie or TV Show...", actualColor: actualColor, searchText: $searchText, clearSearch: $clearSearch)
+//                        
+//                        // Initial load indicator
+//                        if vm.searchMovies.count == 0 && vm.isPageLoading {
+//                            ActivityIndicator(style: .large, shouldAnimate: .constant(true)).frame(width: 30, height: 30, alignment: .center)
+//                            Spacer()
+//                        } else {
+//                            if clearSearch {
+//                                VStack {
+//                                    Spacer().frame(width: 100, height: 100, alignment: .center)
+//                                   // ClearSearchView()
+//                                    Spacer()
+//                                }
+//                            } else {
+//                                VStack {
+//                                    // Search results list
+//                                    List (vm.searchMovies) {item in
+//                                        NavPushButton(destination: MovieDetailScreen(searchMovie: (item, vm.searchMoviePosters[item.id]))
+//                                                        .environmentObject(appState)
+//                                        ) {
+//                                            MovieCell(model: item, poster: vm.searchMoviePosters[item.id])
+//                                                .id(UUID())
+//                                                .environmentObject(vm)
+//                                                .onAppear {
+//                                                    if vm.searchMovies.isLast(item) { vm.loadPage() }
+//                                                }
+//                                        }
+//                                        .frame(width: 380, height: 120, alignment: .leading)
+//                                    }
+//                                    //ActivityIndicator(style: .medium, shouldAnimate: $vm.isPageLoading).frame(width: 30, height: 30, alignment: .center).transition(.opacity)
+//                                }
+//                            }
+//                        }
+//                    }
+//                    .transition(.moveAndFade)
+//                    
                 } else if selectSegment == 1 {
                     Group {
                         List {
@@ -112,39 +112,41 @@ struct MovieSearchScreenContent: View, BaseView {
             } else {
                 EmptyView()
             }
-        }.animation(.easeInOut)
-        .onAppear{
-            vm.setup(ncViewModel: ncViewModel)
-
-            if let selectSegment = UserDefaults.standard.value(forKey: "selectSegment") as? Int {
-                self.selectSegment = selectSegment
-                UserDefaults.standard.removeObject(forKey: "selectSegment")
-            }
-            
-            if appState.isQuickLink, let randomMovie = vm.getRandomMovie() {
-                vm.navigationPush(destination: AnyView(MovieDetailScreen(popularMovie: randomMovie).environmentObject(appState)))
-                self.selectSegment = 1
-            }
-            print("⬆️ MovieSearchScreenContent onAppear")
-        }.onChange(of: selectSegment) { value in
-            if value == 1 {
-                self.clearSearch = true
-                vm.clearSearch()
-            }
-        }.onChange(of: searchText) {value in
-            if value == "" {
-                vm.clearSearch()
-            } else {
-                vm.searchText = value
-                vm.loadPage()
-            }
-   
         }
-        .onDisappear{
-            UserDefaults.standard.setValue(searchText, forKey: "searchText")
-            UserDefaults.standard.setValue(selectSegment, forKey: "selectSegment")
-            print("⬇️ MovieSearchScreenContent onDisappear")
-        }
+        
+//        .animation(.easeInOut)
+//        .onAppear{
+//            vm.setup(ncViewModel: ncViewModel)
+//
+//            if let selectSegment = UserDefaults.standard.value(forKey: "selectSegment") as? Int {
+//                self.selectSegment = selectSegment
+//                UserDefaults.standard.removeObject(forKey: "selectSegment")
+//            }
+//            
+//            if appState.isQuickLink, let randomMovie = vm.getRandomMovie() {
+//                vm.navigationPush(destination: AnyView(MovieDetailScreen(popularMovie: randomMovie).environmentObject(appState)))
+//                self.selectSegment = 1
+//            }
+//            print("⬆️ MovieSearchScreenContent onAppear")
+//        }.onChange(of: selectSegment) { value in
+//            if value == 1 {
+//                self.clearSearch = true
+//                vm.clearSearch()
+//            }
+//        }.onChange(of: searchText) {value in
+//            if value == "" {
+//                vm.clearSearch()
+//            } else {
+//                vm.searchText = value
+//                vm.loadPage()
+//            }
+//   
+//        }
+//        .onDisappear{
+//            UserDefaults.standard.setValue(searchText, forKey: "searchText")
+//            UserDefaults.standard.setValue(selectSegment, forKey: "selectSegment")
+//            print("⬇️ MovieSearchScreenContent onDisappear")
+//        }
     }
 }
 
