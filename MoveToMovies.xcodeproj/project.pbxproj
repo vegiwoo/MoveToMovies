@@ -26,7 +26,6 @@
 		775B97B8261729AE0061794C /* AboutUsContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775B97B7261729AE0061794C /* AboutUsContainerView.swift */; };
 		775B97BB261729BB0061794C /* AboutUsRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775B97BA261729BB0061794C /* AboutUsRenderView.swift */; };
 		777F4E4F2610A11C000A7A87 /* MovieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777F4E4E2610A11C000A7A87 /* MovieView.swift */; };
-		7783BF7626089A0D003EC0F4 /* MovieCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7783BF7526089A0D003EC0F4 /* MovieCell.swift */; };
 		77848DEA25F7BCF8004DBB1A /* NavigationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77848DE925F7BCF8004DBB1A /* NavigationStack.swift */; };
 		778875AA25FE545400B317B1 /* MoveToMoviesModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 778875A825FE545400B317B1 /* MoveToMoviesModel.xcdatamodeld */; };
 		778875AE25FE5C8500B317B1 /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778875AD25FE5C8500B317B1 /* BaseView.swift */; };
@@ -78,7 +77,6 @@
 		775B97B7261729AE0061794C /* AboutUsContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsContainerView.swift; sourceTree = "<group>"; };
 		775B97BA261729BB0061794C /* AboutUsRenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutUsRenderView.swift; sourceTree = "<group>"; };
 		777F4E4E2610A11C000A7A87 /* MovieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieView.swift; sourceTree = "<group>"; };
-		7783BF7526089A0D003EC0F4 /* MovieCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCell.swift; sourceTree = "<group>"; };
 		77848DE925F7BCF8004DBB1A /* NavigationStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStack.swift; sourceTree = "<group>"; };
 		77877A6E25FD2356009E8E57 /* OmdbAPI */ = {isa = PBXFileReference; lastKnownFileType = folder; path = OmdbAPI; sourceTree = "<group>"; };
 		77877A7325FD23B2009E8E57 /* TmdbAPI */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TmdbAPI; sourceTree = "<group>"; };
@@ -373,7 +371,6 @@
 		77F70C972610E13D003E0271 /* Controls */ = {
 			isa = PBXGroup;
 			children = (
-				7783BF7526089A0D003EC0F4 /* MovieCell.swift */,
 			);
 			path = Controls;
 			sourceTree = "<group>";
@@ -507,7 +504,6 @@
 				77DD2C972614DA72000455F4 /* MovieOmdbapiObject + Ext.swift in Sources */,
 				77DD2CA02614DD29000455F4 /* AppReducer.swift in Sources */,
 				77DD2C9D2614DBDD000455F4 /* AppAction.swift in Sources */,
-				7783BF7626089A0D003EC0F4 /* MovieCell.swift in Sources */,
 				7707D80C2610E8C000F0E733 /* PosterOrBackDropScreen.swift in Sources */,
 				7752F96A25F4CC8200DBE89B /* View + Ext.swift in Sources */,
 				7752F96725F4CC4200DBE89B /* NavigationLink + Ext.swift in Sources */,

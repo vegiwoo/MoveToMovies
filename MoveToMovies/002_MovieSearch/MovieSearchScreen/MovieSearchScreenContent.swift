@@ -60,7 +60,7 @@ struct MovieSearchScreenContent: View, BaseView {
 //                    Group {
 //                        // Search bar
 ////                        SearchBar(placeholder: "Search movie or TV Show...", actualColor: actualColor, searchText: $searchText, clearSearch: $clearSearch)
-//                        
+//
 //                        // Initial load indicator
 //                        if vm.searchMovies.count == 0 && vm.isPageLoading {
 //                            ActivityIndicator(style: .large, shouldAnimate: .constant(true)).frame(width: 30, height: 30, alignment: .center)
@@ -94,7 +94,7 @@ struct MovieSearchScreenContent: View, BaseView {
 //                        }
 //                    }
 //                    .transition(.moveAndFade)
-//                    
+//
                 } else if selectSegment == 1 {
                     Group {
                         List {
@@ -102,7 +102,7 @@ struct MovieSearchScreenContent: View, BaseView {
                                 NavPushButton(destination: MovieDetailScreen(popularMovie: movie)
                                                 .environmentObject(appState)
                                 ) {
-                                    MovieCell(model: PopularMovieDTO(fromMovieItem: movie))
+                                  //  MovieCell(model: PopularMovieDTO(fromMovieItem: movie))
                                 }
                                 .frame(width: 380, height: 120, alignment: .leading)
                             }

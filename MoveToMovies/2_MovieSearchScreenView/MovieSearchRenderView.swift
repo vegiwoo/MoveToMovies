@@ -63,7 +63,8 @@ struct MovieSearchRenderView: View {
 
                     if movieSearchStatus == .getResults || movieSearchStatus == .loading  {
                         List(foundMovies, id: \.self) {movie in
-                            Text(movie.title!).padding()
+                            MovieCell(model: movie, poster: nil)
+                                .frame(width: 380, height: 120, alignment: .leading)
                                 .onAppear {
                                     if foundMovies.isLast(movie) {
                                         needForFurtherLoad = true

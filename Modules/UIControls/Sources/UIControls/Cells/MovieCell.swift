@@ -1,17 +1,13 @@
-//
 //  MovieCell.swift
-//  MoveToMovies
-//
-//  Created by Dmitry Samartcev on 22.03.2021.
-//
+//  Created by Dmitry Samartcev on 04.03.2021.
 
 import SwiftUI
-import UIControls
 import OmdbAPI
 
+#if canImport(SwiftUI)
+
+@available(iOS 13.0, *)
 public struct MovieCell: View, SizeClassAdjustable {
-    
-    @EnvironmentObject var vm: MovieSearchScreenViewModel
     
     @Environment(\.verticalSizeClass) var _verticalSizeClass
     @Environment(\.horizontalSizeClass) var _horizontalSizeClass
@@ -24,39 +20,26 @@ public struct MovieCell: View, SizeClassAdjustable {
     var subtitle02: String
     var rightView: AnyView?
     
-    var movieOmdbapiObject: MovieOmdbapiObject?
-    var id: UUID = UUID()
-    
-    init(model: MovieCellModelProtocol) {
-        self.image = model.image
-        self.title = model.title
-        self.subtitle01 = model.subtitle01
-        self.subtitle02 = model.subtitle02
-        self.rightView = model.rightView
-    }
-    
-    
-    init(model: MovieOmdbapiObject, poster: Data?) {
+    public init(model: MovieOmdbapiObject, poster: Data?) {
         self.title = model.title ?? ""
         self.subtitle01 = model.type?.rawValue
         self.subtitle02 = model.year ?? ""
-
+        
         // Poster
-        if let data = poster, let image = UIImage(data: data) {
+        if let data = poster,
+           let image = UIImage(data: data) {
             self.image = image
         }
-        
-        movieOmdbapiObject = model
     }
     
     public var body: some View {
-        GeometryReader {geometry in
+        GeometryReader{geometry in
             VStack {
                 ZStack {
+                    // Fone
                     RoundedRectangle(cornerRadius: 10)
                         .background(Color.gray)
                         .opacity(0.05)
-                    
                     HStack {
                         // Poster
                         if let image = image {
@@ -66,6 +49,8 @@ public struct MovieCell: View, SizeClassAdjustable {
                                 .scaledToFill()
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                                 .smallPosterFrame(geometrySize: geometry.size)
+                        
+                        
                         } else {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke()
@@ -78,12 +63,10 @@ public struct MovieCell: View, SizeClassAdjustable {
                             Text("")
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 1)
-                               
                             // title
                             Text(title)
                                 .font(Font.system(size: isPad ? 24 : isPadOrLandscapeMax ? 18 : 14)).fontWeight(.bold)
                                 .lineLimit(2)
-                                
                             // subtitle01
                             if let subtitle01 = subtitle01 {
                                 Text(subtitle01)
@@ -99,7 +82,6 @@ public struct MovieCell: View, SizeClassAdjustable {
                                    
                             }
                         }.padding([.leading], 10)
-                        
                         // Right view
                         if let rightView = self.rightView {
                             rightView
@@ -107,23 +89,11 @@ public struct MovieCell: View, SizeClassAdjustable {
                                 .padding(.trailing)
                                 .foregroundColor(.secondary)
                         }
-                    }
                 }
             }
         }
     }
+    
 }
-
-struct MovieCell_Previews: PreviewProvider {
-    static var previews: some View {
-        MovieCell(model: DummyCell())
-    }
 }
-
-struct DummyCell: MovieCellModelProtocol {
-    var image: UIImage? = UIImage(named: "dummyImage500x500")
-    var title: String = "Some title"
-    var subtitle01: String? = "Comedy, Drama, Adventure"
-    var subtitle02: String = "1980"
-    var rightView: AnyView? = AnyView(ZStack{Circle().stroke();Text("10.0")})
-}
+#endif
