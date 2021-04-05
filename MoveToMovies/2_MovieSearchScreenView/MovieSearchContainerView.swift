@@ -32,7 +32,7 @@ extension MovieSearchContainerView {
         appStore.binding(for: \.searchMovies.infoMessage)
     }
     
-    private var foundMovies: Binding<[MovieOmdbapiObject]> {
+    private var foundMovies: Binding<[MovieOMDBWithPosterItem]> {
         appStore.binding(for: \.searchMovies.foundMovies)
     }
     

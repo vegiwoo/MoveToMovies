@@ -21,6 +21,9 @@ enum SearchMoviesAction {
     case assignIndexSegmentControl(Int)
     case changeStatusMovieSearch(MovieSearchStatus)
     case loadSearchMovies(query: String, page: Int)
+    case addMovieWithPoster(movie: MovieOmdbapiObject, poster: Data?)
+    case addMovieWithoutPoster(movie: MovieOmdbapiObject)
+    
     case addFoundMovies(query: String, movies: [MovieOmdbapiObject])
     case changeProgressMovieSearch(Float)
 }

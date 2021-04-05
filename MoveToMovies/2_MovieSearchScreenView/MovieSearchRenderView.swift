@@ -19,7 +19,7 @@ struct MovieSearchRenderView: View {
     @Binding var movieSearchStatus: MovieSearchStatus
     @Binding var searchQuery: String
     @Binding var infoMessage: (symbol: String, message: String)
-    @Binding var foundMovies: [MovieOmdbapiObject]
+    @Binding var foundMovies: [MovieOMDBWithPosterItem]
     @Binding var needForFurtherLoad: Bool
     @Binding var progressLoad: Float
     
@@ -29,7 +29,7 @@ struct MovieSearchRenderView: View {
          movieSearchStatus: Binding<MovieSearchStatus>,
          searchQuery: Binding<String>,
          infoMessage: Binding<(symbol: String, message: String)>,
-         foundMovies: Binding<[MovieOmdbapiObject]>,
+         foundMovies: Binding<[MovieOMDBWithPosterItem]>,
          needForFurtherLoad: Binding<Bool>,
          progressLoad: Binding<Float>
          ) {
@@ -62,11 +62,11 @@ struct MovieSearchRenderView: View {
                     SearchBar(placeholder: "Search movie or TV Show...", actualColor: accentColor, searchText: $searchQuery,  movieSearchStatus: $movieSearchStatus)
 
                     if movieSearchStatus == .getResults || movieSearchStatus == .loading  {
-                        List(foundMovies, id: \.self) {movie in
-                            MovieCell(model: movie, poster: nil)
+                        List(foundMovies, id: \.self) {item in
+                            MovieCell(model: item.movie, poster: item.poster)
                                 .frame(width: 380, height: 120, alignment: .leading)
                                 .onAppear {
-                                    if foundMovies.isLast(movie) {
+                                    if foundMovies.isLast(item) {
                                         needForFurtherLoad = true
                                     }
                                 }

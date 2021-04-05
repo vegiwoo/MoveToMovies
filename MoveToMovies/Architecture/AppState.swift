@@ -50,7 +50,7 @@ struct SearchMoviesState {
     var searchQuery: String = ""
     var searchPage: Int = 1
     var infoMessage: (symbol: String, message: String) = ("magnifyingglass", "Find your favorite\nmovie or TV series")
-    var foundMovies: [MovieOmdbapiObject]
+    var foundMovies: [MovieOMDBWithPosterItem]
     var needForFurtherLoad: Bool
     var progressLoad: Float = 0.0
     

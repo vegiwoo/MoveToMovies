@@ -17,6 +17,16 @@ public class NetworkProvider: Singletonable {
         return DispatchQueue(label: Bundle.main.bundleIdentifier != nil ? "\(Bundle.main.bundleIdentifier!).apiRequestQueue" : "apiRequestQueue", qos: .utility)
     }()
     
+    // MARK: Common Methods
+    public func loadCover(from url: URL, for imdbID: String) -> AnyPublisher<ImageDataObjectResponse, Never>?{
+        return session.dataTaskPublisher(for: url)
+            .map({ (data, response)  in
+                return ImageDataObjectResponse(data: data, imdbID: imdbID)
+            })
+            .replaceError(with: ImageDataObjectResponse(data: nil, imdbID: imdbID))
+            .eraseToAnyPublisher()
+    }
+
     // MARK: OmdbAPI
     public func loadMovieRequest(query: String, page: Int) -> AnyPublisher<MovieOmdbapiObjectResponse, Never>? {
 
@@ -43,6 +53,16 @@ public struct MovieOmdbapiObjectResponse: Codable {
         case search = "Search"
         case totalResults
         case response = "Response"
+    }
+}
+
+public struct ImageDataObjectResponse: Codable {
+    public let data: Data?
+    public let imdbID: String
+
+    enum CodingKeys: String, CodingKey {
+        case data = "Data"
+        case imdbID = "ImdbID"
     }
 }
 

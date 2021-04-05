@@ -35,16 +35,37 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
             return Empty().eraseToAnyPublisher()
         }
     case let .addFoundMovies(query, movies):
-        
         state.needForFurtherLoad = false
         
         if movies.count > 0 {
+            
             if state.searchQuery != query {
                 state.foundMovies.removeAll()
                 state.searchQuery = query
             }
             
-            state.foundMovies.append(contentsOf: movies)
+            for movie in movies {
+                
+                if let imdbID = movie.imdbID, let posterString = movie.poster,
+                   let posterURL = URL(string: posterString) {
+                    return (environment.networkProvider.loadCover(from: posterURL, for: imdbID)?
+                                .map{SearchMoviesAction.addMovieWithPoster(movie: movie, poster: $0.data)}
+                                .eraseToAnyPublisher())!
+                } else {
+                    return Just(SearchMoviesAction.addMovieWithoutPoster(movie: movie))
+                        .eraseToAnyPublisher()
+                }
+            }
+            
+            
+            
+            
+            
+            
+            
+           
+            
+            //state.foundMovies.append(contentsOf: movies)
             state.searchPage += 1
             
             return Just(SearchMoviesAction.changeStatusMovieSearch(.getResults))
@@ -99,6 +120,10 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
         if progress < 100 {
             state.progressLoad = progress
         }
+    case let .addMovieWithPoster(movie, poster):
+        state.foundMovies.append(MovieOMDBWithPosterItem(movie: movie, poster: poster))
+    case let .addMovieWithoutPoster(movie):
+        state.foundMovies.append(MovieOMDBWithPosterItem(movie: movie, poster: nil))
     }
     return Empty().eraseToAnyPublisher()
 }
