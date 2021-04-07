@@ -18,13 +18,31 @@ public class NetworkProvider: Singletonable {
     }()
     
     // MARK: Common Methods
-    public func loadCover(from url: URL, for imdbID: String) -> AnyPublisher<ImageDataObjectResponse, Never>?{
-        return session.dataTaskPublisher(for: url)
-            .map({ (data, response)  in
-                return ImageDataObjectResponse(data: data, imdbID: imdbID)
-            })
-            .replaceError(with: ImageDataObjectResponse(data: nil, imdbID: imdbID))
-            .eraseToAnyPublisher()
+    public func loadData(for items: [String: String?]) -> AnyPublisher<[(String, Data?)], Never>{
+        var futures: [AnyPublisher<(String, Data?), Never>] = []
+        
+        for item in items {
+            guard let urlString = item.value,
+                  let url = URL(string: urlString) else {
+                continue
+            }
+            let future = Future<(String, Data?), Never> { promise in
+                URLSession.shared.dataTask(with: url) {data, response, error in
+                    if let data = data {
+                        promise(.success((item.key, data)))
+                    }
+                }.resume()
+            }
+            futures.append(future.eraseToAnyPublisher())
+        }
+        
+        return futures.dropFirst().reduce(into: AnyPublisher(futures[0].map{[$0]})) {
+            res, just in
+            res = res.zip(just) {
+                i1, i2 -> [(String,Data?)] in
+                return i1 + [i2]
+            }.eraseToAnyPublisher()
+        }
     }
 
     // MARK: OmdbAPI

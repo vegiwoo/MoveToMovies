@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Networking
 
 typealias Reducer<State, Action, Environment> = (inout State, Action, Environment) -> AnyPublisher<Action, Never>
 
@@ -44,34 +45,11 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
                 state.searchQuery = query
             }
             
-            for movie in movies {
-                
-                if let imdbID = movie.imdbID, let posterString = movie.poster,
-                   let posterURL = URL(string: posterString) {
-                    return (environment.networkProvider.loadCover(from: posterURL, for: imdbID)?
-                                .map{SearchMoviesAction.addMovieWithPoster(movie: movie, poster: $0.data)}
-                                .eraseToAnyPublisher())!
-                } else {
-                    return Just(SearchMoviesAction.addMovieWithoutPoster(movie: movie))
-                        .eraseToAnyPublisher()
-                }
-            }
-            
-            
-            
-            
-            
-            
-            
-           
-            
-            //state.foundMovies.append(contentsOf: movies)
+            state.foundMovies.append(contentsOf: movies)
             state.searchPage += 1
             
-            return Just(SearchMoviesAction.changeStatusMovieSearch(.getResults))
+            return Just(SearchMoviesAction.changeStatusMovieSearch(.getResults(movies)))
                 .eraseToAnyPublisher()
-            
-            
         } else {
             return Just(SearchMoviesAction.changeStatusMovieSearch(.error))
                 .eraseToAnyPublisher()
@@ -111,8 +89,20 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
             return publisher
                 .map{SearchMoviesAction.changeProgressMovieSearch($0)}
                 .eraseToAnyPublisher()
-        case .getResults:
+        case let .getResults(movies):
             state.infoMessage = ("", "")
+
+            var receivedItems = movies
+            receivedItems.removeAll(where: {$0.poster == nil || $0.imdbID == nil})
+
+            let dictionary: [String: String] = receivedItems.reduce(into: [:]) { dictionary, movie in
+                dictionary[movie.imdbID!] = movie.poster
+            }
+            
+            return environment.networkProvider.loadData(for: dictionary)
+                .replaceError(with: [("String", nil)])
+                .map{SearchMoviesAction.updateMoviesWithPosters(items: $0)}
+                .eraseToAnyPublisher()
         case .error:
             state.infoMessage = ("xmark.octagon", "Not found\nTry changing your search")
         }
@@ -120,10 +110,11 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
         if progress < 100 {
             state.progressLoad = progress
         }
-    case let .addMovieWithPoster(movie, poster):
-        state.foundMovies.append(MovieOMDBWithPosterItem(movie: movie, poster: poster))
-    case let .addMovieWithoutPoster(movie):
-        state.foundMovies.append(MovieOMDBWithPosterItem(movie: movie, poster: nil))
+
+    case let .updateMoviesWithPosters(items):
+        for item in items {
+            state.foundMoviesPosters.updateValue(item.1, forKey: item.0)
+        }
     }
     return Empty().eraseToAnyPublisher()
 }
@@ -143,3 +134,12 @@ func appReducer(state: inout AppState, action: AppAction, environment: AppEnviro
     }
 }
 
+extension Array {
+    public func toDictionary<Key: Hashable>(with selectKey: (Element) -> Key) -> [Key:Element] {
+        var dict = [Key:Element]()
+        for element in self {
+            dict[selectKey(element)] = element
+        }
+        return dict
+    }
+}

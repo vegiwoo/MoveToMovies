@@ -5,6 +5,7 @@
 
 #if canImport(SwiftUI)
 import SwiftUI
+import OmdbAPI
 
 @available(iOS 13.0, *)
 public struct SearchBar: View {
@@ -106,6 +107,33 @@ public struct SearchBar_Previews: PreviewProvider {
 }
 #endif
 
-public enum MovieSearchStatus {
-    case initial, typing, loading, getResults, error
+public enum MovieSearchStatus: CustomStringConvertible {
+    case initial
+    case typing
+    case loading
+    case getResults([MovieOmdbapiObject])
+    case error
+    
+    public var description: String {
+        switch self {
+        case .initial:
+            return "initial"
+        case .typing:
+            return "typing"
+        case .loading:
+            return "loading"
+        case .getResults(_):
+            return "getResults"
+        case .error:
+            return "error"
+        }
+    }
+}
+
+extension MovieSearchStatus: Equatable {
+    public static func == (lhs: MovieSearchStatus, rhs: MovieSearchStatus) -> Bool {
+        lhs.description == rhs.description
+    }
+    
+    
 }

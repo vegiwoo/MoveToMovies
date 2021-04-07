@@ -32,8 +32,12 @@ extension MovieSearchContainerView {
         appStore.binding(for: \.searchMovies.infoMessage)
     }
     
-    private var foundMovies: Binding<[MovieOMDBWithPosterItem]> {
+    private var foundMovies: Binding<[MovieOmdbapiObject]> {
         appStore.binding(for: \.searchMovies.foundMovies)
+    }
+    
+    private var foundMoviesPosters: Binding< [String: Data?]> {
+        appStore.binding(for: \.searchMovies.foundMoviesPosters)
     }
     
     private var needForFurtherLoad: Binding<Bool> {
@@ -45,7 +49,6 @@ extension MovieSearchContainerView {
     private var progressLoad: Binding<Float> {
         appStore.binding(for: \.searchMovies.progressLoad)
     }
-    
 }
 
 struct MovieSearchContainerView: View {
@@ -61,6 +64,7 @@ struct MovieSearchContainerView: View {
                                   searchQuery: searchQuery,
                                   infoMessage: infoMessage,
                                   foundMovies: foundMovies,
+                                  foundMoviesPosters: foundMoviesPosters,
                                   needForFurtherLoad: needForFurtherLoad, progressLoad: progressLoad)
         }
     }

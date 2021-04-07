@@ -18,8 +18,9 @@ struct MovieSearchRenderView: View {
     @Binding var selectedIndexSegmentControl: Int
     @Binding var movieSearchStatus: MovieSearchStatus
     @Binding var searchQuery: String
+    @Binding var foundMoviesPosters: [String: Data?]
     @Binding var infoMessage: (symbol: String, message: String)
-    @Binding var foundMovies: [MovieOMDBWithPosterItem]
+    @Binding var foundMovies: [MovieOmdbapiObject]
     @Binding var needForFurtherLoad: Bool
     @Binding var progressLoad: Float
     
@@ -29,7 +30,8 @@ struct MovieSearchRenderView: View {
          movieSearchStatus: Binding<MovieSearchStatus>,
          searchQuery: Binding<String>,
          infoMessage: Binding<(symbol: String, message: String)>,
-         foundMovies: Binding<[MovieOMDBWithPosterItem]>,
+         foundMovies: Binding<[MovieOmdbapiObject]>,
+         foundMoviesPosters: Binding<[String: Data?]>,
          needForFurtherLoad: Binding<Bool>,
          progressLoad: Binding<Float>
          ) {
@@ -40,6 +42,7 @@ struct MovieSearchRenderView: View {
         self._searchQuery = searchQuery
         self._infoMessage = infoMessage
         self._foundMovies = foundMovies
+        self._foundMoviesPosters = foundMoviesPosters
         self._needForFurtherLoad = needForFurtherLoad
         self._progressLoad = progressLoad
     }
@@ -61,9 +64,9 @@ struct MovieSearchRenderView: View {
                 if selectedIndexSegmentControl == 0 {
                     SearchBar(placeholder: "Search movie or TV Show...", actualColor: accentColor, searchText: $searchQuery,  movieSearchStatus: $movieSearchStatus)
 
-                    if movieSearchStatus == .getResults || movieSearchStatus == .loading  {
+                    if movieSearchStatus.description == "getResults" || movieSearchStatus == .loading  {
                         List(foundMovies, id: \.self) {item in
-                            MovieCell(model: item.movie, poster: item.poster)
+                            MovieCell(model: item, poster: foundMoviesPosters[item.imdbID!] ?? nil)
                                 .frame(width: 380, height: 120, alignment: .leading)
                                 .onAppear {
                                     if foundMovies.isLast(item) {
@@ -111,7 +114,10 @@ struct MovieSearchRenderView_Previews: PreviewProvider {
                               searchQuery: .constant(""),
                               infoMessage: .constant((symbol: "magnifyingglass",
                                                       message: "Find your favorite\nmovie or TV series")),
-                              foundMovies: .constant([]), needForFurtherLoad: .constant(false), progressLoad: .constant(50.9)
+                              foundMovies: .constant([]),
+                              foundMoviesPosters: .constant([:]),
+                              needForFurtherLoad: .constant(false),
+                              progressLoad: .constant(50.0)
                     )
     }
 }
