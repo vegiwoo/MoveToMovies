@@ -18,7 +18,7 @@ public class NetworkProvider: Singletonable {
     }()
     
     // MARK: Common Methods
-    public func loadData(for items: [String: String?]) -> AnyPublisher<[(String, Data?)], Never>{
+    public func loadData(for items: [String: String?]) -> AnyPublisher<[(String, Data?)], Never> {
         var futures: [AnyPublisher<(String, Data?), Never>] = []
         
         for item in items {
@@ -35,13 +35,14 @@ public class NetworkProvider: Singletonable {
             }
             futures.append(future.eraseToAnyPublisher())
         }
-        
+
         return futures.dropFirst().reduce(into: AnyPublisher(futures[0].map{[$0]})) {
             res, just in
             res = res.zip(just) {
                 i1, i2 -> [(String,Data?)] in
                 return i1 + [i2]
-            }.eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
         }
     }
 
@@ -60,7 +61,6 @@ public class NetworkProvider: Singletonable {
             .replaceError(with: MovieOmdbapiObjectResponse(search: [], totalResults: "", response: ""))
             .eraseToAnyPublisher()
     }
-
 }
 
 public struct MovieOmdbapiObjectResponse: Codable {
@@ -83,7 +83,6 @@ public struct ImageDataObjectResponse: Codable {
         case imdbID = "ImdbID"
     }
 }
-
 
 public extension NetworkProvider {
     enum API: CustomStringConvertible {

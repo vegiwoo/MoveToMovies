@@ -65,7 +65,9 @@ struct MovieSearchContainerView: View {
                                   infoMessage: infoMessage,
                                   foundMovies: foundMovies,
                                   foundMoviesPosters: foundMoviesPosters,
-                                  needForFurtherLoad: needForFurtherLoad, progressLoad: progressLoad)
+                                  needForFurtherLoad: needForFurtherLoad,
+                                  progressLoad: progressLoad
+                                  )
         }
     }
 }

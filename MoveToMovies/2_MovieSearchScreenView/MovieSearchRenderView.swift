@@ -64,7 +64,7 @@ struct MovieSearchRenderView: View {
                 if selectedIndexSegmentControl == 0 {
                     SearchBar(placeholder: "Search movie or TV Show...", actualColor: accentColor, searchText: $searchQuery,  movieSearchStatus: $movieSearchStatus)
 
-                    if movieSearchStatus.description == "getResults" || movieSearchStatus == .loading  {
+                    if movieSearchStatus.description == "getResults" || movieSearchStatus == .loading || movieSearchStatus == .endOfSearch {
                         List(foundMovies, id: \.self) {item in
                             MovieCell(model: item, poster: foundMoviesPosters[item.imdbID!] ?? nil)
                                 .frame(width: 380, height: 120, alignment: .leading)
@@ -88,6 +88,10 @@ struct MovieSearchRenderView: View {
                         .foregroundColor(Color(UIColor.systemGray4))
                         .transition(.opacity)
                         Spacer()
+                    }
+                    
+                    if movieSearchStatus == .endOfSearch {
+                        Text("End of search").frame(width: 380, height: 30, alignment: .center)
                     }
                     
                     if movieSearchStatus == .loading {

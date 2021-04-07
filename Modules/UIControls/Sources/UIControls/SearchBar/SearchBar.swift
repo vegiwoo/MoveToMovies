@@ -112,6 +112,7 @@ public enum MovieSearchStatus: CustomStringConvertible {
     case typing
     case loading
     case getResults([MovieOmdbapiObject])
+    case endOfSearch
     case error
     
     public var description: String {
@@ -124,6 +125,8 @@ public enum MovieSearchStatus: CustomStringConvertible {
             return "loading"
         case .getResults(_):
             return "getResults"
+        case .endOfSearch:
+            return "endOfSearch"
         case .error:
             return "error"
         }

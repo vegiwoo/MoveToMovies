@@ -54,7 +54,6 @@ struct SearchMoviesState {
     var foundMoviesPosters: [String: Data?]
     var needForFurtherLoad: Bool
     var progressLoad: Float = 0.0
-    
 }
 
 struct PopularMoviesState {

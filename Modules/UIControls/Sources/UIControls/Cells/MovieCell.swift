@@ -47,10 +47,8 @@ public struct MovieCell: View, SizeClassAdjustable {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .scaledToFill()
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                
                                 .smallPosterFrame(geometrySize: geometry.size)
-                        
-                        
                         } else {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke()

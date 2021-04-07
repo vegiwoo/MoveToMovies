@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import OmdbAPI
 import Networking
 
 typealias Reducer<State, Action, Environment> = (inout State, Action, Environment) -> AnyPublisher<Action, Never>
@@ -51,8 +52,13 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
             return Just(SearchMoviesAction.changeStatusMovieSearch(.getResults(movies)))
                 .eraseToAnyPublisher()
         } else {
-            return Just(SearchMoviesAction.changeStatusMovieSearch(.error))
-                .eraseToAnyPublisher()
+            if state.foundMovies.isEmpty {
+                return Just(SearchMoviesAction.changeStatusMovieSearch(.error))
+                     .eraseToAnyPublisher()
+            } else {
+                return Just(SearchMoviesAction.changeStatusMovieSearch(.endOfSearch))
+                     .eraseToAnyPublisher()
+            }
         }
     case let .assignIndexSegmentControl(index):
         state.selectedIndexSegmentControl = index
@@ -64,9 +70,11 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
         case .initial:
             state.infoMessage = ("magnifyingglass", "Find your favorite\nmovie or TV series")
             state.foundMovies.removeAll()
+            state.foundMoviesPosters.removeAll()
             state.searchPage = 1
             state.searchQuery = ""
             state.needForFurtherLoad = false
+            state.progressLoad = 0.00
         case .typing:
             state.infoMessage = ("", "")
         case .loading:
@@ -105,6 +113,9 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
                 .eraseToAnyPublisher()
         case .error:
             state.infoMessage = ("xmark.octagon", "Not found\nTry changing your search")
+        case .endOfSearch:
+            state.movieSearchStatus = .endOfSearch
+            
         }
     case let .changeProgressMovieSearch(progress):
         if progress < 100 {
