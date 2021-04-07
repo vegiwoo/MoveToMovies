@@ -19,7 +19,7 @@ public struct SmallPosterFrame: ViewModifier, SizeClassAdjustable {
     
     public func body(content: Content) -> some View {
         content
-            .frame(width: isPad ? size.width / 5 :  isPadOrLandscapeMax ? size.height / 3 : size.width / 5.5)
+            .frame(width: isPad ? size.width / 5 :  isPadOrLandscapeMax ? size.height / 3 : size.width / 5.5, height: size.height - 20)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding(.all, 10)
     }
@@ -30,5 +30,4 @@ public extension View {
     func smallPosterFrame(geometrySize: CGSize) -> some View {
         self.modifier(SmallPosterFrame( size: geometrySize))
     }
-    
 }

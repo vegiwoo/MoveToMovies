@@ -47,7 +47,6 @@ public struct MovieCell: View, SizeClassAdjustable {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .scaledToFill()
-                                
                                 .smallPosterFrame(geometrySize: geometry.size)
                         } else {
                             RoundedRectangle(cornerRadius: 10)

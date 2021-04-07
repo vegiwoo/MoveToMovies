@@ -74,7 +74,17 @@ struct MovieSearchRenderView: View {
                                     }
                                 }
                         }
-                    } else {
+                        
+                        if movieSearchStatus == .loading {
+                            ProgressView("", value: progressLoad, total: 100)
+                                .frame(width: geometry.size.width, height: 3, alignment: .center)
+                        }
+                        
+                        if movieSearchStatus == .endOfSearch {
+                            Text("End of search").frame(width: 380, height: 30, alignment: .center)
+                        }
+                        
+                    } else if movieSearchStatus == .initial || movieSearchStatus == .error  {
                         Spacer().frame(width: 100, height: 100, alignment: .center)
                         // Info View
                         VStack(spacing: 20) {
@@ -88,16 +98,6 @@ struct MovieSearchRenderView: View {
                         .foregroundColor(Color(UIColor.systemGray4))
                         .transition(.opacity)
                         Spacer()
-                    }
-                    
-                    if movieSearchStatus == .endOfSearch {
-                        Text("End of search").frame(width: 380, height: 30, alignment: .center)
-                    }
-                    
-                    if movieSearchStatus == .loading {
-                        ProgressView("", value: progressLoad, total: 100)
-                            .frame(width: geometry.size.width, height: 3, alignment: .center)
-                        
                     }
 
                 // Popular movies

@@ -26,10 +26,8 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
     
     switch action {
     case let .loadSearchMovies(query,page):
-        
-        state.movieSearchStatus = .loading
-        
         if !query.isEmpty {
+            state.movieSearchStatus = .loading
             return (environment.networkProvider.loadMovieRequest(query: query.trimmingCharacters(in: .whitespacesAndNewlines), page: page)?
                         .map{SearchMoviesAction.addFoundMovies(query: query, movies: $0.search)}
                         .eraseToAnyPublisher())!
@@ -40,16 +38,25 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
         state.needForFurtherLoad = false
         
         if movies.count > 0 {
-            
             if state.searchQuery != query {
                 state.foundMovies.removeAll()
                 state.searchQuery = query
             }
             
-            state.foundMovies.append(contentsOf: movies)
-            state.searchPage += 1
+            var moviesForPosterSearch: [MovieOmdbapiObject] = .init()
             
-            return Just(SearchMoviesAction.changeStatusMovieSearch(.getResults(movies)))
+            for movie in movies {
+                if !state.foundMovies.contains(movie) {
+                    state.foundMovies.append(movie)
+                    moviesForPosterSearch.append(movie)
+                }
+                
+                if state.foundMovies.isLast(movie) {
+                    state.searchPage += 1
+                }
+            }
+
+            return Just(SearchMoviesAction.changeStatusMovieSearch(.getResults(moviesForPosterSearch)))
                 .eraseToAnyPublisher()
         } else {
             if state.foundMovies.isEmpty {
@@ -68,6 +75,7 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
         
         switch newStatus {
         case .initial:
+            print("initial")
             state.infoMessage = ("magnifyingglass", "Find your favorite\nmovie or TV series")
             state.foundMovies.removeAll()
             state.foundMoviesPosters.removeAll()
@@ -99,18 +107,21 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
                 .eraseToAnyPublisher()
         case let .getResults(movies):
             state.infoMessage = ("", "")
-
-            var receivedItems = movies
-            receivedItems.removeAll(where: {$0.poster == nil || $0.imdbID == nil})
-
-            let dictionary: [String: String] = receivedItems.reduce(into: [:]) { dictionary, movie in
-                dictionary[movie.imdbID!] = movie.poster
-            }
             
-            return environment.networkProvider.loadData(for: dictionary)
-                .replaceError(with: [("String", nil)])
-                .map{SearchMoviesAction.updateMoviesWithPosters(items: $0)}
-                .eraseToAnyPublisher()
+            if movies.count > 0 {
+                var receivedItems = movies
+                receivedItems.removeAll(where: {$0.poster == nil || $0.imdbID == nil})
+
+                let dictionary: [String: String] = receivedItems.reduce(into: [:]) { dictionary, movie in
+                    dictionary[movie.imdbID!] = movie.poster
+                }
+                
+                return environment.networkProvider.loadData(for: dictionary)
+                    .replaceError(with: [("String", nil)])
+                    .map{SearchMoviesAction.updateMoviesWithPosters(items: $0)}
+                    .eraseToAnyPublisher()
+            }
+
         case .error:
             state.infoMessage = ("xmark.octagon", "Not found\nTry changing your search")
         case .endOfSearch:
@@ -142,15 +153,5 @@ func appReducer(state: inout AppState, action: AppAction, environment: AppEnviro
             .map(AppAction.searchMovies)
             .eraseToAnyPublisher()
     
-    }
-}
-
-extension Array {
-    public func toDictionary<Key: Hashable>(with selectKey: (Element) -> Key) -> [Key:Element] {
-        var dict = [Key:Element]()
-        for element in self {
-            dict[selectKey(element)] = element
-        }
-        return dict
     }
 }

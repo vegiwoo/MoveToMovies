@@ -20,6 +20,7 @@ public struct SearchBar: View {
         didSet {
             if movieSearchStatus == .initial {
                 typingText = ""
+                isClearButton = false
             }
         }
     }
@@ -67,7 +68,6 @@ public struct SearchBar: View {
                         // Tap clear button
                         movieSearchStatus = .initial
                         typingText = ""; searchText = ""
-                        //keyboardDismiss()
                     }) {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(Color(actualColor))
