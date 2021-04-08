@@ -11,6 +11,14 @@ struct MainScreenContainerView: View {
     
     @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
     
+    var body: some View {
+        MainScreenRenderView(selectedIndex: tabbarSelectedIndex, selectedView: tabbarSelectedView, visibleTabbar: true)
+            .environmentObject(appStore)
+    }
+}
+
+/// Binding valiables
+extension MainScreenContainerView {
     private var tabbarSelectedIndex: Binding<Int> {
         appStore.binding(for: \.tabBar.selectedIndex) {AppAction.tabbar(action: TabbarAction.indexChange($0))}
     }
@@ -18,10 +26,7 @@ struct MainScreenContainerView: View {
         appStore.binding(for: \.tabBar.selectedView)
     }
     
-    var body: some View {
-        MainScreenRenderView(selectedIndex: tabbarSelectedIndex, selectedView: tabbarSelectedView, visibleTabbar: true)
-            .environmentObject(appStore)
-    }
+    
 }
 
 struct MainScreenContainerView_Previews: PreviewProvider {

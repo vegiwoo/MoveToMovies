@@ -25,6 +25,7 @@ enum SearchMoviesAction {
     case updateMoviesWithPosters(items: [(String, Data?)])
     case addFoundMovies(query: String, movies: [MovieOmdbapiObject])
     case changeProgressMovieSearch(Float)
+    case setSelectedMoviePoster(for: MovieOmdbapiObject?)
 }
 
 enum TabbarAction {

@@ -75,7 +75,6 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
         
         switch newStatus {
         case .initial:
-            print("initial")
             state.infoMessage = ("magnifyingglass", "Find your favorite\nmovie or TV series")
             state.foundMovies.removeAll()
             state.foundMoviesPosters.removeAll()
@@ -83,6 +82,8 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
             state.searchQuery = ""
             state.needForFurtherLoad = false
             state.progressLoad = 0.00
+            state.selectedMovie = nil
+            state.posterOfSelectedMovie = nil
         case .typing:
             state.infoMessage = ("", "")
         case .loading:
@@ -136,6 +137,20 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
     case let .updateMoviesWithPosters(items):
         for item in items {
             state.foundMoviesPosters.updateValue(item.1, forKey: item.0)
+        }
+    case let .setSelectedMoviePoster(for: movie):
+        if let newValue = movie {
+            state.selectedMovie = newValue
+            
+            if let imdbID = newValue.imdbID,
+               let poster = state.foundMoviesPosters[imdbID] {
+                state.posterOfSelectedMovie = poster
+            } else {
+                state.posterOfSelectedMovie = nil
+            }
+            
+        } else {
+            state.selectedMovie = nil
         }
     }
     return Empty().eraseToAnyPublisher()

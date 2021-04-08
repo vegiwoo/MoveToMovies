@@ -10,6 +10,40 @@ import OmdbAPI
 import Navigation
 import UIControls
 
+struct MovieSearchContainerView: View {
+    
+    @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
+    @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
+    
+    @State var isGotoDetailedView: Bool = false
+    
+    var body: some View {
+        MovieSearchRenderView(title: TabbarTab.movies.text,
+                              accentColor: TabbarTab.movies.actualColor,
+                              selectedIndexSegmentControl: selectedIndexSegmentControl,
+                              movieSearchStatus: movieSearchStatus,
+                              searchQuery: searchQuery,
+                              infoMessage: infoMessage,
+                              foundMovies: foundMovies,
+                              foundMoviesPosters: foundMoviesPosters,
+                              needForFurtherLoad: needForFurtherLoad,
+                              progressLoad: progressLoad,
+                              selectedMovie: selectedMovie
+        )
+        .onAppear {
+            isGotoDetailedView = false
+        }
+        .onChange(of: appStore.state.searchMovies.selectedMovie) { (value) in
+            if value != nil, isGotoDetailedView == false {
+                isGotoDetailedView.toggle()
+                navCoordinator.push(MovieDetailContainerView())
+            }
+        }
+        
+    }
+}
+
+/// Bindings variables
 extension MovieSearchContainerView {
     private var selectedIndexSegmentControl: Binding<Int> {
         appStore.binding(for: \.searchMovies.selectedIndexSegmentControl) {
@@ -41,7 +75,7 @@ extension MovieSearchContainerView {
     }
     
     private var needForFurtherLoad: Binding<Bool> {
-        appStore.binding(for: \.searchMovies.needForFurtherLoad) {_ in 
+        appStore.binding(for: \.searchMovies.needForFurtherLoad) {_ in
             AppAction.searchMovies(action: SearchMoviesAction.loadSearchMovies(query: appStore.state.searchMovies.searchQuery, page: appStore.state.searchMovies.searchPage))
         }
     }
@@ -49,27 +83,13 @@ extension MovieSearchContainerView {
     private var progressLoad: Binding<Float> {
         appStore.binding(for: \.searchMovies.progressLoad)
     }
-}
-
-struct MovieSearchContainerView: View {
     
-    @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
-    
-    var body: some View {
-        NavCoordinatorView {
-            MovieSearchRenderView(title: TabbarTab.movies.text,
-                                  accentColor: TabbarTab.movies.actualColor,
-                                  selectedIndexSegmentControl: selectedIndexSegmentControl,
-                                  movieSearchStatus: movieSearchStatus,
-                                  searchQuery: searchQuery,
-                                  infoMessage: infoMessage,
-                                  foundMovies: foundMovies,
-                                  foundMoviesPosters: foundMoviesPosters,
-                                  needForFurtherLoad: needForFurtherLoad,
-                                  progressLoad: progressLoad
-                                  )
+    private var selectedMovie: Binding<MovieOmdbapiObject?> {
+        appStore.binding(for: \.searchMovies.selectedMovie) {
+            AppAction.searchMovies(action: SearchMoviesAction.setSelectedMoviePoster(for: $0))
         }
     }
+    
 }
 
 struct MovieSearchContainerView_Previews: PreviewProvider {

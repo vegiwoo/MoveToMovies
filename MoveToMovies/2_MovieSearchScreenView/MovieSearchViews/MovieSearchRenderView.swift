@@ -8,8 +8,11 @@
 import SwiftUI
 import OmdbAPI
 import UIControls
+import Navigation
 
 struct MovieSearchRenderView: View {
+    
+    @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
     
     let title: String
     let accentColor: UIColor
@@ -23,7 +26,8 @@ struct MovieSearchRenderView: View {
     @Binding var foundMovies: [MovieOmdbapiObject]
     @Binding var needForFurtherLoad: Bool
     @Binding var progressLoad: Float
-    
+    @Binding var selectedMovie: MovieOmdbapiObject?
+
     init(title: String,
          accentColor: UIColor,
          selectedIndexSegmentControl: Binding<Int>,
@@ -33,7 +37,8 @@ struct MovieSearchRenderView: View {
          foundMovies: Binding<[MovieOmdbapiObject]>,
          foundMoviesPosters: Binding<[String: Data?]>,
          needForFurtherLoad: Binding<Bool>,
-         progressLoad: Binding<Float>
+         progressLoad: Binding<Float>,
+         selectedMovie: Binding<MovieOmdbapiObject?>
          ) {
         self.title = title
         self.accentColor = accentColor
@@ -45,6 +50,7 @@ struct MovieSearchRenderView: View {
         self._foundMoviesPosters = foundMoviesPosters
         self._needForFurtherLoad = needForFurtherLoad
         self._progressLoad = progressLoad
+        self._selectedMovie = selectedMovie
     }
     
     var body: some View {
@@ -63,16 +69,27 @@ struct MovieSearchRenderView: View {
                 // Search movies
                 if selectedIndexSegmentControl == 0 {
                     SearchBar(placeholder: "Search movie or TV Show...", actualColor: accentColor, searchText: $searchQuery,  movieSearchStatus: $movieSearchStatus)
-
-                    if movieSearchStatus.description == "getResults" || movieSearchStatus == .loading || movieSearchStatus == .endOfSearch {
-                        List(foundMovies, id: \.self) {item in
-                            MovieCell(model: item, poster: foundMoviesPosters[item.imdbID!] ?? nil)
-                                .frame(width: 380, height: 120, alignment: .leading)
-                                .onAppear {
-                                    if foundMovies.isLast(item) {
-                                        needForFurtherLoad = true
+                    
+                    if movieSearchStatus.description == "getResults" ||
+                        movieSearchStatus == .loading ||
+                        movieSearchStatus == .endOfSearch {
+                        
+                        ScrollViewReader { proxy in
+                            ScrollView {
+                                LazyVStack {
+                                    ForEach(foundMovies, id: \.self) {item in
+                                        MovieCell(model: item, poster: foundMoviesPosters[item.imdbID!] ?? nil)
+                                            .frame(width: 380, height: 120, alignment: .leading)
+                                            .onAppear {
+                                                if foundMovies.isLast(item) {
+                                                    needForFurtherLoad = true
+                                                }
+                                            }.onTapGesture {
+                                                selectedMovie = item
+                                            }
                                     }
                                 }
+                            }
                         }
                         
                         if movieSearchStatus == .loading {
@@ -99,7 +116,7 @@ struct MovieSearchRenderView: View {
                         .transition(.opacity)
                         Spacer()
                     }
-
+                    
                 // Popular movies
                 } else if selectedIndexSegmentControl == 1 {
                     
@@ -121,7 +138,8 @@ struct MovieSearchRenderView_Previews: PreviewProvider {
                               foundMovies: .constant([]),
                               foundMoviesPosters: .constant([:]),
                               needForFurtherLoad: .constant(false),
-                              progressLoad: .constant(50.0)
+                              progressLoad: .constant(50.0),
+                              selectedMovie: .constant(MovieOmdbapiObject())
                     )
     }
 }

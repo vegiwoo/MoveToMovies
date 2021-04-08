@@ -3,7 +3,7 @@ openapi: 3.0.0
 info:
   title: API client for https://www.themoviedb.org
   description: Developed as part of the 'Move to Movies' educational project on the "iOS Developer professional" course on the educational platform [Otus](https://otus.ru)
-  version: 0.0.21
+  version: 0.1.0
   contact:
     name: Dmitry Samartcev
     url: https://github.com/vegiwoo
@@ -209,6 +209,82 @@ components:
           type: boolean
         vote_average:
           type: number
+
+    # MovieListResultObjectWithMediaType: 
+    #   allOf:
+    #     - $ref: '#/components/schemas/MovieListResultObject' 
+    #     - type: object
+    #       required:
+    #         - media_type
+    #       properties:
+    #         media_type:
+    #           type: string
+
+    # TVListResultObject:
+    #   type: object
+    #   properties:
+    #     poster_path:
+    #       type: string
+    #       nullable: true 
+    #     popularity:
+    #       type: number 
+    #     id:
+    #       type: integer
+    #     overview: 
+    #       type: string
+    #     backdrop_path:
+    #       type: string
+    #       nullable: true
+    #     vote_average:
+    #       type: number
+    #     first_air_date:
+    #       type: string
+    #     origin_country:
+    #       type: array
+    #       items:
+    #         type: string
+    #     gerne_ids:
+    #       type: array
+    #       items: 
+    #         type: integer
+    #     original_language:
+    #       type: string
+    #     vote_count: 
+    #       type: integer
+    #     name: 
+    #       type: string
+    #     original_name: 
+    #       type: string
+
+    # TVListResultObjectWithMediaType: 
+    #   allOf:
+    #     - $ref: '#/components/schemas/TVListResultObject' 
+    #     - type: object
+    #       required:
+    #         - media_type
+    #       properties:
+    #         media_type:
+    #           type: string
+
+    # PersonListResultObject: 
+    #   type: object
+    #   properties:
+    #     profile_path:
+    #       type: string
+    #       nullable: true
+    #     adult:
+    #       type: boolean
+    #     id:
+    #       type: integer
+    #     name: 
+    #       type: string
+    #     popularity:
+    #       type: 
+    #     known_for:
+    #       oneOf:
+    #         - $ref: '#/components/schemas/MovieListResultObjectWithMediaType'
+    #         - $ref: '#/components/schemas/TVListResultObjectWithMediaType'
+
           
 paths:
   /movie/popular:
@@ -330,32 +406,55 @@ paths:
                     type: string
                   status_code: 
                     type: integer
-                    
-  # /t/p/{image_size}/{poster_path}:
-  #   get:
-  #     summary: Get a movie poster.
-  #     servers:
-  #       - url: https://image.tmdb.org
-  #         description: Server address for storing images.
-  #     parameters:
+  # /find/{external_id}:
+  #   get: 
+  #     summary: Searches for one of identifiers (e.g. imdb_id).
+  #       parameters:
+  #       - in: query
+  #         name: api_key
+  #         required: true
+  #         description: API key for using the service.
+  #         schema:
+  #           type : string   
   #       - in: path
-  #         name: image_size
+  #         name: external_id
   #         required: true
   #         schema:
   #           type: string
-  #           enum: [w92, w154, w185, w342, w500, w780, original]
-  #         description: Specifies width of poster in pixels.
-  #       - in: path
-  #         name: poster_path
-  #         required: true
-  #         schema:
-  #           type: string
-  #         description: Specifies path of poster
-  #     responses:
-  #       '200':
-  #         description: Date object containing poster.
-  #         content:
-  #           image/png:
-  #             schema:
-  #               type: string
-  #               format: binary
+  #           enum: 
+  #             - imdb_id
+  #             - freebase_mid
+  #             - freebase_id
+  #             - tvdb_id
+  #             - tvrage_id
+  #             - facebook_id
+  #             - instagram_id
+  #         description: The movie ID.
+  #       responses:
+  #         '200':
+  #           description: Information about a movie.
+  #           content:
+  #             application/json:
+  #               schema:
+  #                 type: object
+  #                 properties: 
+  #                   movie_results:
+  #                     type: array
+  #                     items:
+  #                       $ref: '#/components/schemas/MovieListResultObject'
+  #                   person_results:
+  #                     type: array
+  #                     items:
+  #                       $ref: '#/components/schemas/PersonListResultObject'
+  #                   tv_results: 
+  #                     type: array
+  #                     items: 
+  #                       $ref: '#/components/schemas/TVListResultObject'
+  #                   tv_episode_results:
+  #                     type: array
+  #                     items:
+  #                       #$ref: '#/components/schemas/MovieListResultObject'
+  #                   tv_season_results:
+  #                     type: array
+  #                     items:
+  #                       #$ref: '#/components/schemas/MovieListResultObject'

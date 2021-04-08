@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIControls
+import Navigation
 
 struct MainScreenRenderView: View, SizeClassAdjustable {
     
@@ -25,15 +26,16 @@ struct MainScreenRenderView: View, SizeClassAdjustable {
     var body: some View {
         GeometryReader {geometry in
             VStack {
-                selectedView
-                    .frame(width: geometry.size.width,
-                           height: isPad
-                            ? (geometry.size.height / 11) * 10
-                            : isPadOrLandscapeMax
-                            ? (geometry.size.height / 6) * 5
-                            : (geometry.size.height / 12) * 11)
-                    .transition(.moveAndFade)
-                
+                NavCoordinatorView {
+                    selectedView
+                }.frame(width: geometry.size.width,
+                        height: isPad
+                         ? (geometry.size.height / 11) * 10
+                         : isPadOrLandscapeMax
+                         ? (geometry.size.height / 6) * 5
+                         : (geometry.size.height / 12) * 11)
+                 .transition(.moveAndFade)
+
                 if visibleTabbar {
                     TabBar(tabbarSelectedIndex: $selectedIndex, tabBarItems: appStore.state.tabBar.tabBarItems, animanion: Animation.easeInOut(duration: 0.4))
                         .frame(width: isPad
