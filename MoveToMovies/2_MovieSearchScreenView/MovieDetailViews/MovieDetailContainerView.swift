@@ -9,7 +9,7 @@ import SwiftUI
 import OmdbAPI
 import Navigation
 
-struct MovieDetailContainerView: View {
+struct MovieDetailContainerView: View, IContaierView {
     
     @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
     @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
@@ -19,8 +19,8 @@ struct MovieDetailContainerView: View {
     init() {}
     
     var body: some View {
-        MovieDetailRenderView(selectedMovie: selectedMovie,
-                              foundMoviePosterData: selectedMoviePosterData,
+        MovieDetailRenderView(selectedOMDBMovie: selectedMovie,
+                              selectedOMDBMoviePoster: selectedMoviePosterData,
                               isGotoPreviewsView: $isGotoPreviewsView)
             .onAppear {
                 isGotoPreviewsView = false
@@ -34,13 +34,13 @@ struct MovieDetailContainerView: View {
 
 extension MovieDetailContainerView {
     private var selectedMovie: Binding<MovieOmdbapiObject?> {
-        appStore.binding(for: \.searchMovies.selectedMovie) {
+        appStore.binding(for: \.searchMovies.selectedOMDBMovie) {
             AppAction.searchMovies(action: SearchMoviesAction.setSelectedMoviePoster(for: $0))
         }
     }
 
     private var selectedMoviePosterData: Binding<Data?> {
-        appStore.binding(for: \.searchMovies.posterOfSelectedMovie)
+        appStore.binding(for: \.searchMovies.selectedOMDBMoviePoster)
     }
 }
 struct MovieDetailContainerView_Previews: PreviewProvider {

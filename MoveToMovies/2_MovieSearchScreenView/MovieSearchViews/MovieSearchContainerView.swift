@@ -10,7 +10,7 @@ import OmdbAPI
 import Navigation
 import UIControls
 
-struct MovieSearchContainerView: View {
+struct MovieSearchContainerView: View, IContaierView {
     
     @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
     @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
@@ -33,7 +33,7 @@ struct MovieSearchContainerView: View {
         .onAppear {
             isGotoDetailedView = false
         }
-        .onChange(of: appStore.state.searchMovies.selectedMovie) { (value) in
+        .onChange(of: appStore.state.searchMovies.selectedOMDBMovie) { (value) in
             if value != nil, isGotoDetailedView == false {
                 isGotoDetailedView.toggle()
                 navCoordinator.push(MovieDetailContainerView())
@@ -87,7 +87,7 @@ extension MovieSearchContainerView {
     }
     
     private var selectedMovie: Binding<MovieOmdbapiObject?> {
-        appStore.binding(for: \.searchMovies.selectedMovie) {
+        appStore.binding(for: \.searchMovies.selectedOMDBMovie) {
             AppAction.searchMovies(action: SearchMoviesAction.setSelectedMoviePoster(for: $0))
         }
     }

@@ -13,8 +13,7 @@ struct MovieView: View {
     
     private var popularMovie: MovieItem?
     private var searchMovie: (MovieOmdbapiObject, Data?)?
-    
-    
+
     private var actualColor: Color
     
     @State var gernesColumns: [GridItem] = .init()

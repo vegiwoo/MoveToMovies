@@ -54,19 +54,9 @@ struct SearchMoviesState {
     var foundMoviesPosters: [String: Data?]
     var needForFurtherLoad: Bool
     var progressLoad: Float = 0.0
-    
-    var selectedMovie: MovieOmdbapiObject? /*{
-        willSet {
-            if let newValue = newValue {
-                print("SearchMoviesState: selectedMovie imdbID \(String(describing: newValue.imdbID))")
-            }
-        }
-    }*/
-    var posterOfSelectedMovie: Data? /*{
-        willSet {
-            print("SearchMoviesState: posterOfSelectedMovie data \(String(describing: newValue?.count))")
-        }
-    }*/
+    var selectedOMDBMovie: MovieOmdbapiObject?
+    var selectedOMDBMoviePoster: Data? 
+
 }
 
 struct PopularMoviesState {

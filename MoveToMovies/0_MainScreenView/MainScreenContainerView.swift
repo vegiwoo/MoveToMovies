@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import Navigation
 
-struct MainScreenContainerView: View {
+struct MainScreenContainerView: View, IContaierView {
     
     @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
+    @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
     
     var body: some View {
         MainScreenRenderView(selectedIndex: tabbarSelectedIndex, selectedView: tabbarSelectedView, visibleTabbar: true)
@@ -25,8 +27,7 @@ extension MainScreenContainerView {
     private var tabbarSelectedView: Binding<AnyView> {
         appStore.binding(for: \.tabBar.selectedView)
     }
-    
-    
+
 }
 
 struct MainScreenContainerView_Previews: PreviewProvider {

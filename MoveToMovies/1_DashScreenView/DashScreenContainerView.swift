@@ -6,8 +6,13 @@
 //
 
 import SwiftUI
+import Navigation
 
-struct DashScreenContainerView: View {
+struct DashScreenContainerView: View, IContaierView {
+    
+    @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
+    @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
+    
     var body: some View {
         DashScreenRenderView()
     }

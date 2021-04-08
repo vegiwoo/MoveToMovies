@@ -10,28 +10,28 @@ import OmdbAPI
 import UIControls
 import Navigation
 
-
 struct MovieDetailRenderView: View {
     
     @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
    
-    @Binding var selectedMovie: MovieOmdbapiObject?
-    @Binding var selectedMoviePosterData: Data?
+    @Binding var selectedOMDBMovie: MovieOmdbapiObject?
+    @Binding var selectedOMDBMoviePoster: Data?
     @Binding var isGotoPreviewsView: Bool
     
-    init(selectedMovie: Binding<MovieOmdbapiObject?>, foundMoviePosterData: Binding<Data?>, isGotoPreviewsView: Binding<Bool>) {
-        self._selectedMovie = selectedMovie
-        self._selectedMoviePosterData = foundMoviePosterData
+    init(selectedOMDBMovie: Binding<MovieOmdbapiObject?>, selectedOMDBMoviePoster: Binding<Data?>, isGotoPreviewsView: Binding<Bool>) {
+        self._selectedOMDBMovie = selectedOMDBMovie
+        self._selectedOMDBMoviePoster = selectedOMDBMoviePoster
         self._isGotoPreviewsView = isGotoPreviewsView
     }
 
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
-                
-            Text(selectedMovie?.title ?? "No title")
-
-            Spacer()
-            
+            // Selected OMDB Movie
+            if let selectedOMDBMovie = selectedOMDBMovie,
+               let selectedOMDBMoviePoster = selectedOMDBMoviePoster {
+                StretchyHeaderScreen(imageData: selectedOMDBMoviePoster, title: selectedOMDBMovie.title!, content: AnyView(
+                                        MovieInfoContainerView()))
+            }
             CircleBackButtonLabel().onTapGesture {
                 isGotoPreviewsView = true
             }
@@ -41,8 +41,8 @@ struct MovieDetailRenderView: View {
 
 struct MovieDetailRenderView_Previews: PreviewProvider {
     static var previews: some View {
-        MovieDetailRenderView(selectedMovie: .constant(MovieOmdbapiObject()),
-                              foundMoviePosterData: .constant(nil),
+        MovieDetailRenderView(selectedOMDBMovie: .constant(MovieOmdbapiObject()),
+                              selectedOMDBMoviePoster: .constant(nil),
                               isGotoPreviewsView: .constant(false))
     }
 }

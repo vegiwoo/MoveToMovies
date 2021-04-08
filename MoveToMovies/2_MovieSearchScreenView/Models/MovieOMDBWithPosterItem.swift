@@ -8,9 +8,9 @@
 import Foundation
 import OmdbAPI
 
-struct MovieOMDBWithPosterItem: Hashable, Identifiable {
-    var id: UUID { UUID() }
-    var movie: MovieOmdbapiObject
-    var poster: Data?
-}
+//struct MovieOMDBWithPosterItem: Hashable, Identifiable {
+//    var id: UUID { UUID() }
+//    var movie: MovieOmdbapiObject
+//    var poster: Data?
+//}
 

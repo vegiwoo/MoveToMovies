@@ -82,8 +82,8 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
             state.searchQuery = ""
             state.needForFurtherLoad = false
             state.progressLoad = 0.00
-            state.selectedMovie = nil
-            state.posterOfSelectedMovie = nil
+            state.selectedOMDBMovie = nil
+            state.selectedOMDBMoviePoster = nil
         case .typing:
             state.infoMessage = ("", "")
         case .loading:
@@ -140,17 +140,17 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
         }
     case let .setSelectedMoviePoster(for: movie):
         if let newValue = movie {
-            state.selectedMovie = newValue
+            state.selectedOMDBMovie = newValue
             
             if let imdbID = newValue.imdbID,
                let poster = state.foundMoviesPosters[imdbID] {
-                state.posterOfSelectedMovie = poster
+                state.selectedOMDBMoviePoster = poster
             } else {
-                state.posterOfSelectedMovie = nil
+                state.selectedOMDBMoviePoster = nil
             }
             
         } else {
-            state.selectedMovie = nil
+            state.selectedOMDBMovie = nil
         }
     }
     return Empty().eraseToAnyPublisher()
