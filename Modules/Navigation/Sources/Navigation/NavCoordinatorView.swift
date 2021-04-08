@@ -13,9 +13,9 @@ public struct NavCoordinatorView<Content>: View  where Content: View {
     
     public init(ta: TransitionAndAnimations = TransitionAndAnimations(
                     pushTransinion: AnyTransition.opacity,
-                    pushAnimation: Animation.easeIn(duration: 0.3),
+                    pushAnimation: Animation.easeIn(duration: 0.05),
                     popTransinion: AnyTransition.opacity,
-                    popAnimation: Animation.easeOut(duration: 0.3)),
+                    popAnimation: Animation.easeOut(duration: 0.05)),
                 @ViewBuilder content: @escaping () -> Content) {
         
         self.ta = ta

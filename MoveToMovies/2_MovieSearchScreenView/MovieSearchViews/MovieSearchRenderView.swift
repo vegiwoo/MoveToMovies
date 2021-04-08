@@ -89,7 +89,13 @@ struct MovieSearchRenderView: View {
                                             }
                                     }
                                 }
+                            }.onAppear {
+                                if let selectedMovie = selectedMovie {
+                                    proxy.scrollTo(selectedMovie, anchor: .center)
+                                    self.selectedMovie = nil
+                                }
                             }
+                            
                         }
                         
                         if movieSearchStatus == .loading {

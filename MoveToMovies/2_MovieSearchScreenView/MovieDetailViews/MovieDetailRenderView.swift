@@ -33,7 +33,6 @@ struct MovieDetailRenderView: View {
             Spacer()
             
             CircleBackButtonLabel().onTapGesture {
-                selectedMovie = nil
                 isGotoPreviewsView = true
             }
         }

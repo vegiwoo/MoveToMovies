@@ -37,6 +37,8 @@ struct MovieSearchContainerView: View {
             if value != nil, isGotoDetailedView == false {
                 isGotoDetailedView.toggle()
                 navCoordinator.push(MovieDetailContainerView())
+            } else {
+                isGotoDetailedView = false
             }
         }
         
