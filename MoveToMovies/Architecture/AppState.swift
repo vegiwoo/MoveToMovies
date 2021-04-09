@@ -60,6 +60,10 @@ struct SearchMoviesState {
 }
 
 struct PopularMoviesState {
-    
+    var updateData: Bool = false
+    var posterSize: PosterSize = .w500
 }
 
+enum PosterSize {
+    case w92, w154, w185, w342, w500, w780, original
+}

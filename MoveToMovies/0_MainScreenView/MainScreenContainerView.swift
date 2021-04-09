@@ -14,13 +14,18 @@ struct MainScreenContainerView: View, IContaierView {
     @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
     
     var body: some View {
-        MainScreenRenderView(selectedIndex: tabbarSelectedIndex, selectedView: tabbarSelectedView, visibleTabbar: true)
+        MainScreenRenderView(selectedIndex: tabbarSelectedIndex, selectedView: tabbarSelectedView, visibleTabbar: true, updateData: updateData)
             .environmentObject(appStore)
     }
 }
 
 /// Binding valiables
 extension MainScreenContainerView {
+    
+    private var updateData: Binding<Bool> {
+        appStore.binding(for: \.popularMovies.updateData) {_ in AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.loadGenres)}
+    }
+    
     private var tabbarSelectedIndex: Binding<Int> {
         appStore.binding(for: \.tabBar.selectedIndex) {AppAction.tabbar(action: TabbarAction.indexChange($0))}
     }

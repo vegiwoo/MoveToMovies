@@ -35,7 +35,7 @@ struct MovieDetailContainerView: View, IContaierView {
 extension MovieDetailContainerView {
     private var selectedMovie: Binding<MovieOmdbapiObject?> {
         appStore.binding(for: \.searchMovies.selectedOMDBMovie) {
-            AppAction.searchMovies(action: SearchMoviesAction.setSelectedMoviePoster(for: $0))
+            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.setSelectedMoviePoster(for: $0))
         }
     }
 

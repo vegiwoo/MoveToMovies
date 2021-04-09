@@ -33,7 +33,10 @@ struct MovieDetailRenderView: View {
                                         MovieInfoContainerView()))
             }
             CircleBackButtonLabel().onTapGesture {
-                isGotoPreviewsView = true
+                withAnimation(Animation.easeInOut(duration: 1.0)){
+                    isGotoPreviewsView = true
+                }
+                
             }
         }
     }

@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import TmdbAPI
 import OmdbAPI
 import UIControls
 import Networking
@@ -14,11 +15,16 @@ import Networking
 /// Description of app action in structure composition
 enum AppAction {
     case tabbar(action: TabbarAction)
-    case searchMovies(action: SearchMoviesAction)
+    case searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction)
+    case popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction)
 }
 
 // MARK: Context actions
-enum SearchMoviesAction {
+enum TabbarAction {
+    case indexChange(Int)
+}
+
+enum SearchOmbdAPIMoviesAction {
     case assignIndexSegmentControl(Int)
     case changeStatusMovieSearch(MovieSearchStatus)
     case loadSearchMovies(query: String, page: Int)
@@ -28,6 +34,12 @@ enum SearchMoviesAction {
     case setSelectedMoviePoster(for: MovieOmdbapiObject?)
 }
 
-enum TabbarAction {
-    case indexChange(Int)
+enum PopularTmbdAPIMoviesAction {
+    case loadGenres
+    case updateGenresInStorage(response: GenresResponse)
+    case loadPopularMovies(message: String)
+    case update(popularMovies: [MovieListResultObject])
+    case updatePopularMoviesInfo(movies: [Movie], posterSize: PosterSize)
 }
+
+

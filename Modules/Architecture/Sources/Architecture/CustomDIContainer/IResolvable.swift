@@ -13,8 +13,9 @@ public protocol IResolvable: AnyObject {
 }
 
 public protocol Singletonable: IResolvable where Arguments == Void { }
-extension Singletonable {
-    public static var instanceScope: InstanceScope { .singletone }
+
+public extension Singletonable {
+    static var instanceScope: InstanceScope { .singletone }
 }
 
 public protocol PerRequestable: IResolvable { }
@@ -24,7 +25,7 @@ extension PerRequestable {
 
 @propertyWrapper
 public struct Resolvable<T: IResolvable> where T.Arguments == Void {
-    private var cache: T?
+    public var cache: T?
 
     public init(){}
     

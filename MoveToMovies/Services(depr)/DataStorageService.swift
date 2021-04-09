@@ -685,10 +685,6 @@ struct CoversDownloadResponse {
     let backdropBlobData: Data?
 }
 
-enum PosterSizes {
-    case w92, w154, w185, w342, w500, w780, original
-}
-
 class DataStoragePublisher {
 
     var requestPublisher: AnyPublisher<DataStorageRequest, Never> {

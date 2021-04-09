@@ -92,7 +92,7 @@ final class NetworkServiceImpl: NetworkService {
                 }
                 print("🟢 NetworkService: Info about \(existingCountries.count) countries was obtained from database.")
             case .getCovers(let coversDownloadRequest):
-                self.loadCovers(with: coversDownloadRequest, posterSize: PosterSizes.w500)
+                self.loadCovers(with: coversDownloadRequest, posterSize: PosterSize.w500)
             }
     
         })
@@ -189,7 +189,7 @@ final class NetworkServiceImpl: NetworkService {
         }
     }
     
-    private func loadCovers(with request: CoversDownloadRequest, posterSize: PosterSizes) {
+    private func loadCovers(with request: CoversDownloadRequest, posterSize: PosterSize) {
        
         let tmdbImagesPath = API.tmdbImagesPath.description
         

@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import OmdbAPI
 import Networking
+import CoreDataFramework
 
 typealias Reducer<State, Action, Environment> = (inout State, Action, Environment) -> AnyPublisher<Action, Never>
 
@@ -22,14 +23,14 @@ func tabbarReducer(state: inout TabBarState, action: TabbarAction, environment: 
     return Empty().eraseToAnyPublisher()
 }
 
-func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAction, environment: AppEnvironment) -> AnyPublisher<SearchMoviesAction, Never> {
+func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOmbdAPIMoviesAction, environment: AppEnvironment) -> AnyPublisher<SearchOmbdAPIMoviesAction, Never> {
     
     switch action {
     case let .loadSearchMovies(query,page):
         if !query.isEmpty {
             state.movieSearchStatus = .loading
             return (environment.networkProvider.loadMovieRequest(query: query.trimmingCharacters(in: .whitespacesAndNewlines), page: page)?
-                        .map{SearchMoviesAction.addFoundMovies(query: query, movies: $0.search)}
+                        .map{SearchOmbdAPIMoviesAction.addFoundMovies(query: query, movies: $0.search)}
                         .eraseToAnyPublisher())!
         } else {
             return Empty().eraseToAnyPublisher()
@@ -56,14 +57,14 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
                 }
             }
 
-            return Just(SearchMoviesAction.changeStatusMovieSearch(.getResults(moviesForPosterSearch)))
+            return Just(SearchOmbdAPIMoviesAction.changeStatusMovieSearch(.getResults(moviesForPosterSearch)))
                 .eraseToAnyPublisher()
         } else {
             if state.foundMovies.isEmpty {
-                return Just(SearchMoviesAction.changeStatusMovieSearch(.error))
+                return Just(SearchOmbdAPIMoviesAction.changeStatusMovieSearch(.error))
                      .eraseToAnyPublisher()
             } else {
-                return Just(SearchMoviesAction.changeStatusMovieSearch(.endOfSearch))
+                return Just(SearchOmbdAPIMoviesAction.changeStatusMovieSearch(.endOfSearch))
                      .eraseToAnyPublisher()
             }
         }
@@ -104,7 +105,7 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
             }.fire()
             
             return publisher
-                .map{SearchMoviesAction.changeProgressMovieSearch($0)}
+                .map{SearchOmbdAPIMoviesAction.changeProgressMovieSearch($0)}
                 .eraseToAnyPublisher()
         case let .getResults(movies):
             state.infoMessage = ("", "")
@@ -119,7 +120,7 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
                 
                 return environment.networkProvider.loadData(for: dictionary)
                     .replaceError(with: [("String", nil)])
-                    .map{SearchMoviesAction.updateMoviesWithPosters(items: $0)}
+                    .map{SearchOmbdAPIMoviesAction.updateMoviesWithPosters(items: $0)}
                     .eraseToAnyPublisher()
             }
 
@@ -156,6 +157,38 @@ func searchMoviesReducer(state: inout SearchMoviesState, action: SearchMoviesAct
     return Empty().eraseToAnyPublisher()
 }
 
+func searchTmdbApiMoviesReducer(state: inout PopularMoviesState, action: PopularTmbdAPIMoviesAction, environment: AppEnvironment) -> AnyPublisher<PopularTmbdAPIMoviesAction, Never> {
+    switch action {
+    case .loadGenres:
+        //environment.coreDataProvider.clearStrorаge()
+        return (environment.networkProvider.loadGenresFromTmdb()?
+                    .map{PopularTmbdAPIMoviesAction.updateGenresInStorage(response: $0)}
+                    .eraseToAnyPublisher())!
+    case let .updateGenresInStorage(genresResponse):
+        return environment.coreDataProvider.save(genres: genresResponse.genres)
+            .map{PopularTmbdAPIMoviesAction.loadPopularMovies(message: $0)}
+            .eraseToAnyPublisher()
+    case let .loadPopularMovies(message):
+        print(message)
+        return (environment.networkProvider.loadPopularMoviesListFromTmdb()?
+                    .map{PopularTmbdAPIMoviesAction.update(popularMovies: $0.results)}
+                    .eraseToAnyPublisher())!
+    case let .update(popularMovies):
+        
+        let posterSize = state.posterSize
+        
+        return environment.networkProvider.loadPopularMoviesInfoFromTmdb(by: popularMovies.map{$0.id!})
+            .map{PopularTmbdAPIMoviesAction.updatePopularMoviesInfo(movies: $0, posterSize: posterSize)}
+            .eraseToAnyPublisher()
+    case let .updatePopularMoviesInfo(movies, posterSize):
+        print(movies.count)
+        
+        environment.coreDataProvider.store(movies: movies, posterSize: posterSize)
+    }
+
+    return Empty().eraseToAnyPublisher()
+}
+
 /// Description of app reduser in structure composition
 func appReducer(state: inout AppState, action: AppAction, environment: AppEnvironment) -> AnyPublisher<AppAction, Never>{
     switch action {
@@ -163,10 +196,14 @@ func appReducer(state: inout AppState, action: AppAction, environment: AppEnviro
         return tabbarReducer(state: &state.tabBar, action: action, environment: environment)
             .map(AppAction.tabbar)
             .eraseToAnyPublisher()
-    case let .searchMovies(action):
-        return searchMoviesReducer(state: &state.searchMovies, action: action, environment: environment)
-            .map(AppAction.searchMovies)
+    case let .searchOmbdAPIMovies(action):
+        return searchOmdbApiMoviesReducer(state: &state.searchMovies, action: action, environment: environment)
+            .map(AppAction.searchOmbdAPIMovies)
             .eraseToAnyPublisher()
     
+    case let .popularTmbdAPIMovies(action):
+        return searchTmdbApiMoviesReducer(state: &state.popularMovies, action: action, environment: environment)
+            .map(AppAction.popularTmbdAPIMovies)
+            .eraseToAnyPublisher()
     }
 }

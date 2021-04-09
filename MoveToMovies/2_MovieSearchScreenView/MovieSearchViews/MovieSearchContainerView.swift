@@ -49,18 +49,18 @@ struct MovieSearchContainerView: View, IContaierView {
 extension MovieSearchContainerView {
     private var selectedIndexSegmentControl: Binding<Int> {
         appStore.binding(for: \.searchMovies.selectedIndexSegmentControl) {
-            AppAction.searchMovies(action: SearchMoviesAction.assignIndexSegmentControl($0))
+            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.assignIndexSegmentControl($0))
         }
     }
     private var movieSearchStatus: Binding<MovieSearchStatus> {
         appStore.binding(for: \.searchMovies.movieSearchStatus) {
-            AppAction.searchMovies(action: SearchMoviesAction.changeStatusMovieSearch($0))
+            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.changeStatusMovieSearch($0))
         }
     }
     
     private var searchQuery: Binding<String> {
         appStore.binding(for: \.searchMovies.searchQuery) {
-            AppAction.searchMovies(action: SearchMoviesAction.loadSearchMovies(query: $0, page: 1))
+            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.loadSearchMovies(query: $0, page: 1))
         }
     }
     
@@ -78,7 +78,7 @@ extension MovieSearchContainerView {
     
     private var needForFurtherLoad: Binding<Bool> {
         appStore.binding(for: \.searchMovies.needForFurtherLoad) {_ in
-            AppAction.searchMovies(action: SearchMoviesAction.loadSearchMovies(query: appStore.state.searchMovies.searchQuery, page: appStore.state.searchMovies.searchPage))
+            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.loadSearchMovies(query: appStore.state.searchMovies.searchQuery, page: appStore.state.searchMovies.searchPage))
         }
     }
     
@@ -88,7 +88,7 @@ extension MovieSearchContainerView {
     
     private var selectedMovie: Binding<MovieOmdbapiObject?> {
         appStore.binding(for: \.searchMovies.selectedOMDBMovie) {
-            AppAction.searchMovies(action: SearchMoviesAction.setSelectedMoviePoster(for: $0))
+            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.setSelectedMoviePoster(for: $0))
         }
     }
     

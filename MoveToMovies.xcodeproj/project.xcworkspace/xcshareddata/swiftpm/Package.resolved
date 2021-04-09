@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "ArchitecturePackage",
+        "repositoryURL": "https://github.com/vegiwoo/ArchitecturePackage.git",
+        "state": {
+          "branch": "main",
+          "revision": "1ad82dcad865cc6b734d54025df8d0f837b762e4",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -4,7 +4,7 @@
 import Foundation
 
 public class Container {
-    private var singletones: [ObjectIdentifier : AnyObject] = [:]
+    var singletones: [ObjectIdentifier : AnyObject] = [:]
     
     public init() {}
     
