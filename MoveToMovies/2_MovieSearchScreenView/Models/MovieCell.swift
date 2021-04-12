@@ -3,10 +3,9 @@
 
 import SwiftUI
 import OmdbAPI
+import TmdbAPI
+import UIControls
 
-#if canImport(SwiftUI)
-
-@available(iOS 13.0, *)
 public struct MovieCell: View, SizeClassAdjustable {
     
     @Environment(\.verticalSizeClass) var _verticalSizeClass
@@ -25,11 +24,31 @@ public struct MovieCell: View, SizeClassAdjustable {
         self.subtitle01 = model.type?.rawValue
         self.subtitle02 = model.year ?? ""
         
-        // Poster
         if let data = poster,
            let image = UIImage(data: data) {
             self.image = image
         }
+    }
+    
+    public init (model: MovieItemDTO) {
+        self.title = model.title
+        self.subtitle01 = MovieCell.setGenreString(by: model.genres)
+        self.subtitle02 = model.releaseDate
+
+        if let data = model.poster,
+           let image = UIImage(data: data) {
+            self.image = image
+        }
+        
+        self.rightView =
+            AnyView(
+                ZStack {
+                    Circle().stroke()
+                    Text("\(model.voteAverage)").font(Font.system(size: 14))
+                }
+                .padding(.trailing)
+                .foregroundColor(.secondary)
+            )
     }
     
     public var body: some View {
@@ -68,29 +87,44 @@ public struct MovieCell: View, SizeClassAdjustable {
                             if let subtitle01 = subtitle01 {
                                 Text(subtitle01)
                                     .font(Font.system(size: isPad ? 24 : isPadOrLandscapeMax ? 18 : 14)).fontWeight(.regular)
-                                    .lineLimit(2)
-                                    
+                                    .lineLimit(1)
+                                
                             }
                             // subtitle02
                             if let subtitle02 = subtitle02 {
                                 Text(subtitle02)
                                     .font(Font.system(size: isPad ? 20 : isPadOrLandscapeMax ? 16 : 12)).fontWeight(.semibold)
                                     .lineLimit(1)
-                                   
+                                
                             }
                         }.padding([.leading], 10)
                         // Right view
                         if let rightView = self.rightView {
                             rightView
                                 .frame(width: isPad ? geometry.size.width / 12 : isPadOrLandscapeMax ? geometry.size.width / 10 : geometry.size.width / 8)
-                                .padding(.trailing)
+                                .padding(.trailing, 10)
                                 .foregroundColor(.secondary)
                         }
+                    }
                 }
             }
         }
     }
     
+    private static func setGenreString(by items:  [String]) -> String? {
+        var resultString = ""
+        for (index,value) in items.enumerated() {
+            
+                if index != items.endIndex - 1 {
+                    resultString.append("\(value), ")
+                    if index == 2 { resultString.append("\n")}
+                    
+                } else {
+                    resultString.append(value)
+                }
+            
+        }
+        return resultString
+        
+    }
 }
-}
-#endif

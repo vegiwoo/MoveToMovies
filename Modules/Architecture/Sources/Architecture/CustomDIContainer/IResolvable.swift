@@ -7,8 +7,7 @@ public protocol IResolvable: AnyObject {
     associatedtype Arguments
     
     static var instanceScope: InstanceScope { get }
-    // Initializer takes container and arguments
-    // Each entity that implements this initializer will get the necessary dependencies from  container
+
     init (container: IContainer, args: Arguments)
 }
 

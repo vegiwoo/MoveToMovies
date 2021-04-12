@@ -13,7 +13,7 @@ final class AppStore<State, Action, Environment>: ObservableObject {
    
     @Published private(set) var state: State
     
-    private let environment: Environment
+    let environment: Environment
     private let reducer: Reducer<State, Action, Environment>
     private var cancellables: Set<AnyCancellable> = .init()
     

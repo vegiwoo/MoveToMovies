@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreData
 import TmdbAPI
 import OmdbAPI
 import UIControls
@@ -35,6 +36,7 @@ enum SearchOmbdAPIMoviesAction {
 }
 
 enum PopularTmbdAPIMoviesAction {
+    case setCoreData(context: NSManagedObjectContext)
     case loadGenres
     case updateGenresInStorage(response: GenresResponse)
     case loadPopularMovies(message: String)
@@ -43,6 +45,7 @@ enum PopularTmbdAPIMoviesAction {
     case loadCovers(items: [(imdbId: String, posterPath: String?, backdropPath: String?)])
     case updateCovers(postersData: [(String, Data?)], backdropData: [(String, Data?)])
     case updatingPopularMoviesComplete
+    //case setSelectedTmdbApiMovie(for: MovieItem)
 }
 
 

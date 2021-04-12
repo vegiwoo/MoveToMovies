@@ -15,7 +15,6 @@ import Navigation
 final class MovieSearchScreenViewModel: ObservableObject {
 
     private var context: NSManagedObjectContext?
-    private var networkService: NetworkService?
     private var dataStorageService: DataStorageService?
     private var networkServiceSubscriber: AnyCancellable?
     
@@ -30,9 +29,8 @@ final class MovieSearchScreenViewModel: ObservableObject {
     
     var bag: Set<AnyCancellable> = .init()
 
-    init(_ context: NSManagedObjectContext, networkService: NetworkService, dataStorageService: DataStorageService) {
+    init(_ context: NSManagedObjectContext, dataStorageService: DataStorageService) {
         self.context = context
-        self.networkService = networkService
         self.dataStorageService = dataStorageService
     
         print("⬆️ MovieSearchScreenViewModel init")
@@ -50,18 +48,18 @@ final class MovieSearchScreenViewModel: ObservableObject {
     }
     
     private func subscribe() {
-        if let networkService = networkService {
-            networkServiceSubscriber = networkService.networkServicePublisher
-                .subscribe(on: networkService.apiResponseQueue)
-                .sink{value in
-                    if let movieOmdbapiObjects = value as? (movies: [MovieOmdbapiObject], totalResults: Int) {
-                        self.currentPage += 1
-                        self.searchMovies.append(contentsOf: movieOmdbapiObjects.movies)
-                        self.isPageLoading = false
-                        self.loadPostersForSearch(movies: movieOmdbapiObjects.movies)
-                    }
-                }
-        }
+//        if let networkService = networkService {
+//            networkServiceSubscriber = networkService.networkServicePublisher
+//                .subscribe(on: networkService.apiResponseQueue)
+//                .sink{value in
+//                    if let movieOmdbapiObjects = value as? (movies: [MovieOmdbapiObject], totalResults: Int) {
+//                        self.currentPage += 1
+//                        self.searchMovies.append(contentsOf: movieOmdbapiObjects.movies)
+//                        self.isPageLoading = false
+//                        self.loadPostersForSearch(movies: movieOmdbapiObjects.movies)
+//                    }
+//                }
+//        }
     }
     
     private func unsubscribe() {
@@ -70,13 +68,12 @@ final class MovieSearchScreenViewModel: ObservableObject {
     }
 
     func loadPage() {
-        guard let searchText = searchText, !searchText.isEmpty,
-              let networkService = self.networkService,
-              isPageLoading == false else { return }
-        isPageLoading = true
-        
-        print("value \(searchText), page \(currentPage)")
-        networkService.getSearchMovieRequest(title: searchText, page: currentPage)
+//        guard let searchText = searchText, !searchText.isEmpty
+//              isPageLoading == false else { return }
+//        isPageLoading = true
+//        
+//        print("value \(searchText), page \(currentPage)")
+        //networkService.getSearchMovieRequest(title: searchText, page: currentPage)
     }
     
     private func loadPostersForSearch(movies: [MovieOmdbapiObject]) {

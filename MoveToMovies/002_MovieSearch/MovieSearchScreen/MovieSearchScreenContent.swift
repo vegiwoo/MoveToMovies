@@ -16,7 +16,7 @@ struct MovieSearchScreenContent: View, BaseView {
     @EnvironmentObject var ncViewModel: NavCoordinatorViewModel
     @EnvironmentObject var vm: MovieSearchScreenViewModel
    
-    private var networkService: NetworkService
+    //private var networkService: NetworkService
     private var dataStorageService: DataStorageService
     
     @FetchRequest (entity: MovieItem.entity(), sortDescriptors: [
@@ -32,8 +32,8 @@ struct MovieSearchScreenContent: View, BaseView {
     @State var searchText: String = ""
     @State var clearSearch: Bool = true
 
-    init(networkService: NetworkService, dataStorageService: DataStorageService, actualColor: UIColor, title: String) {
-        self.networkService = networkService
+    init(dataStorageService: DataStorageService, actualColor: UIColor, title: String) {
+
         self.dataStorageService = dataStorageService
         self.actualColor = actualColor
         self.title = title
@@ -152,7 +152,7 @@ struct MovieSearchScreenContent: View, BaseView {
 
 struct MovieSearchScreenContent_Previews: PreviewProvider {
     static var previews: some View {
-        MovieSearchScreenContent(networkService: AppStating.networkService, dataStorageService: AppStating.dataStoreService, actualColor: .orange, title: "Hello")
+        MovieSearchScreenContent(dataStorageService: AppStating.dataStoreService, actualColor: .orange, title: "Hello")
        
     }
 }

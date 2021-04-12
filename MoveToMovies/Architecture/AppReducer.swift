@@ -70,6 +70,11 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
         }
     case let .assignIndexSegmentControl(index):
         state.selectedIndexSegmentControl = index
+        
+        if index == 1 {
+            state.movieSearchStatus = .initial
+        }
+        
     case let .changeStatusMovieSearch(newStatus):
         
         state.movieSearchStatus = newStatus
@@ -160,7 +165,7 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
 func searchTmdbApiMoviesReducer(state: inout PopularMoviesState, action: PopularTmbdAPIMoviesAction, environment: AppEnvironment) -> AnyPublisher<PopularTmbdAPIMoviesAction, Never> {
     switch action {
     case .loadGenres:
-        environment.coreDataProvider.clearStrorаge()
+        //environment.coreDataProvider.clearStrorаge()
         state.updatingPopularMovies = false
         return (environment.networkProvider.loadGenresFromTmdb()?
                     .map{PopularTmbdAPIMoviesAction.updateGenresInStorage(response: $0)}
@@ -199,6 +204,8 @@ func searchTmdbApiMoviesReducer(state: inout PopularMoviesState, action: Popular
     case .updatingPopularMoviesComplete:
         print("🟢 Popular films update completed.")
         state.updatingPopularMovies = true
+    case let .setCoreData(context):
+        state.context = context
     }
 
     return Empty().eraseToAnyPublisher()

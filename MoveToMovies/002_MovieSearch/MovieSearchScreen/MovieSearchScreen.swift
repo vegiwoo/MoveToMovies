@@ -14,14 +14,14 @@ struct MovieSearchScreen: View {
     @EnvironmentObject var appState: AppStating
     @EnvironmentObject var viewModel: MovieSearchScreenViewModel
     
-    var networkService: NetworkService
+    //var networkService: NetworkService
     var dataStorageService: DataStorageService
     var actualColor: UIColor
     var title: String
     
     var body: some View {
         NavCoordinatorView {
-            MovieSearchScreenContent(networkService: networkService, dataStorageService: dataStorageService, actualColor: actualColor, title: title)
+            MovieSearchScreenContent(dataStorageService: dataStorageService, actualColor: actualColor, title: title)
                 .environmentObject(appState)
                 .environmentObject(viewModel)
         }

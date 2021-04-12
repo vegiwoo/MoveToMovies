@@ -13,6 +13,7 @@ import Navigation
 struct MovieSearchRenderView: View {
     
     @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
+    @Environment(\.managedObjectContext) var managedObjectContext
     
     let title: String
     let accentColor: UIColor
@@ -26,7 +27,12 @@ struct MovieSearchRenderView: View {
     @Binding var foundMovies: [MovieOmdbapiObject]
     @Binding var needForFurtherLoad: Bool
     @Binding var progressLoad: Float
-    @Binding var selectedMovie: MovieOmdbapiObject?
+    @Binding var selectedOMDBMovie: MovieOmdbapiObject?
+    @Binding var selectedTMDBMovie: MovieItem?
+    
+    @FetchRequest (entity: MovieItem.entity(), sortDescriptors: [
+                    NSSortDescriptor(keyPath: \MovieItem.voteAverage, ascending: false) ]
+    ) var popularMovies: FetchedResults<MovieItem>
 
     init(title: String,
          accentColor: UIColor,
@@ -38,7 +44,8 @@ struct MovieSearchRenderView: View {
          foundMoviesPosters: Binding<[String: Data?]>,
          needForFurtherLoad: Binding<Bool>,
          progressLoad: Binding<Float>,
-         selectedMovie: Binding<MovieOmdbapiObject?>
+         selectedOMDBMovie: Binding<MovieOmdbapiObject?>,
+         selectedTMDBMovie: Binding<MovieItem?>
          ) {
         self.title = title
         self.accentColor = accentColor
@@ -50,7 +57,8 @@ struct MovieSearchRenderView: View {
         self._foundMoviesPosters = foundMoviesPosters
         self._needForFurtherLoad = needForFurtherLoad
         self._progressLoad = progressLoad
-        self._selectedMovie = selectedMovie
+        self._selectedOMDBMovie = selectedOMDBMovie
+        self._selectedTMDBMovie = selectedTMDBMovie
     }
     
     var body: some View {
@@ -74,7 +82,7 @@ struct MovieSearchRenderView: View {
                         movieSearchStatus == .loading ||
                         movieSearchStatus == .endOfSearch {
                         
-                        ScrollViewReader { proxy in
+                        ScrollViewReader { scrollProxy in
                             ScrollView {
                                 LazyVStack {
                                     ForEach(foundMovies, id: \.self) {item in
@@ -85,14 +93,14 @@ struct MovieSearchRenderView: View {
                                                     needForFurtherLoad = true
                                                 }
                                             }.onTapGesture {
-                                                selectedMovie = item
+                                                selectedOMDBMovie = item
                                             }
                                     }
                                 }
                             }.onAppear {
-                                if let selectedMovie = selectedMovie {
-                                    proxy.scrollTo(selectedMovie, anchor: .center)
-                                    self.selectedMovie = nil
+                                if let selectedMovie = selectedOMDBMovie {
+                                    scrollProxy.scrollTo(selectedMovie, anchor: .center)
+                                    self.selectedOMDBMovie = nil
                                 }
                             }
                             
@@ -125,7 +133,22 @@ struct MovieSearchRenderView: View {
                     
                 // Popular movies
                 } else if selectedIndexSegmentControl == 1 {
-                    
+                    ScrollViewReader { scrollProxy in
+                        ScrollView {
+                            LazyVStack {
+                                ForEach(popularMovies, id: \.self) {item in
+                                    MovieCell(model: MovieItemDTO(item))
+                                        .frame(width: 380, height: 120, alignment: .leading)
+                                        .id(UUID())
+                                }
+                            }
+                        }.onAppear {
+                            if let selectedMovie = selectedTMDBMovie {
+                                scrollProxy.scrollTo(selectedMovie, anchor: .center)
+                                self.selectedTMDBMovie = nil
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -145,7 +168,8 @@ struct MovieSearchRenderView_Previews: PreviewProvider {
                               foundMoviesPosters: .constant([:]),
                               needForFurtherLoad: .constant(false),
                               progressLoad: .constant(50.0),
-                              selectedMovie: .constant(MovieOmdbapiObject())
+                              selectedOMDBMovie: .constant(MovieOmdbapiObject()),
+                              selectedTMDBMovie: .constant(nil)
                     )
     }
 }

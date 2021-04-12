@@ -13,9 +13,6 @@ import TmdbAPI
 
 protocol DataStorageService {
     var context: NSManagedObjectContext { get }
-    var networkResponseQueue: DispatchQueue { get set}
-    var networkPublisher: PassthroughSubject<Any, Never> { get set }
-    var networkSubscriber: AnyCancellable? { get }
     var dataStoragePublisher: DataStoragePublisher { get }
     func saveContext()
     func getRendomMovieItem() -> MovieItem?
@@ -24,9 +21,9 @@ protocol DataStorageService {
 
 final class DataStorageServiceImpl: DataStorageService {
         
-    var networkResponseQueue: DispatchQueue
-    var networkPublisher: PassthroughSubject<Any, Never>
-    var networkSubscriber: AnyCancellable?
+    //var networkResponseQueue: DispatchQueue
+    //var networkPublisher: PassthroughSubject<Any, Never>
+    //var networkSubscriber: AnyCancellable?
     var dataStoragePublisher: DataStoragePublisher
     
     let dataStorageQueue: DispatchQueue = .init(label: Bundle.main.bundleIdentifier != nil ? "\(Bundle.main.bundleIdentifier!).dataStorageQueue" : "dataStorageQueue", qos: .utility)
@@ -59,10 +56,7 @@ final class DataStorageServiceImpl: DataStorageService {
     
     var completionUpdatingData: Bool = false
     
-    init(networkResponseQueue: DispatchQueue, networkPublisher: PassthroughSubject<Any, Never>, dataStoragePublisher: DataStoragePublisher) {
-        
-        self.networkResponseQueue = networkResponseQueue
-        self.networkPublisher = networkPublisher
+    init(dataStoragePublisher: DataStoragePublisher) {
         self.dataStoragePublisher = dataStoragePublisher
         onAppear()
     }
@@ -82,35 +76,7 @@ final class DataStorageServiceImpl: DataStorageService {
     }
 
     private func subscribe() {
-        networkSubscriber = networkPublisher
-            .subscribe(on: networkResponseQueue)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished:
-                    print("🟢 NetworkService: Publisher finished.")
-                case .failure(let error):
-                    print("🔴 ERROR in NetworkService:\n\(error.localizedDescription)")
-                }
-            }, receiveValue: { value in
-                if let genres = value as? [Genre] {
-                    self.save(genres: genres)
-                }
-                if let popularMovieIds = value as? [Int] {
-                    self.cleanUpStorageFromIrrelevantIdsOfPopularFilms(with: popularMovieIds)
-                }
-                
-                if let movie = value as? Movie {
-                    self.store(movie: movie)
-                }
-                
-                if let country = value as? ProductionCountyDTO {
-                    self.store(country: country)
-                }
-                
-                if let coversResponse = value as? CoversDownloadResponse {
-                    self.save(coversResponse: coversResponse)
-                }
-            })
+        
     }
     
     private func unsubscribe() {

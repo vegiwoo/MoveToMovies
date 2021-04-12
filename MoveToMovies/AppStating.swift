@@ -12,18 +12,15 @@ import TmdbAPI
 
 final class AppStating: ObservableObject {
     
-    @StateObject var movieSearchVM: MovieSearchScreenViewModel = .init(AppStating.dataStoreService.context, networkService: AppStating.networkService, dataStorageService: AppStating.dataStoreService)
+    @StateObject var movieSearchVM: MovieSearchScreenViewModel = .init(AppStating.dataStoreService.context, dataStorageService: AppStating.dataStoreService)
     
     static var dataStoragePublisher = DataStoragePublisher()
-    
-    static var networkService: NetworkService =
-        NetworkServiceImpl(apiResponseQueue: AppStating.networkServiceResponseQueue, dataStoragePublisher: dataStoragePublisher)
     
     static var networkServiceResponseQueue: DispatchQueue = DispatchQueue(label: Bundle.main.bundleIdentifier != nil ? "\(Bundle.main.bundleIdentifier!).networkServiceResponseQueue" : "networkServiceResponseQueue", qos: .utility)
 
     
     static var dataStoreService: DataStorageService = {
-        return DataStorageServiceImpl(networkResponseQueue: AppStating.networkServiceResponseQueue, networkPublisher: networkService.networkServicePublisher, dataStoragePublisher: AppStating.dataStoragePublisher)
+        return DataStorageServiceImpl(dataStoragePublisher: AppStating.dataStoragePublisher)
     }()
     
     @Published var selectTabIndex: Int = TabbarTab.dashboardScreen.rawValue  {
@@ -53,7 +50,6 @@ final class AppStating: ObservableObject {
                                             )
             case .movies:
                 selectionScreen = AnyView(MovieSearchScreen(
-                                            networkService: AppStating.networkService,
                                             dataStorageService: AppStating.dataStoreService,
                                             actualColor: selectedTab.actualColor,
                                             title: selectedTab.text)

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 import OmdbAPI
 import Navigation
 import UIControls
@@ -14,8 +15,9 @@ struct MovieSearchContainerView: View, IContaierView {
     
     @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
     @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
-    
+
     @State var isGotoDetailedView: Bool = false
+    
     
     var body: some View {
         MovieSearchRenderView(title: TabbarTab.movies.text,
@@ -28,8 +30,10 @@ struct MovieSearchContainerView: View, IContaierView {
                               foundMoviesPosters: foundMoviesPosters,
                               needForFurtherLoad: needForFurtherLoad,
                               progressLoad: progressLoad,
-                              selectedMovie: selectedMovie
+                              selectedOMDBMovie: selectedOMDBMovie,
+                              selectedTMDBMovie: selectedTMDBMovie
         )
+        .environment(\.managedObjectContext, appStore.state.popularMovies.context!)
         .onAppear {
             isGotoDetailedView = false
         }
@@ -57,40 +61,38 @@ extension MovieSearchContainerView {
             AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.changeStatusMovieSearch($0))
         }
     }
-    
     private var searchQuery: Binding<String> {
         appStore.binding(for: \.searchMovies.searchQuery) {
             AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.loadSearchMovies(query: $0, page: 1))
         }
     }
-    
     private var infoMessage: Binding<(symbol: String, message: String)> {
         appStore.binding(for: \.searchMovies.infoMessage)
     }
-    
     private var foundMovies: Binding<[MovieOmdbapiObject]> {
         appStore.binding(for: \.searchMovies.foundMovies)
     }
-    
     private var foundMoviesPosters: Binding< [String: Data?]> {
         appStore.binding(for: \.searchMovies.foundMoviesPosters)
     }
-    
     private var needForFurtherLoad: Binding<Bool> {
         appStore.binding(for: \.searchMovies.needForFurtherLoad) {_ in
             AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.loadSearchMovies(query: appStore.state.searchMovies.searchQuery, page: appStore.state.searchMovies.searchPage))
         }
     }
-    
     private var progressLoad: Binding<Float> {
         appStore.binding(for: \.searchMovies.progressLoad)
     }
-    
-    private var selectedMovie: Binding<MovieOmdbapiObject?> {
+    private var selectedOMDBMovie: Binding<MovieOmdbapiObject?> {
         appStore.binding(for: \.searchMovies.selectedOMDBMovie) {
             AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.setSelectedMoviePoster(for: $0))
         }
     }
+    
+    private var selectedTMDBMovie: Binding<MovieItem?> {
+        appStore.binding(for: \.popularMovies.selectedTMDBMovie)
+    }
+    
     
 }
 

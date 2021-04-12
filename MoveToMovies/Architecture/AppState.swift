@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 import UIControls
 import OmdbAPI
 
@@ -59,9 +60,11 @@ struct SearchMoviesState {
 }
 
 struct PopularMoviesState {
+    var context: NSManagedObjectContext?
     var updatingPopularMovies: Bool = false
     var updateData: Bool = false
     var posterSize: PosterSize = .w500
+    var selectedTMDBMovie: MovieItem?
 }
 
 public enum PosterSize: String {

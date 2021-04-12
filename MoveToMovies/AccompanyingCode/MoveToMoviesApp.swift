@@ -29,6 +29,11 @@ struct MoveToMoviesApp: App {
     init() {
         ContainerHolder.container = Container()
         self.appStore = MoveToMoviesApp.createStore()
+        
+        // Set core data context through action
+        self.appStore.send(AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.setCoreData(context: self.appStore.environment.coreDataProvider.context)))
+        
+         
     }
     
     var body: some Scene {
