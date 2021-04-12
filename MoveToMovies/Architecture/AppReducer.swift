@@ -160,7 +160,8 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
 func searchTmdbApiMoviesReducer(state: inout PopularMoviesState, action: PopularTmbdAPIMoviesAction, environment: AppEnvironment) -> AnyPublisher<PopularTmbdAPIMoviesAction, Never> {
     switch action {
     case .loadGenres:
-        //environment.coreDataProvider.clearStrorаge()
+        environment.coreDataProvider.clearStrorаge()
+        state.updatingPopularMovies = false
         return (environment.networkProvider.loadGenresFromTmdb()?
                     .map{PopularTmbdAPIMoviesAction.updateGenresInStorage(response: $0)}
                     .eraseToAnyPublisher())!
@@ -174,16 +175,30 @@ func searchTmdbApiMoviesReducer(state: inout PopularMoviesState, action: Popular
                     .map{PopularTmbdAPIMoviesAction.update(popularMovies: $0.results)}
                     .eraseToAnyPublisher())!
     case let .update(popularMovies):
-        
-        let posterSize = state.posterSize
-        
         return environment.networkProvider.loadPopularMoviesInfoFromTmdb(by: popularMovies.map{$0.id!})
-            .map{PopularTmbdAPIMoviesAction.updatePopularMoviesInfo(movies: $0, posterSize: posterSize)}
+            .map{PopularTmbdAPIMoviesAction.updatePopularMoviesInfo(movies: $0)}
             .eraseToAnyPublisher()
-    case let .updatePopularMoviesInfo(movies, posterSize):
-        print(movies.count)
-        
-        environment.coreDataProvider.store(movies: movies, posterSize: posterSize)
+    case let .updatePopularMoviesInfo(movies):
+        return (environment.coreDataProvider.store(movies: movies)?
+                    .map{PopularTmbdAPIMoviesAction.loadCovers(items: $0)}
+                    .eraseToAnyPublisher())!
+            
+    case let .loadCovers(items):
+        print("Request to download posters and backdrops for \(items.count) movies")
+        let coversize = state.posterSize
+        return environment.networkProvider.loadCovers(for: items, coverSize: coversize.rawValue)
+            .map({ (postersData, backdropData) in
+                return PopularTmbdAPIMoviesAction.updateCovers(postersData: postersData, backdropData: backdropData)
+            })
+            .eraseToAnyPublisher()
+            
+    case let .updateCovers(postersData, backdropData):
+        return environment.coreDataProvider.updateCovers(postersData: postersData, backdropsData: backdropData)
+            .map{_ in PopularTmbdAPIMoviesAction.updatingPopularMoviesComplete}
+            .eraseToAnyPublisher()
+    case .updatingPopularMoviesComplete:
+        print("🟢 Popular films update completed.")
+        state.updatingPopularMovies = true
     }
 
     return Empty().eraseToAnyPublisher()

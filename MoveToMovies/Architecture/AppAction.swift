@@ -39,7 +39,10 @@ enum PopularTmbdAPIMoviesAction {
     case updateGenresInStorage(response: GenresResponse)
     case loadPopularMovies(message: String)
     case update(popularMovies: [MovieListResultObject])
-    case updatePopularMoviesInfo(movies: [Movie], posterSize: PosterSize)
+    case updatePopularMoviesInfo(movies: [Movie])
+    case loadCovers(items: [(imdbId: String, posterPath: String?, backdropPath: String?)])
+    case updateCovers(postersData: [(String, Data?)], backdropData: [(String, Data?)])
+    case updatingPopularMoviesComplete
 }
 
 

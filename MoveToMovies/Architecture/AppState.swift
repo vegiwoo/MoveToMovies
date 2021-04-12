@@ -56,14 +56,14 @@ struct SearchMoviesState {
     var progressLoad: Float = 0.0
     var selectedOMDBMovie: MovieOmdbapiObject?
     var selectedOMDBMoviePoster: Data? 
-
 }
 
 struct PopularMoviesState {
+    var updatingPopularMovies: Bool = false
     var updateData: Bool = false
     var posterSize: PosterSize = .w500
 }
 
-enum PosterSize {
+public enum PosterSize: String {
     case w92, w154, w185, w342, w500, w780, original
 }

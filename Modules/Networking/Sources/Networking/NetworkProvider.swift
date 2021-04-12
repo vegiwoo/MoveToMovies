@@ -123,6 +123,30 @@ public class NetworkProvider: Singletonable {
             .eraseToAnyPublisher()
         }
     }
+    
+    public func loadCovers(for items: [(imdbId: String, posterPath: String?, backdropPath: String?)], coverSize: String) -> AnyPublisher<(postersData: [(String, Data?)], backdropData: [(String, Data?)]), Never>{
+        
+        let basePath = API.tmdbImagesPath.description
+
+        var posterRequestStrings: [String: String] = .init()
+        var backdropRequestStrings: [String: String] = .init()
+       
+
+        for item in items {
+            if let posterPath = item.posterPath {
+                posterRequestStrings.updateValue("\(basePath)\(coverSize)\(posterPath)", forKey: item.imdbId)
+            }
+            
+            if let backdropPath = item.backdropPath {
+                backdropRequestStrings.updateValue("\(basePath)\(coverSize)\(backdropPath)", forKey: item.imdbId)
+            }
+        }
+
+        return Publishers.CombineLatest(self.loadData(for: posterRequestStrings), self.loadData(for: backdropRequestStrings))
+            .map{(postersData: $0.0, backdropData: $0.1)
+        }.eraseToAnyPublisher()
+
+    }
 }
 
 public extension NetworkProvider {

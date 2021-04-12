@@ -56,7 +56,7 @@ class CoreDataProvider: Singletonable {
         }
     }
 
-    // MARK: - Genres
+    // MARK: TMDB Api - Genres
     func save(genres: [Genre]) -> AnyPublisher<String,Never> {
 
         let entityName = "GenreItem"
@@ -96,18 +96,18 @@ class CoreDataProvider: Singletonable {
         }}
     }
  
-    // MARK: - Movies
-    func store(movies: [Movie], posterSize: PosterSize) {
+    // MARK: Movie
+    func store(movies: [Movie]) -> AnyPublisher<[(imdbId: String, posterPath: String?, backdropPath: String?)],Never>?{
         
         let entityName = "MovieItem"
         
-        var futures: [AnyPublisher<MovieItem, Never>] = []
+        var futures: [Future<(imdbId: String, posterPath: String?, backdropPath: String?), Never>] = []
         
         for movie in movies {
             guard let title = movie.title
             else { continue }
             
-            var future: Future<MovieItem, Never>
+            var future: Future<(imdbId: String, posterPath: String?, backdropPath: String?), Never>
             
             let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
             movieFetchRequest.predicate =  NSPredicate(format: "title == %@", title)
@@ -116,7 +116,7 @@ class CoreDataProvider: Singletonable {
             
             if let existingMovie = existingMovies.first {
                 // Update existing movie
-                future = Future<MovieItem,Never> { promise in
+                future = Future<(imdbId: String, posterPath: String?, backdropPath: String?),Never> { promise in
                     
                     if let popularity = movie.popularity {existingMovie.popularity = popularity}
                     if let revenue = movie.revenue {existingMovie.revenue = Int32(revenue)}
@@ -127,29 +127,25 @@ class CoreDataProvider: Singletonable {
                     if let voteCount = movie.voteCount {existingMovie.voteCount = Int32(voteCount)}
                     
                     self.saveContext()
-                    
-                    // TODO: Check poster && backdrop
-                    
-                    promise(.success(existingMovie))
-                    
+                    print("💾 Movie with id '\(existingMovie.id)' saved in DB.")
+                    promise(.success((imdbId: movie.imdbId!,
+                                      posterPath: movie.posterPath,
+                                      backdropPath: movie.backdropPath)))
                 }
                 
             } else {
                 // Save new movie
                 future = self.save(entityName: entityName, movie: movie)
             }
-  
-            futures.append(future.eraseToAnyPublisher())
+            futures.append(future)
         }
         
-        
-       
-
+        return Publishers.MergeMany(futures).collect().eraseToAnyPublisher()
     }
     
-    private func save(entityName: String, movie: Movie) -> Future<MovieItem, Never>{
+    private func save(entityName: String, movie: Movie) -> Future<(imdbId: String, posterPath: String?, backdropPath: String?), Never>{
         
-        return Future<MovieItem,Never> {promise in
+        return Future<(imdbId: String, posterPath: String?, backdropPath: String?),Never> {promise in
             // Create new MovieItem
             let newMovie = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self.context) as! MovieItem
             
@@ -213,24 +209,24 @@ class CoreDataProvider: Singletonable {
             let cancellable01 = Publishers.Zip4(collectionFuture, genresFuture, companiesFuture, countriesFuture).sink {values in
                 if let collectionItem = values.0 {
                     newMovie.collection = collectionItem
-                    print(newMovie.collection?.name ?? "no collection for movie")
+                    //print(newMovie.collection?.name ?? "no collection for movie")
                 }
                 if let genreItems = values.1 {
                     for gerne in genreItems {
                         newMovie.addToGenres(gerne)
-                        print("genre \(gerne.name ?? "unknown") add to movie")
+                        //print("genre \(gerne.name ?? "unknown") add to movie")
                     }
                 }
                 if let companiesItems = values.2 {
                     for company in companiesItems {
                         newMovie.addToCompanies(company)
-                        print("company \(company.name ?? "unknown") add to movie")
+                        //print("company \(company.name ?? "unknown") add to movie")
                     }
                 }
                 if let countriesItems = values.3{
                     for country in countriesItems {
                         newMovie.addToCountries(country)
-                        print("country \(country.iso31661 ?? "unknown tag") add to movie")
+                        //print("country \(country.iso31661 ?? "unknown tag") add to movie")
                     }
                 }
 
@@ -239,23 +235,71 @@ class CoreDataProvider: Singletonable {
                 if let languagesItems = languagesItems {
                     for languagesItem in languagesItems {
                         newMovie.addToLanguages(languagesItem)
-                        print("languages \(languagesItem.iso6391 ?? "unknown tag") add to movie")
+                        //print("languages \(languagesItem.iso6391 ?? "unknown tag") add to movie")
                     }
                 }
                 
                 self.saveContext()
                 print("💾 Movie with id '\(newMovie.id)' saved in DB.")
-                print(newMovie)
-                promise(.success(newMovie))
+            
+                promise(.success((imdbId: movie.imdbId!,
+                                  posterPath: movie.posterPath,
+                                  backdropPath: movie.backdropPath)))
             }
             [cancellable01, cancellable02].forEach{$0.cancel()}
-            
-            // TODO: Countries info
-            // TODO: Check poster && backdrop
         }
   
     }
     
+    private func fetshingMovie(by imdbId: String) -> MovieItem? {
+        let entityName = "MovieItem"
+        let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        movieFetchRequest.predicate =  NSPredicate(format: "imdbId == %@", imdbId)
+        let existingMovies = try! self.context.fetch(movieFetchRequest) as! [MovieItem]
+        return existingMovies.first
+    }
+
+    // MARK: Movie Covers
+    func updateCovers(postersData: [(String, Data?)], backdropsData: [(String, Data?)]) -> AnyPublisher<Bool, Never> {
+    
+        return Future<Bool, Never> {promise in
+            var counter: Int = 0
+            for posterData in postersData {
+                
+                guard let movieItem = self.fetshingMovie(by: posterData.0)
+                else { continue }
+                
+                if movieItem.poster == nil, let data = posterData.1 {
+                    let entityName = "PosterItem"
+                    let newPosterItem = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self.context) as! PosterItem
+                    
+                    newPosterItem.blob = data
+                    movieItem.poster = newPosterItem
+                    
+                    if movieItem.backdrop == nil,
+                       let backdropData = backdropsData.first(where: {$0.0 == movieItem.imdbId}),
+                       let data = backdropData.1 {
+                        
+                        let entityName = "BackdropItem"
+                        let newBackdropItem = NSEntityDescription.insertNewObject(forEntityName: entityName, into: self.context) as! BackdropItem
+                        
+                        newBackdropItem.blob = data
+                        movieItem.backdrop = newBackdropItem
+                    }
+                    
+                    self.saveContext()
+                    print("💾 Update poster & backdrop data for movie with id \(String(describing: movieItem.imdbId))")
+                }
+                counter += 1
+                if postersData.count == counter {
+                    promise(.success(true))
+                }
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    
+    // MARK: TMDB Api - Collection
     private func save(collection: MovieBelongsToCollection) -> Deferred<Future<CollectionItem?, Never>>  {
         
         return Deferred{Future<CollectionItem?, Never> {promise in
@@ -285,6 +329,7 @@ class CoreDataProvider: Singletonable {
         }}
     }
     
+    // MARK: TMDB Api - ProductionCompany
     private func save(productionCompanies: [ProductionCompany]) -> Deferred<Future<[ProductionCompanyItem]?, Never>> {
         return Deferred{Future<[ProductionCompanyItem]?, Never> {promise in
             let entityName = "ProductionCompanyItem"
@@ -316,13 +361,13 @@ class CoreDataProvider: Singletonable {
                     self.saveContext()
                     print("💾 Production company with id '\(newCompany.id)' SAVED in DB.")
                 }
-
             }
             
             promise(.success(results))
         }}
     }
     
+    // MARK: TMDB Api - ProductionCountry
     private func save(productionCountries: [ProductionCountry]) -> Deferred<Future<[ProductionCountryItem]?, Never>> {
         return Deferred{Future<[ProductionCountryItem]?, Never> {promise in
             let entityName = "ProductionCountryItem"
@@ -354,6 +399,7 @@ class CoreDataProvider: Singletonable {
         }}
     }
     
+    // MARK: TMDB Api - SpokenLanguage
     private func save(spokenLanguages: [SpokenLanguage]) -> Deferred<Future<[SpokenLanguageItem]?, Never>> {
         return Deferred{Future<[SpokenLanguageItem]?, Never> {promise in
             
