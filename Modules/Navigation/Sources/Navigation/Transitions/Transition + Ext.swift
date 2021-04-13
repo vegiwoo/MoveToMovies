@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 public extension AnyTransition {
     static var moveAndFade: AnyTransition {
         let insertion = AnyTransition.move(edge: .leading).combined(with: .opacity)

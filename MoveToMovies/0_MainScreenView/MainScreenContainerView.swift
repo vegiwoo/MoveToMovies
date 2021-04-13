@@ -8,10 +8,9 @@
 import SwiftUI
 import Navigation
 
-struct MainScreenContainerView: View, IContaierView {
+struct MainScreenContainerView: View/* ,IContaierView */{
     
     @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
-    @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
     
     var body: some View {
         MainScreenRenderView(selectedIndex: tabbarSelectedIndex, selectedView: tabbarSelectedView, visibleTabbar: true, updateData: updateData)

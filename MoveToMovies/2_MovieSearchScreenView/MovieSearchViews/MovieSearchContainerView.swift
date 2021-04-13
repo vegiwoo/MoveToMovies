@@ -15,9 +15,8 @@ struct MovieSearchContainerView: View, IContaierView {
     
     @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
     @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
-
-    @State var isGotoDetailedView: Bool = false
     
+    //@State var isGotoDetailedView: Bool = false
     
     var body: some View {
         MovieSearchRenderView(title: TabbarTab.movies.text,
@@ -35,17 +34,25 @@ struct MovieSearchContainerView: View, IContaierView {
         )
         .environment(\.managedObjectContext, appStore.state.popularMovies.context!)
         .onAppear {
-            isGotoDetailedView = false
+            //isGotoDetailedView = false
+            print(navCoordinator.navigationSequenceCount)
+            print("⬇️ MovieSearchContainerView onAppear")
+        }.onReceive(appStore.state.searchMovies.publisher) { (value) in
+            gotoDetailedView(value: value)
+        }.onReceive(appStore.state.popularMovies.publisher) { (value) in
+            gotoDetailedView(value: value)
+        }.onDisappear{
+            print("⬇️ MovieSearchContainerView onDisappear")
         }
-        .onChange(of: appStore.state.searchMovies.selectedOMDBMovie) { (value) in
-            if value != nil, isGotoDetailedView == false {
-                isGotoDetailedView.toggle()
-                navCoordinator.push(MovieDetailContainerView())
-            } else {
-                isGotoDetailedView = false
-            }
+    }
+    
+    private func gotoDetailedView(value: Bool) {
+        if value /*, isGotoDetailedView == false*/ {
+            //isGotoDetailedView.toggle()
+            navCoordinator.push(MovieDetailContainerView())
+        } else {
+            //isGotoDetailedView = false
         }
-        
     }
 }
 
@@ -85,20 +92,22 @@ extension MovieSearchContainerView {
     }
     private var selectedOMDBMovie: Binding<MovieOmdbapiObject?> {
         appStore.binding(for: \.searchMovies.selectedOMDBMovie) {
-            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.setSelectedMoviePoster(for: $0))
+            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.setSelectedOMDBMoviePoster(for: $0))
         }
     }
     
     private var selectedTMDBMovie: Binding<MovieItem?> {
-        appStore.binding(for: \.popularMovies.selectedTMDBMovie)
+        appStore.binding(for: \.popularMovies.selectedTMDBMovie) {
+            AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: $0))
+            
+        }
     }
-    
-    
 }
 
 struct MovieSearchContainerView_Previews: PreviewProvider {
     static let appStore = MoveToMoviesApp.createStore()
     static var previews: some View {
-        MovieSearchContainerView().environmentObject(appStore)
+        MovieSearchContainerView()
+            .environmentObject(appStore)
     }
 }

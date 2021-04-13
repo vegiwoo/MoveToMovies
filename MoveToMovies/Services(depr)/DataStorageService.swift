@@ -214,7 +214,7 @@ final class DataStorageServiceImpl: DataStorageService {
 
                 do {
                     try self.context.save()
-                    print("💾 Movie with id '\(id)' updated in DB.")
+                    //print("💾 Movie with id '\(id)' updated in DB.")
                 } catch {
                     print(error.localizedDescription)
                 }
@@ -296,7 +296,7 @@ final class DataStorageServiceImpl: DataStorageService {
             
             do {
                 try self.context.save()
-                print("💾 Movie with id '\(movie.id ?? 0)' saved in DB.")
+                //print("💾 Movie with id '\(movie.id ?? 0)' saved in DB.")
             } catch {
                 print(error.localizedDescription)
             }
@@ -593,7 +593,7 @@ final class DataStorageServiceImpl: DataStorageService {
                 
                 do {
                     try self.context.save()
-                    print("💾 Save poster to movie with id '\(movieItem.id)' in DB.")
+                    //print("💾 Save poster to movie with id '\(movieItem.id)' in DB.")
                     
                     if let existingPosters = self.fetchPosters(), existingPosters.count == 20 {
                         self.dataStoragePublisher.publish(request: .completionUpdatingData)
@@ -613,7 +613,7 @@ final class DataStorageServiceImpl: DataStorageService {
                 
                 do {
                     try self.context.save()
-                    print("💾 Save backdrop to movie with id '\(movieItem.id)' in DB.")
+                    //print("💾 Save backdrop to movie with id '\(movieItem.id)' in DB.")
                 } catch {
                     print(error.localizedDescription)
                 }

@@ -144,7 +144,7 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
         for item in items {
             state.foundMoviesPosters.updateValue(item.1, forKey: item.0)
         }
-    case let .setSelectedMoviePoster(for: movie):
+    case let .setSelectedOMDBMoviePoster(for: movie):
         if let newValue = movie {
             state.selectedOMDBMovie = newValue
             
@@ -157,6 +157,7 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
             
         } else {
             state.selectedOMDBMovie = nil
+            state.selectedOMDBMoviePoster = nil
         }
     }
     return Empty().eraseToAnyPublisher()
@@ -189,7 +190,7 @@ func searchTmdbApiMoviesReducer(state: inout PopularMoviesState, action: Popular
                     .eraseToAnyPublisher())!
             
     case let .loadCovers(items):
-        print("Request to download posters and backdrops for \(items.count) movies")
+        //print("Request to download posters and backdrops for \(items.count) movies")
         let coversize = state.posterSize
         return environment.networkProvider.loadCovers(for: items, coverSize: coversize.rawValue)
             .map({ (postersData, backdropData) in
@@ -206,6 +207,16 @@ func searchTmdbApiMoviesReducer(state: inout PopularMoviesState, action: Popular
         state.updatingPopularMovies = true
     case let .setCoreData(context):
         state.context = context
+    case let .setSelectedTMDBMovieCovers(movie):
+        if let movie = movie {
+            state.selectedTMDBMovie = movie
+            state.selectedTMDBMoviePoster = movie.poster?.blob != nil ? movie.poster!.blob : nil
+            state.selectedTMDBMovieBackdrop = movie.backdrop?.blob != nil ? movie.backdrop!.blob : nil
+        } else {
+            state.selectedTMDBMovie = nil
+            state.selectedTMDBMoviePoster = nil
+            state.selectedTMDBMovieBackdrop = nil
+        }
     }
 
     return Empty().eraseToAnyPublisher()

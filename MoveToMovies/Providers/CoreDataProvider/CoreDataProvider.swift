@@ -127,7 +127,7 @@ class CoreDataProvider: Singletonable {
                     if let voteCount = movie.voteCount {existingMovie.voteCount = Int32(voteCount)}
                     
                     self.saveContext()
-                    print("💾 Movie with id '\(existingMovie.id)' saved in DB.")
+                    //print("💾 Movie with id '\(existingMovie.id)' saved in DB.")
                     promise(.success((imdbId: movie.imdbId!,
                                       posterPath: movie.posterPath,
                                       backdropPath: movie.backdropPath)))
@@ -240,7 +240,7 @@ class CoreDataProvider: Singletonable {
                 }
                 
                 self.saveContext()
-                print("💾 Movie with id '\(newMovie.id)' saved in DB.")
+                //print("💾 Movie with id '\(newMovie.id)' saved in DB.")
             
                 promise(.success((imdbId: movie.imdbId!,
                                   posterPath: movie.posterPath,
@@ -288,7 +288,7 @@ class CoreDataProvider: Singletonable {
                     }
                     
                     self.saveContext()
-                    print("💾 Update poster & backdrop data for movie with id \(String(describing: movieItem.imdbId))")
+                    //print("💾 Update poster & backdrop data for movie with id \(String(describing: movieItem.imdbId))")
                 }
                 counter += 1
                 if postersData.count == counter {

@@ -11,8 +11,7 @@ import UIControls
 import Navigation
 
 struct MovieSearchRenderView: View {
-    
-    @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
+    //@EnvironmentObject var navCoordinator: NavCoordinatorViewModel
     @Environment(\.managedObjectContext) var managedObjectContext
     
     let title: String
@@ -140,6 +139,9 @@ struct MovieSearchRenderView: View {
                                     MovieCell(model: MovieItemDTO(item))
                                         .frame(width: 380, height: 120, alignment: .leading)
                                         .id(UUID())
+                                        .onTapGesture {
+                                            selectedTMDBMovie = item
+                                        }
                                 }
                             }
                         }.onAppear {
@@ -173,5 +175,3 @@ struct MovieSearchRenderView_Previews: PreviewProvider {
                     )
     }
 }
-
-

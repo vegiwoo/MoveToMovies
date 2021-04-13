@@ -30,14 +30,15 @@ struct MainScreenRenderView: View, SizeClassAdjustable {
             VStack {
                 NavCoordinatorView {
                     selectedView
-                }.frame(width: geometry.size.width,
-                        height: isPad
-                         ? (geometry.size.height / 11) * 10
-                         : isPadOrLandscapeMax
-                         ? (geometry.size.height / 6) * 5
-                         : (geometry.size.height / 12) * 11)
-                 .transition(.moveAndFade)
-
+                        .frame(width: geometry.size.width,
+                            height: isPad
+                             ? (geometry.size.height / 11) * 10
+                             : isPadOrLandscapeMax
+                             ? (geometry.size.height / 6) * 5
+                             : (geometry.size.height / 12) * 11)
+                        .transition(.moveAndFade)
+                }
+                
                 if visibleTabbar {
                     TabBar(tabbarSelectedIndex: $selectedIndex, tabBarItems: appStore.state.tabBar.tabBarItems, animanion: Animation.easeInOut(duration: 0.4))
                         .frame(width: isPad
