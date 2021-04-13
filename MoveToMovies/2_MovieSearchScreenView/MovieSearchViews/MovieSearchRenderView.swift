@@ -11,7 +11,7 @@ import UIControls
 import Navigation
 
 struct MovieSearchRenderView: View {
-    //@EnvironmentObject var navCoordinator: NavCoordinatorViewModel
+    @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
     @Environment(\.managedObjectContext) var managedObjectContext
     
     let title: String

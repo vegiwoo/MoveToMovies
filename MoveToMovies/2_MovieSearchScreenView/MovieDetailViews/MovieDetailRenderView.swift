@@ -33,9 +33,10 @@ struct MovieDetailRenderView: View {
                let selectedOMDBMoviePoster = selectedOMDBMoviePoster {
                 StretchyHeaderScreen(imageData: selectedOMDBMoviePoster, title: selectedOMDBMovie.title!, content: AnyView(
                                         MovieInfoContainerView()))
-            } else if let movie = selectedTMDBMovie {
+            } else if let movie = selectedTMDBMovie,
+                      let posterData = movie.poster?.blob {
                 // Selected TMDB Movie
-                Text(movie.title!).padding()
+                StretchyHeaderScreen(imageData: posterData, title: movie.title!, content: AnyView(MovieInfoContainerView()))
             }
 
             CircleBackButtonLabel().onTapGesture {

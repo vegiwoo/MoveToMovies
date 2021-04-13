@@ -47,8 +47,6 @@ struct TabBarState {
 }
 
 struct SearchMoviesState {
-    var publisher: PassthroughSubject<Bool,Never> = PassthroughSubject<Bool,Never>()
-    
     var selectedIndexSegmentControl: Int = 0
     var movieSearchStatus: MovieSearchStatus = .initial
     var searchQuery: String = ""
@@ -58,30 +56,16 @@ struct SearchMoviesState {
     var foundMoviesPosters: [String: Data?]
     var needForFurtherLoad: Bool
     var progressLoad: Float = 0.0
-    var selectedOMDBMovie: MovieOmdbapiObject? {
-        didSet {
-            if selectedOMDBMovie != nil {
-                publisher.send(true)
-            }
-        }
-    }
+    var selectedOMDBMovie: MovieOmdbapiObject?
     var selectedOMDBMoviePoster: Data?
 }
 
 struct PopularMoviesState {
-    var publisher: PassthroughSubject<Bool,Never> = PassthroughSubject<Bool,Never>()
-    
     var context: NSManagedObjectContext?
     var updatingPopularMovies: Bool = false
     var updateData: Bool = false
     var posterSize: PosterSize = .w500
-    var selectedTMDBMovie: MovieItem? {
-        didSet {
-            if selectedTMDBMovie != nil {
-                publisher.send(true)
-            }
-        }
-    }
+    var selectedTMDBMovie: MovieItem?
     var selectedTMDBMoviePoster: Data?
     var selectedTMDBMovieBackdrop: Data?
 }

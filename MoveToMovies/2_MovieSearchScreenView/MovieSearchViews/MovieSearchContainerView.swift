@@ -16,8 +16,6 @@ struct MovieSearchContainerView: View, IContaierView {
     @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
     @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
     
-    //@State var isGotoDetailedView: Bool = false
-    
     var body: some View {
         MovieSearchRenderView(title: TabbarTab.movies.text,
                               accentColor: TabbarTab.movies.actualColor,
@@ -34,25 +32,15 @@ struct MovieSearchContainerView: View, IContaierView {
         )
         .environment(\.managedObjectContext, appStore.state.popularMovies.context!)
         .onAppear {
-            //isGotoDetailedView = false
             print(navCoordinator.navigationSequenceCount)
             print("⬇️ MovieSearchContainerView onAppear")
-        }.onReceive(appStore.state.searchMovies.publisher) { (value) in
-            gotoDetailedView(value: value)
-        }.onReceive(appStore.state.popularMovies.publisher) { (value) in
-            gotoDetailedView(value: value)
-        }.onDisappear{
-            print("⬇️ MovieSearchContainerView onDisappear")
         }
-    }
-    
-    private func gotoDetailedView(value: Bool) {
-        if value /*, isGotoDetailedView == false*/ {
-            //isGotoDetailedView.toggle()
-            navCoordinator.push(MovieDetailContainerView())
-        } else {
-            //isGotoDetailedView = false
-        }
+        .valueChanged(value: appStore.state.searchMovies.selectedOMDBMovie, onChange: { (value) in
+            if value != nil { navCoordinator.push(MovieDetailContainerView())}
+        })
+        .valueChanged(value: appStore.state.popularMovies.selectedTMDBMovie, onChange: { (value) in
+            if value != nil { navCoordinator.push(MovieDetailContainerView())}
+        })
     }
 }
 
@@ -95,7 +83,6 @@ extension MovieSearchContainerView {
             AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.setSelectedOMDBMoviePoster(for: $0))
         }
     }
-    
     private var selectedTMDBMovie: Binding<MovieItem?> {
         appStore.binding(for: \.popularMovies.selectedTMDBMovie) {
             AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: $0))
