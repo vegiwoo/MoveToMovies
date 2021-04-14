@@ -17,11 +17,15 @@ struct MovieSearchContainerView: View {
     @EnvironmentObject private var appStore: AppStore<AppState, AppAction, AppEnvironment>
     @EnvironmentObject private var ns: NavigationStack
     
-    @State var isGotoDetailView: Bool = false
+    @State var isGotoOMDBMovieDetailView: Bool = false
+    @State var isGotoTMDBMovieDetailView: Bool = false
     
     var body: some View {
         ZStack {
-            PushView(destination: MovieDetailContainerView(), isActive: $isGotoDetailView) {
+            PushView(destination: MovieDetailContainerView(), isActive: $isGotoOMDBMovieDetailView) {
+                EmptyView()
+            }
+            PushView(destination: MovieDetailContainerView(), isActive: $isGotoTMDBMovieDetailView) {
                 EmptyView()
             }
             MovieSearchRenderView(title: TabbarTab.movies.text,
@@ -39,14 +43,20 @@ struct MovieSearchContainerView: View {
             )
             .environment(\.managedObjectContext, appStore.state.popularMovies.context!)
             .environmentObject(ns)
-        }
-        .onAppear {
-            print("⬆️ MovieSearchContainerView onAppear")
-        }.onChange(of: selectedOMDBMovie.wrappedValue) { (value) in
-            if value != nil, isGotoDetailView == false {
-                isGotoDetailView = true
+        }.onChange(of: selectedOMDBMovie.wrappedValue, perform: { value in
+            if value != nil, isGotoOMDBMovieDetailView == false {
+                isGotoOMDBMovieDetailView.toggle()
+            } else {
+                isGotoOMDBMovieDetailView = false
             }
-        }
+        })
+        .onChange(of: selectedTMDBMovie.wrappedValue, perform: { value in
+            if value != nil, isGotoTMDBMovieDetailView == false {
+                isGotoTMDBMovieDetailView.toggle()
+            } else {
+                isGotoTMDBMovieDetailView = false
+            }
+        })
     }
 }
 
