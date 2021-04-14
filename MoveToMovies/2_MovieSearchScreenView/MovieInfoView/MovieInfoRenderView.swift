@@ -18,26 +18,34 @@ struct MovieInfoRenderView: View {
     @State var companiesColumns: [GridItem] = .init()
     
     var body: some View {
-        if let selectedOMDBMovie = selectedOMDBMovie {
-            VStack (spacing: 16) {
-                if let year = selectedOMDBMovie.year {
-                    Text("Year: \(year)")
-                        .font(.title2)
-                        .foregroundColor(.secondary)
+        Group {
+            if let selectedOMDBMovie = selectedOMDBMovie {
+                VStack (spacing: 16) {
+                    if let year = selectedOMDBMovie.year {
+                        Text("Year: \(year)")
+                            .font(.title2)
+                            .foregroundColor(.secondary)
+                    }
+                    if let type = selectedOMDBMovie.type {
+                        Text("Type: \(type.rawValue)")
+                            .font(.title3)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
                 }
-                if let type = selectedOMDBMovie.type {
-                    Text("Type: \(type.rawValue)")
-                        .font(.title3)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(.horizontal)
+            } /*else if let selectedTMDBMovie = selectedTMDBMovie {
+                
+                
+                
+                
+                
+            }*/
+        }.padding(.horizontal)
             .padding(.top, 16)
             .onAppear {
                 setCountColumnsForItems()
             }
         }
-    }
     
     private func setCountColumnsForItems() {
         if let popularMovie = selectedTMDBMovie {

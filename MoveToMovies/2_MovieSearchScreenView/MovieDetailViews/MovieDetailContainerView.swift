@@ -9,24 +9,21 @@ import SwiftUI
 import OmdbAPI
 import Navigation
 
-struct MovieDetailContainerView: View /*, IContaierView*/ {
+struct MovieDetailContainerView: View {
     
-    @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
-    @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
+    @EnvironmentObject private var appStore: AppStore<AppState, AppAction, AppEnvironment>
+    @EnvironmentObject private var ns: NavigationStack
 
     @State var isGotoPreviewsView: Bool = false
     
-    init() {}
-    
     var body: some View {
-
         MovieDetailRenderView(selectedOMDBMovie: selectedOMDBMovie,
                               selectedOMDBMoviePoster: selectedOMDBMoviePosterData,
                               selectedTMDBMovie: selectedTMDBMovie,
                               isGotoPreviewsView: $isGotoPreviewsView)
-            .valueChanged(value: isGotoPreviewsView, onChange: { (value) in
-                if value { navCoordinator.pop(to: .previous) }
-            })
+            .onChange(of: isGotoPreviewsView) { (value) in
+                if value { ns.pop() }
+            }
     }
 }
 

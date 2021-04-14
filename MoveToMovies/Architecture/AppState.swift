@@ -27,8 +27,8 @@ struct TabBarState {
             TabBarItem(sfSymbolName: "info", title: "About us", color: TabbarTab.aboutUSScreen.actualColor),
         ]
     }
-    var selectedIndex: Int = 1
-    var selectedView: AnyView = TabBarState.setActualScreen(for: 1)
+    var selectedIndex: Int = 0
+    var selectedView: AnyView = TabBarState.setActualScreen(for: 0)
     
     static func setActualScreen(for index: Int) -> AnyView {
         if let selectedTabbarTab = TabbarTab.allCases.first(where: { $0.rawValue == index }) {
@@ -52,9 +52,9 @@ struct SearchMoviesState {
     var searchQuery: String = ""
     var searchPage: Int = 1
     var infoMessage: (symbol: String, message: String) = ("magnifyingglass", "Find your favorite\nmovie or TV series")
-    var foundMovies: [MovieOmdbapiObject]
-    var foundMoviesPosters: [String: Data?]
-    var needForFurtherLoad: Bool
+    var foundMovies: [MovieOmdbapiObject] = .init()
+    var foundMoviesPosters: [String: Data?] = .init()
+    var needForFurtherLoad: Bool = false
     var progressLoad: Float = 0.0
     var selectedOMDBMovie: MovieOmdbapiObject?
     var selectedOMDBMoviePoster: Data?

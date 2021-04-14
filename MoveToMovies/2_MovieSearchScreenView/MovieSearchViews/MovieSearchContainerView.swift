@@ -7,40 +7,46 @@
 
 import SwiftUI
 import CoreData
+import Combine
 import OmdbAPI
 import Navigation
 import UIControls
 
-struct MovieSearchContainerView: View, IContaierView {
+struct MovieSearchContainerView: View {
     
-    @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
-    @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
+    @EnvironmentObject private var appStore: AppStore<AppState, AppAction, AppEnvironment>
+    @EnvironmentObject private var ns: NavigationStack
+    
+    @State var isGotoDetailView: Bool = false
     
     var body: some View {
-        MovieSearchRenderView(title: TabbarTab.movies.text,
-                              accentColor: TabbarTab.movies.actualColor,
-                              selectedIndexSegmentControl: selectedIndexSegmentControl,
-                              movieSearchStatus: movieSearchStatus,
-                              searchQuery: searchQuery,
-                              infoMessage: infoMessage,
-                              foundMovies: foundMovies,
-                              foundMoviesPosters: foundMoviesPosters,
-                              needForFurtherLoad: needForFurtherLoad,
-                              progressLoad: progressLoad,
-                              selectedOMDBMovie: selectedOMDBMovie,
-                              selectedTMDBMovie: selectedTMDBMovie
-        )
-        .environment(\.managedObjectContext, appStore.state.popularMovies.context!)
-        .onAppear {
-            print(navCoordinator.navigationSequenceCount)
-            print("⬇️ MovieSearchContainerView onAppear")
+        ZStack {
+            PushView(destination: MovieDetailContainerView(), isActive: $isGotoDetailView) {
+                EmptyView()
+            }
+            MovieSearchRenderView(title: TabbarTab.movies.text,
+                                  accentColor: TabbarTab.movies.actualColor,
+                                  selectedIndexSegmentControl: selectedIndexSegmentControl,
+                                  movieSearchStatus: movieSearchStatus,
+                                  searchQuery: searchQuery,
+                                  infoMessage: infoMessage,
+                                  foundMovies: foundMovies,
+                                  foundMoviesPosters: foundMoviesPosters,
+                                  needForFurtherLoad: needForFurtherLoad,
+                                  progressLoad: progressLoad,
+                                  selectedOMDBMovie: selectedOMDBMovie,
+                                  selectedTMDBMovie: selectedTMDBMovie
+            )
+            .environment(\.managedObjectContext, appStore.state.popularMovies.context!)
+            .environmentObject(ns)
         }
-        .valueChanged(value: appStore.state.searchMovies.selectedOMDBMovie, onChange: { (value) in
-            if value != nil { navCoordinator.push(MovieDetailContainerView())}
-        })
-        .valueChanged(value: appStore.state.popularMovies.selectedTMDBMovie, onChange: { (value) in
-            if value != nil { navCoordinator.push(MovieDetailContainerView())}
-        })
+        .onAppear {
+            print("⬆️ MovieSearchContainerView onAppear")
+        }.onChange(of: selectedOMDBMovie.wrappedValue) { (value) in
+            if value != nil, isGotoDetailView == false {
+                isGotoDetailView = true
+            }
+        }
     }
 }
 
@@ -86,7 +92,6 @@ extension MovieSearchContainerView {
     private var selectedTMDBMovie: Binding<MovieItem?> {
         appStore.binding(for: \.popularMovies.selectedTMDBMovie) {
             AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: $0))
-            
         }
     }
 }

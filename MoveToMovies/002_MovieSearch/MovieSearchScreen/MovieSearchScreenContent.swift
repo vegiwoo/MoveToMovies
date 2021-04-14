@@ -99,7 +99,7 @@ struct MovieSearchScreenContent: View, BaseView {
                     Group {
                         List {
                             ForEach(popularMovies, id: \.self) { movie in
-                                NavPushButton(destination: MovieDetailScreen(popularMovie: movie)
+                                NavPushButton(destination: MovieDetailScreen001(popularMovie: movie)
                                                 .environmentObject(appState)
                                 ) {
                                   //  MovieCell(model: PopularMovieDTO(fromMovieItem: movie))

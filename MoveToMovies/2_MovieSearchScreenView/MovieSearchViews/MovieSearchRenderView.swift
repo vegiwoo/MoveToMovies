@@ -11,7 +11,6 @@ import UIControls
 import Navigation
 
 struct MovieSearchRenderView: View {
-    @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
     @Environment(\.managedObjectContext) var managedObjectContext
     
     let title: String
@@ -29,10 +28,13 @@ struct MovieSearchRenderView: View {
     @Binding var selectedOMDBMovie: MovieOmdbapiObject?
     @Binding var selectedTMDBMovie: MovieItem?
     
+    @State var gotoDetail: Bool = false
+    
+    
     @FetchRequest (entity: MovieItem.entity(), sortDescriptors: [
                     NSSortDescriptor(keyPath: \MovieItem.voteAverage, ascending: false) ]
     ) var popularMovies: FetchedResults<MovieItem>
-
+    
     init(title: String,
          accentColor: UIColor,
          selectedIndexSegmentControl: Binding<Int>,
@@ -45,7 +47,7 @@ struct MovieSearchRenderView: View {
          progressLoad: Binding<Float>,
          selectedOMDBMovie: Binding<MovieOmdbapiObject?>,
          selectedTMDBMovie: Binding<MovieItem?>
-         ) {
+    ) {
         self.title = title
         self.accentColor = accentColor
         self._selectedIndexSegmentControl = selectedIndexSegmentControl
@@ -73,6 +75,7 @@ struct MovieSearchRenderView: View {
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(.horizontal)
+                
                 // Search movies
                 if selectedIndexSegmentControl == 0 {
                     SearchBar(placeholder: "Search movie or TV Show...", actualColor: accentColor, searchText: $searchQuery,  movieSearchStatus: $movieSearchStatus)
@@ -80,7 +83,7 @@ struct MovieSearchRenderView: View {
                     if movieSearchStatus.description == "getResults" ||
                         movieSearchStatus == .loading ||
                         movieSearchStatus == .endOfSearch {
-                        
+
                         ScrollViewReader { scrollProxy in
                             ScrollView {
                                 LazyVStack {
@@ -102,7 +105,6 @@ struct MovieSearchRenderView: View {
                                     self.selectedOMDBMovie = nil
                                 }
                             }
-                            
                         }
                         
                         if movieSearchStatus == .loading {

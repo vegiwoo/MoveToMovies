@@ -9,20 +9,18 @@ import SwiftUI
 import OmdbAPI
 import Navigation
 
-struct MovieInfoContainerView: View, IContaierView {
+struct MovieInfoContainerView: View {
     
     @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
-    @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
-    
+
     var body: some View {
         MovieInfoRenderView(
             selectedOMDBMovie: selectedOMDBMovie,
             searchOMDBMoviePoster: selectedOMDBMoviePoster,
-            selectedTMDBMovie: .constant(nil)
+            selectedTMDBMovie: selectedTMDBMovie
         )
     }
 }
-
 
 /// Binding variables
 extension MovieInfoContainerView {
@@ -31,6 +29,11 @@ extension MovieInfoContainerView {
     }
     private var selectedOMDBMoviePoster: Binding<Data?> {
         appStore.binding(for: \.searchMovies.selectedOMDBMoviePoster)
+    }
+    private var selectedTMDBMovie: Binding<MovieItem?> {
+        appStore.binding(for: \.popularMovies.selectedTMDBMovie) {
+            AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: $0))
+        }
     }
 }
 

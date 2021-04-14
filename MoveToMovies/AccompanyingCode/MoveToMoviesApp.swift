@@ -61,11 +61,7 @@ struct MoveToMoviesApp: App {
     static func createStore() -> AppStore<AppState, AppAction, AppEnvironment> {
         return AppStore(initialState: .init(
                             tabBar: TabBarState(),
-                            searchMovies: SearchMoviesState.init(
-                                foundMovies: [],
-                                foundMoviesPosters: [:],
-                                needForFurtherLoad: false,
-                                progressLoad: 0),
+                            searchMovies: SearchMoviesState.init(),
                             popularMovies: PopularMoviesState.init()),
                         reducer: appReducer,
                         environment: AppEnvironment(

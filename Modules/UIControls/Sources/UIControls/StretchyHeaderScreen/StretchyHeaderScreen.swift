@@ -26,13 +26,10 @@ public struct StretchyHeaderScreen: View {
     
     public var body: some View {
         ScrollView{
-            // Screen content
             VStack {
                 VStack {
-                    // Text title of screen
                     Text(title)
                         .background(GeometryGetter(rect: self.$titleRect))
-                    // Мain content of screen
                     content
                 }
                 .padding(.horizontal)

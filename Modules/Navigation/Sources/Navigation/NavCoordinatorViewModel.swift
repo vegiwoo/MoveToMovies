@@ -7,13 +7,17 @@ import SwiftUI
 /// Represents the ViewModel for the navigation coordinator.
 @available(iOS 13.0, *)
 public final class NavCoordinatorViewModel: ObservableObject {
+    
     @Published var currentScreen: Screen?
+    
     private var navigationSequence: LinkedList<Screen> = .init() {
         didSet {
             currentScreen = navigationSequence.lastValue
         }
     }
+    
     var navigationType: NavigationType = .push
+    
     private let animations: (push: Animation, pop: Animation)
 
     public var navigationSequenceCount: Int{

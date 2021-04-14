@@ -49,18 +49,8 @@ extension AppStore {
             get: {
                 self.state[keyPath: keyPath]},
             set: {
-                print($0)
                 self.state = $0 as! State
             }
         )
     }
 }
-
-/*
- let binding = Binding(
-             get: { self.selection },
-             set: { self.selection = $0 }
-         )
- 
- 
- */

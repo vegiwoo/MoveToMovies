@@ -10,7 +10,7 @@ import UIControls
 import Navigation
 import OmdbAPI
 
-struct MovieDetailScreen: View {
+struct MovieDetailScreen001: View {
 
     //@EnvironmentObject var vm: MovieSearchScreenViewModel
     @EnvironmentObject var appState: AppStating
@@ -62,6 +62,6 @@ struct MovieDetailScreen: View {
 
 struct MovieDetailScreen_Previews: PreviewProvider {
     static var previews: some View {
-        MovieDetailScreen(popularMovie: AppStating.dataStoreService.getRendomMovieItem() ?? MovieItem())
+        MovieDetailScreen001(popularMovie: AppStating.dataStoreService.getRendomMovieItem() ?? MovieItem())
     }
 }

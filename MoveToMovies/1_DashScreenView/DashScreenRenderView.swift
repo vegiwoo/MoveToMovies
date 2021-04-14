@@ -6,10 +6,19 @@
 //
 
 import SwiftUI
+import Navigation
 
 struct DashScreenRenderView: View {
+    
+    @EnvironmentObject var nc: NavCoordinatorViewModel
+    
     var body: some View {
-        Text("DashScreenRenderView")
+        PushView(destination: EmptyView().background(Color.red)) {
+            Text("Push")
+                .padding()
+                .foregroundColor(.green)
+                .background(Color.yellow)
+        }
     }
 }
 

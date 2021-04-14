@@ -12,13 +12,13 @@ import Navigation
 
 struct MovieDetailRenderView: View {
     
-    @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
-   
+    @EnvironmentObject var navigationStack: NavigationStack
+
     @Binding var selectedOMDBMovie: MovieOmdbapiObject?
     @Binding var selectedOMDBMoviePoster: Data?
     @Binding var selectedTMDBMovie: MovieItem?
     @Binding var isGotoPreviewsView: Bool
-    
+
     init(selectedOMDBMovie: Binding<MovieOmdbapiObject?>, selectedOMDBMoviePoster: Binding<Data?>, selectedTMDBMovie: Binding<MovieItem?>, isGotoPreviewsView: Binding<Bool>) {
         self._selectedOMDBMovie = selectedOMDBMovie
         self._selectedOMDBMoviePoster = selectedOMDBMoviePoster
@@ -27,7 +27,9 @@ struct MovieDetailRenderView: View {
     }
 
     var body: some View {
+      
         ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
+
             // Selected OMDB Movie
             if let selectedOMDBMovie = selectedOMDBMovie,
                let selectedOMDBMoviePoster = selectedOMDBMoviePoster {
@@ -43,7 +45,6 @@ struct MovieDetailRenderView: View {
                 withAnimation(Animation.easeInOut(duration: 1.0)){
                     isGotoPreviewsView = true
                 }
-                
             }
         }
     }
@@ -51,6 +52,7 @@ struct MovieDetailRenderView: View {
 
 struct MovieDetailRenderView_Previews: PreviewProvider {
     static var previews: some View {
+        
         MovieDetailRenderView(selectedOMDBMovie: .constant(MovieOmdbapiObject()),
                               selectedOMDBMoviePoster: .constant(nil),
                               selectedTMDBMovie: .constant(nil),
