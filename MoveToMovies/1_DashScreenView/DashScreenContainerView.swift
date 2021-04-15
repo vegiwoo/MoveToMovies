@@ -13,18 +13,15 @@ struct DashScreenContainerView: View{
     @EnvironmentObject private var appStore: AppStore<AppState, AppAction, AppEnvironment>
     @EnvironmentObject private var ns: NavigationStack
 
-    //@State var isQuickTransition: Bool  = false
-    
     var body: some View {
-        DashScreenRenderView(readinessUpdatePopularTmbdMovies: readinessUpdatePopularTmbdMovies, isQuickTransition: isQuickTransition)
-            .onChange(of: appStore.state.popularMovies.isQuickTransition) { (value) in
+        DashScreenRenderView(readinessUpdatePopularTmbdMovies: readinessUpdatePopularTmbdMovies, isQuickTransition: gotoDetailedView)
+            .onAppear{
+                appStore.send(AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.gotoDetailedView(false)))
+            }
+            .onChange(of: gotoDetailedView.wrappedValue) { (value) in
                 if value {
-                    print(value)
-                    print(appStore.state.popularMovies.selectedTMDBMovie?.title)
-                    
-
-//                    appStore.send(AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.assignIndexSegmentControl(1)))
-//                    appStore.send(AppAction.tabbar(action: TabbarAction.indexChange(1)))
+                    appStore.send(AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.assignIndexSegmentControl(1)))
+                    appStore.send(AppAction.tabbar(action: TabbarAction.indexChange(1)))
                 }
             }.onDisappear {
                 print("⬇️ DashScreenContainerView onDisappear")
@@ -42,9 +39,9 @@ extension DashScreenContainerView {
             AppAction.tabbar(action: TabbarAction.indexChange($0))
         }
     }
-    private var isQuickTransition: Binding<Bool> {
-        appStore.binding(for: \.popularMovies.isQuickTransition) { _ in
-            AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.getRandomMovie)
+    private var gotoDetailedView: Binding<Bool> {
+        appStore.binding(for: \.popularMovies.gotoDetailedView) {
+            AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.gotoDetailedView($0))
         }
     }
 }

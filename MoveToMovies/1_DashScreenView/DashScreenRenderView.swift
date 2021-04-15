@@ -29,7 +29,7 @@ struct DashScreenRenderView: View {
                 ZStack {
                     Circle()
                         .foregroundColor(.gray)
-                    if readinessForQuickTransition {
+                    if readinessUpdatePopularTmbdMovies {
                         Text("Get random\npopular movie")
                             .multilineTextAlignment(.center)
                             .foregroundColor(.white)

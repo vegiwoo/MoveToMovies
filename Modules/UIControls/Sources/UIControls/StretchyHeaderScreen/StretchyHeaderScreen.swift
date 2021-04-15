@@ -25,7 +25,7 @@ public struct StretchyHeaderScreen: View {
     }
     
     public var body: some View {
-        ScrollView{
+        ScrollView {
             VStack {
                 VStack {
                     Text(title)

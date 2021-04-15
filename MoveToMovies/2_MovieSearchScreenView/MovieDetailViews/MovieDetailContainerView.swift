@@ -15,6 +15,8 @@ struct MovieDetailContainerView: View {
     @EnvironmentObject private var ns: NavigationStack
 
     @State var isGotoPreviewsView: Bool = false
+    @Binding var isQuickTransition: Bool
+    
     
     var body: some View {
         MovieDetailRenderView(selectedOMDBMovie: selectedOMDBMovie,
@@ -25,7 +27,9 @@ struct MovieDetailContainerView: View {
                 print("ℹ️ First nesting level of stack.")
             }
             .onChange(of: isGotoPreviewsView) { (value) in
-                if value { ns.pop() }
+                if value {
+                    isQuickTransition = false
+                    ns.pop() }
             }
     }
 }
@@ -51,6 +55,6 @@ extension MovieDetailContainerView {
 
 struct MovieDetailContainerView_Previews: PreviewProvider {
     static var previews: some View {
-        MovieDetailContainerView()
+        MovieDetailContainerView(isQuickTransition: .constant(false))
     }
 }

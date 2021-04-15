@@ -218,9 +218,17 @@ func searchTmdbApiMoviesReducer(state: inout PopularMoviesState, action: Popular
             state.selectedTMDBMoviePoster = nil
             state.selectedTMDBMovieBackdrop = nil
         }
-    case .getRandomMovie:
-        if let randomMovie = environment.coreDataProvider.fetshingRandomMovie() {
-            return Just(PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: randomMovie)).eraseToAnyPublisher()
+    case let .gotoDetailedView(value):
+        if value {
+            state.gotoDetailedView = true
+            if let randomMovie = environment.coreDataProvider.fetshingRandomMovie() {
+                return Just(PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: randomMovie)).eraseToAnyPublisher()
+            } else {
+                return Just(PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: nil)).eraseToAnyPublisher()
+            }
+        } else {
+            state.gotoDetailedView = false
+            return Just(PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: nil)).eraseToAnyPublisher()
         }
     }
     return Empty().eraseToAnyPublisher()

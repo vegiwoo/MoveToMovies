@@ -22,37 +22,39 @@ struct MovieSearchContainerView: View {
     
     var body: some View {
         ZStack {
-            PushView(destination: MovieDetailContainerView(), isActive: $isGotoOMDBMovieDetailView) {
-                EmptyView()
-            }
-            PushView(destination: MovieDetailContainerView(), isActive: $isGotoTMDBMovieDetailView) {
-                EmptyView()
-            }
-            MovieSearchRenderView(title: TabbarTab.movies.text,
-                                  accentColor: TabbarTab.movies.actualColor,
-                                  selectedIndexSegmentControl: selectedIndexSegmentControl,
-                                  movieSearchStatus: movieSearchStatus,
-                                  searchQuery: searchQuery,
-                                  infoMessage: infoMessage,
-                                  foundMovies: foundMovies,
-                                  foundMoviesPosters: foundMoviesPosters,
-                                  needForFurtherLoad: needForFurtherLoad,
-                                  progressLoad: progressLoad,
-                                  selectedOMDBMovie: selectedOMDBMovie,
-                                  selectedTMDBMovie: selectedTMDBMovie
-            )
-            .environment(\.managedObjectContext, appStore.state.popularMovies.context!)
-            .environmentObject(ns)
             
+            PushView(destination: MovieDetailContainerView(isQuickTransition: gotoDetailedView), isActive: $isGotoOMDBMovieDetailView) {
+                EmptyView()
+            }
+            PushView(destination: MovieDetailContainerView(isQuickTransition: gotoDetailedView), isActive: $isGotoTMDBMovieDetailView) {
+                EmptyView()
+            }
+            if gotoDetailedView.wrappedValue {
+                EmptyView()
+            } else {
+                MovieSearchRenderView(title: TabbarTab.movies.text,
+                                      accentColor: TabbarTab.movies.actualColor,
+                                      selectedIndexSegmentControl: selectedIndexSegmentControl,
+                                      movieSearchStatus: movieSearchStatus,
+                                      searchQuery: searchQuery,
+                                      infoMessage: infoMessage,
+                                      foundMovies: foundMovies,
+                                      foundMoviesPosters: foundMoviesPosters,
+                                      needForFurtherLoad: needForFurtherLoad,
+                                      progressLoad: progressLoad,
+                                      selectedOMDBMovie: selectedOMDBMovie,
+                                      selectedTMDBMovie: selectedTMDBMovie,
+                                      gotoDetailedView: gotoDetailedView
+                )
+                .environment(\.managedObjectContext, appStore.state.popularMovies.context!)
+                .environmentObject(ns)
+            }
         }.onAppear {
-            if selectedTMDBMovie.wrappedValue != nil {
-    
-                if isGotoTMDBMovieDetailView == false {
-                    isGotoTMDBMovieDetailView.toggle()
-                } else {
-                    appStore.send(AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: nil)))
-                    isGotoTMDBMovieDetailView = false
+            if gotoDetailedView.wrappedValue {
+                guard selectedTMDBMovie.wrappedValue != nil else {
+                    fatalError()
                 }
+                isGotoTMDBMovieDetailView = true
             }
         }.onChange(of: selectedOMDBMovie.wrappedValue, perform: { value in
             if value != nil, isGotoOMDBMovieDetailView == false {
@@ -113,6 +115,11 @@ extension MovieSearchContainerView {
     private var selectedTMDBMovie: Binding<MovieItem?> {
         appStore.binding(for: \.popularMovies.selectedTMDBMovie) {
             AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: $0))
+        }
+    }
+    private var gotoDetailedView: Binding<Bool> {
+        appStore.binding(for: \.popularMovies.gotoDetailedView) {
+            AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.gotoDetailedView($0))
         }
     }
 }

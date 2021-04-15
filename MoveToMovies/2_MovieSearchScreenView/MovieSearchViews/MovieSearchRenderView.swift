@@ -27,6 +27,7 @@ struct MovieSearchRenderView: View {
     @Binding var progressLoad: Float
     @Binding var selectedOMDBMovie: MovieOmdbapiObject?
     @Binding var selectedTMDBMovie: MovieItem?
+    @Binding var gotoDetailedView: Bool
     
     @State var gotoDetail: Bool = false
     
@@ -45,7 +46,8 @@ struct MovieSearchRenderView: View {
          needForFurtherLoad: Binding<Bool>,
          progressLoad: Binding<Float>,
          selectedOMDBMovie: Binding<MovieOmdbapiObject?>,
-         selectedTMDBMovie: Binding<MovieItem?>
+         selectedTMDBMovie: Binding<MovieItem?>,
+         gotoDetailedView: Binding<Bool>
     ) {
         self.title = title
         self.accentColor = accentColor
@@ -59,6 +61,7 @@ struct MovieSearchRenderView: View {
         self._progressLoad = progressLoad
         self._selectedOMDBMovie = selectedOMDBMovie
         self._selectedTMDBMovie = selectedTMDBMovie
+        self._gotoDetailedView = gotoDetailedView
     }
     
     var body: some View {
@@ -131,7 +134,7 @@ struct MovieSearchRenderView: View {
                         Spacer()
                     }
                     
-                // Popular movies
+                    // Popular movies
                 } else if selectedIndexSegmentControl == 1 {
                     ScrollViewReader { scrollProxy in
                         ScrollView {
@@ -146,10 +149,10 @@ struct MovieSearchRenderView: View {
                                 }
                             }
                         }.onAppear {
-                            if let selectedMovie = selectedTMDBMovie {
+                            if !gotoDetailedView, let selectedMovie = selectedTMDBMovie {
                                 scrollProxy.scrollTo(selectedMovie, anchor: .center)
+                                selectedTMDBMovie = nil
                             }
-                            selectedTMDBMovie = nil
                         }
                     }
                 }
@@ -172,7 +175,8 @@ struct MovieSearchRenderView_Previews: PreviewProvider {
                               needForFurtherLoad: .constant(false),
                               progressLoad: .constant(50.0),
                               selectedOMDBMovie: .constant(MovieOmdbapiObject()),
-                              selectedTMDBMovie: .constant(nil)
+                              selectedTMDBMovie: .constant(nil),
+                              gotoDetailedView: .constant(false)
                     )
     }
 }

@@ -29,7 +29,7 @@ struct MainScreenRenderView: View, SizeClassAdjustable {
             VStack {
                 NavigationStackView {
                     selectedView
-                        .transition(.moveAndFade)
+                        .transition(.opacity)
                         .frame(width: geometry.size.width,
                                height: isPad
                                 ? (geometry.size.height / 11) * 10

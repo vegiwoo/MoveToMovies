@@ -47,7 +47,7 @@ enum PopularTmbdAPIMoviesAction {
     case updateCovers(postersData: [(String, Data?)], backdropData: [(String, Data?)])
     case updatingPopularMoviesComplete
     case setSelectedTMDBMovieCovers(for: MovieItem?)
-    case getRandomMovie
+    case gotoDetailedView(Bool)
 }
 
 

@@ -70,11 +70,7 @@ struct PopularMoviesState {
     var selectedTMDBMovie: MovieItem?
     var selectedTMDBMoviePoster: Data?
     var selectedTMDBMovieBackdrop: Data?
-    var isQuickTransition: Bool = false {
-        willSet {
-            print(newValue)
-        }
-    }
+    var gotoDetailedView: Bool = false
 }
 
 public enum PosterSize: String {
