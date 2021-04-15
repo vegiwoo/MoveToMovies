@@ -43,6 +43,17 @@ struct MovieSearchContainerView: View {
             )
             .environment(\.managedObjectContext, appStore.state.popularMovies.context!)
             .environmentObject(ns)
+            
+        }.onAppear {
+            if selectedTMDBMovie.wrappedValue != nil {
+    
+                if isGotoTMDBMovieDetailView == false {
+                    isGotoTMDBMovieDetailView.toggle()
+                } else {
+                    appStore.send(AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: nil)))
+                    isGotoTMDBMovieDetailView = false
+                }
+            }
         }.onChange(of: selectedOMDBMovie.wrappedValue, perform: { value in
             if value != nil, isGotoOMDBMovieDetailView == false {
                 isGotoOMDBMovieDetailView.toggle()

@@ -42,15 +42,10 @@ struct MovieInfoRenderView: View {
                                     }
                                 }
                             }
-                            .opacity(0.6)
                             Text("Poster and Backdrop").foregroundColor(.white).fontWeight(.bold)
                         }
                     }
                 }
-                
-                
-                
-                
             }
         }.padding(.horizontal)
             .padding(.top, 16)

@@ -30,7 +30,6 @@ struct MovieSearchRenderView: View {
     
     @State var gotoDetail: Bool = false
     
-    
     @FetchRequest (entity: MovieItem.entity(), sortDescriptors: [
                     NSSortDescriptor(keyPath: \MovieItem.voteAverage, ascending: false) ]
     ) var popularMovies: FetchedResults<MovieItem>

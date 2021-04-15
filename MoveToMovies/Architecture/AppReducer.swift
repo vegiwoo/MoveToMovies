@@ -168,7 +168,7 @@ func searchTmdbApiMoviesReducer(state: inout PopularMoviesState, action: Popular
     switch action {
     case .loadGenres:
         //environment.coreDataProvider.clearStrorаge()
-        state.updatingPopularMovies = false
+        state.readinessUpdatePopularTmbdMovies = false
         return (environment.networkProvider.loadGenresFromTmdb()?
                     .map{PopularTmbdAPIMoviesAction.updateGenresInStorage(response: $0)}
                     .eraseToAnyPublisher())!
@@ -205,7 +205,7 @@ func searchTmdbApiMoviesReducer(state: inout PopularMoviesState, action: Popular
             .eraseToAnyPublisher()
     case .updatingPopularMoviesComplete:
         print("🟢 Popular films update completed.")
-        state.updatingPopularMovies = true
+        state.readinessUpdatePopularTmbdMovies = true
     case let .setCoreData(context):
         state.context = context
     case let .setSelectedTMDBMovieCovers(movie):
@@ -220,10 +220,9 @@ func searchTmdbApiMoviesReducer(state: inout PopularMoviesState, action: Popular
         }
     case .getRandomMovie:
         if let randomMovie = environment.coreDataProvider.fetshingRandomMovie() {
-            state.selectedTMDBMovie = randomMovie
+            return Just(PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: randomMovie)).eraseToAnyPublisher()
         }
     }
-
     return Empty().eraseToAnyPublisher()
 }
 

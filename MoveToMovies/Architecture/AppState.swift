@@ -64,12 +64,17 @@ struct SearchMoviesState {
 
 struct PopularMoviesState {
     var context: NSManagedObjectContext?
-    var updatingPopularMovies: Bool = false
+    var readinessUpdatePopularTmbdMovies: Bool = false
     var updateData: Bool = false
     var posterSize: PosterSize = .w500
     var selectedTMDBMovie: MovieItem?
     var selectedTMDBMoviePoster: Data?
     var selectedTMDBMovieBackdrop: Data?
+    var isQuickTransition: Bool = false {
+        willSet {
+            print(newValue)
+        }
+    }
 }
 
 public enum PosterSize: String {
