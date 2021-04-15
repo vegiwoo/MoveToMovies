@@ -18,6 +18,8 @@ func tabbarReducer(state: inout TabBarState, action: TabbarAction, environment: 
     case let .indexChange(index):
         state.selectedIndex = index
         state.selectedView = TabBarState.setActualScreen(for: index)
+    case let .hideTabbar(visible):
+        state.isVisibleTabBar = visible
     }
     return Empty().eraseToAnyPublisher()
 }
@@ -215,6 +217,10 @@ func searchTmdbApiMoviesReducer(state: inout PopularMoviesState, action: Popular
             state.selectedTMDBMovie = nil
             state.selectedTMDBMoviePoster = nil
             state.selectedTMDBMovieBackdrop = nil
+        }
+    case .getRandomMovie:
+        if let randomMovie = environment.coreDataProvider.fetshingRandomMovie() {
+            state.selectedTMDBMovie = randomMovie
         }
     }
 

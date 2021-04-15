@@ -7,6 +7,7 @@
 
 import SwiftUI
 import OmdbAPI
+import Navigation
 
 struct MovieInfoRenderView: View {
     
@@ -14,55 +15,72 @@ struct MovieInfoRenderView: View {
     @Binding var searchOMDBMoviePoster: Data?
     @Binding var selectedTMDBMovie: MovieItem?
     
-    @State var gernesColumns: [GridItem] = .init()
-    @State var companiesColumns: [GridItem] = .init()
-    
     var body: some View {
         Group {
-            if let selectedOMDBMovie = selectedOMDBMovie {
-                VStack (spacing: 16) {
-                    if let year = selectedOMDBMovie.year {
-                        Text("Year: \(year)")
-                            .font(.title2)
-                            .foregroundColor(.secondary)
+            if let item = selectedOMDBMovie {
+                OmbdMovieInfoView(selectedOMDBMovie: item)
+            } else if let item = selectedTMDBMovie {
+                VStack {
+                    TmdbMovieInfoView(selectedTMDBMovie: item)
+                    PushView(destination: PosterAndBackdropContainerView()) {
+                        ZStack {
+                            Group {
+                                if let selectedTMDBMovie = selectedTMDBMovie {
+                                    if let backdropData = selectedTMDBMovie.backdrop?.blob,
+                                       let uiImage = UIImage(data: backdropData) {
+                                        Image(uiImage: uiImage)
+                                                        .resizable()
+                                                        .scaledToFill()
+                                                        .frame(width: 200, height: 50, alignment: .center)
+                                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                                        
+                                    
+                                    } else {
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .background(Color.gray)
+                                            .frame(width: 200, height: 50, alignment: .center)
+                                    }
+                                }
+                            }
+                            .opacity(0.6)
+                            Text("Poster and Backdrop").foregroundColor(.white).fontWeight(.bold)
+                        }
                     }
-                    if let type = selectedOMDBMovie.type {
-                        Text("Type: \(type.rawValue)")
-                            .font(.title3)
-                            .foregroundColor(.secondary)
-                    }
-                    Spacer()
                 }
-            } /*else if let selectedTMDBMovie = selectedTMDBMovie {
                 
                 
                 
                 
-                
-            }*/
+            }
         }.padding(.horizontal)
             .padding(.top, 16)
-            .onAppear {
-                setCountColumnsForItems()
-            }
         }
     
-    private func setCountColumnsForItems() {
-        if let popularMovie = selectedTMDBMovie {
-            if let companiesCount = popularMovie.companies?.count {
-                if companiesCount == 1 {
-                    companiesColumns = Array(repeating: GridItem(.flexible()), count: 1)
-                } else {
-                    companiesColumns = Array(repeating: GridItem(.flexible()), count: 2)
+    private struct OmbdMovieInfoView: View {
+        
+        let selectedOMDBMovie: MovieOmdbapiObject
+        
+        var body: some View {
+            VStack (spacing: 16) {
+                if let originalTitle = selectedOMDBMovie.title {
+                    VStack {
+                        Text("Original Title").headerStyle()
+                        Text(originalTitle).infoStyle()
+                    }
                 }
-            }
-            
-            if let genresCount = popularMovie.genres?.count {
-                if genresCount == 1 {
-                    gernesColumns = Array(repeating: GridItem(.flexible()), count: 1)
-                } else {
-                    gernesColumns = Array(repeating: GridItem(.flexible()), count: 2)
+                if let year = selectedOMDBMovie.year {
+                    VStack {
+                        Text("Year").headerStyle()
+                        Text("\(year)").infoStyle()
+                    }
                 }
+                if let type = selectedOMDBMovie.type {
+                    VStack {
+                        Text("Type").headerStyle()
+                        Text("\(type.rawValue)").infoStyle()
+                    }
+                }
+                Spacer()
             }
         }
     }
@@ -73,3 +91,5 @@ struct MovieInfoRenderView_Previews: PreviewProvider {
         MovieInfoRenderView(selectedOMDBMovie: .constant(nil), searchOMDBMoviePoster: .constant(nil), selectedTMDBMovie: .constant(nil))
     }
 }
+
+

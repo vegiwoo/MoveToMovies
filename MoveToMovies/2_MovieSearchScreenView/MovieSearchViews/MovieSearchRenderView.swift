@@ -102,8 +102,8 @@ struct MovieSearchRenderView: View {
                             }.onAppear {
                                 if let selectedMovie = selectedOMDBMovie {
                                     scrollProxy.scrollTo(selectedMovie, anchor: .center)
-                                    self.selectedOMDBMovie = nil
                                 }
+                                selectedOMDBMovie = nil
                             }
                         }
                         
@@ -149,8 +149,8 @@ struct MovieSearchRenderView: View {
                         }.onAppear {
                             if let selectedMovie = selectedTMDBMovie {
                                 scrollProxy.scrollTo(selectedMovie, anchor: .center)
-                                self.selectedTMDBMovie = nil
                             }
+                            selectedTMDBMovie = nil
                         }
                     }
                 }

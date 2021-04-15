@@ -17,7 +17,9 @@ public struct CircleBackButtonLabel: View {
                     .frame(width: 80, height: 80, alignment: .trailing)
                     .foregroundColor(.white)
                     .shadow(radius: 5)
-                Image(systemName: "arrow.backward").foregroundColor(.blue).font(.title)
+                Image(systemName: "arrow.backward")
+                    .foregroundColor(.primary)
+                    .font(.title)
             }
         }
         .frame(maxWidth: .infinity)

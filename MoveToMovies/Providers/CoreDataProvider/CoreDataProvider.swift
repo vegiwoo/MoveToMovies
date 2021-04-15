@@ -259,6 +259,13 @@ class CoreDataProvider: Singletonable {
         return existingMovies.first
     }
 
+    func fetshingRandomMovie() -> MovieItem? {
+        let entityName = "MovieItem"
+        let movieFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        let existingMovies = try! self.context.fetch(movieFetchRequest) as! [MovieItem]
+        return existingMovies.randomElement()
+    }
+
     // MARK: Movie Covers
     func updateCovers(postersData: [(String, Data?)], backdropsData: [(String, Data?)]) -> AnyPublisher<Bool, Never> {
     

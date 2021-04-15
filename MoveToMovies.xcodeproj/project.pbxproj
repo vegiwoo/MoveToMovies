@@ -40,6 +40,12 @@
 		778875D225FFC22500B317B1 /* UIImage + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778875D125FFC22500B317B1 /* UIImage + Ext.swift */; };
 		778875D92600CCC800B317B1 /* MappingModelV1toV2.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 778875D82600CCC800B317B1 /* MappingModelV1toV2.xcmappingmodel */; };
 		779067762609F0CC00BB7765 /* Collection + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 779067752609F0CC00BB7765 /* Collection + Ext.swift */; };
+		77A20CD626274D9F00BE3545 /* Date + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A20CD526274D9F00BE3545 /* Date + Ext.swift */; };
+		77A20CD926274E3B00BE3545 /* TmdbMovieInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A20CD826274E3B00BE3545 /* TmdbMovieInfoView.swift */; };
+		77A20CDE2627595D00BE3545 /* PosterAndBackdropContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A20CDD2627595D00BE3545 /* PosterAndBackdropContainerView.swift */; };
+		77A20CE22627596C00BE3545 /* PosterAndBackdropRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A20CE12627596C00BE3545 /* PosterAndBackdropRenderView.swift */; };
+		77A20CE526275BD000BE3545 /* PosterOrBackdropContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A20CE426275BD000BE3545 /* PosterOrBackdropContainerView.swift */; };
+		77A20CE826275BDB00BE3545 /* PosterOrBackdropRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A20CE726275BDB00BE3545 /* PosterOrBackdropRenderView.swift */; };
 		77A67F8925F0DC82005CB877 /* MoveToMoviesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A67F8825F0DC82005CB877 /* MoveToMoviesApp.swift */; };
 		77A67F8D25F0DC83005CB877 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 77A67F8C25F0DC83005CB877 /* Assets.xcassets */; };
 		77A67F9025F0DC83005CB877 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 77A67F8F25F0DC83005CB877 /* Preview Assets.xcassets */; };
@@ -101,6 +107,12 @@
 		778875D525FFD22200B317B1 /* MoveToMoviesModel 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "MoveToMoviesModel 3.xcdatamodel"; sourceTree = "<group>"; };
 		778875D82600CCC800B317B1 /* MappingModelV1toV2.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = MappingModelV1toV2.xcmappingmodel; sourceTree = "<group>"; };
 		779067752609F0CC00BB7765 /* Collection + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection + Ext.swift"; sourceTree = "<group>"; };
+		77A20CD526274D9F00BE3545 /* Date + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date + Ext.swift"; sourceTree = "<group>"; };
+		77A20CD826274E3B00BE3545 /* TmdbMovieInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TmdbMovieInfoView.swift; sourceTree = "<group>"; };
+		77A20CDD2627595D00BE3545 /* PosterAndBackdropContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterAndBackdropContainerView.swift; sourceTree = "<group>"; };
+		77A20CE12627596C00BE3545 /* PosterAndBackdropRenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterAndBackdropRenderView.swift; sourceTree = "<group>"; };
+		77A20CE426275BD000BE3545 /* PosterOrBackdropContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterOrBackdropContainerView.swift; sourceTree = "<group>"; };
+		77A20CE726275BDB00BE3545 /* PosterOrBackdropRenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterOrBackdropRenderView.swift; sourceTree = "<group>"; };
 		77A67F8525F0DC82005CB877 /* MoveToMovies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoveToMovies.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		77A67F8825F0DC82005CB877 /* MoveToMoviesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveToMoviesApp.swift; sourceTree = "<group>"; };
 		77A67F8C25F0DC83005CB877 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -178,6 +190,7 @@
 			children = (
 				7735B104261F44B30055EF6E /* MovieInfoContainerView.swift */,
 				7735B107261F44C00055EF6E /* MovieInfoRenderView.swift */,
+				77A20CD826274E3B00BE3545 /* TmdbMovieInfoView.swift */,
 			);
 			path = MovieInfoView;
 			sourceTree = "<group>";
@@ -212,6 +225,7 @@
 				778875CE25FFB3E500B317B1 /* String + Ext.swift */,
 				778875D125FFC22500B317B1 /* UIImage + Ext.swift */,
 				779067752609F0CC00BB7765 /* Collection + Ext.swift */,
+				77A20CD526274D9F00BE3545 /* Date + Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -241,6 +255,8 @@
 				77720412261E11DF0007E2FC /* MovieSearchViews */,
 				77720411261E11D20007E2FC /* MovieDetailViews */,
 				7735B103261F44850055EF6E /* MovieInfoView */,
+				77A20CDB2627590200BE3545 /* PosterAndBackdropView */,
+				77A20CDC2627591600BE3545 /* PosterOrBackdropView */,
 			);
 			path = 2_MovieSearchScreenView;
 			sourceTree = "<group>";
@@ -307,6 +323,24 @@
 				7744382326014EDC0024D53E /* DataStorageService.swift */,
 			);
 			path = "Services(depr)";
+			sourceTree = "<group>";
+		};
+		77A20CDB2627590200BE3545 /* PosterAndBackdropView */ = {
+			isa = PBXGroup;
+			children = (
+				77A20CDD2627595D00BE3545 /* PosterAndBackdropContainerView.swift */,
+				77A20CE12627596C00BE3545 /* PosterAndBackdropRenderView.swift */,
+			);
+			path = PosterAndBackdropView;
+			sourceTree = "<group>";
+		};
+		77A20CDC2627591600BE3545 /* PosterOrBackdropView */ = {
+			isa = PBXGroup;
+			children = (
+				77A20CE426275BD000BE3545 /* PosterOrBackdropContainerView.swift */,
+				77A20CE726275BDB00BE3545 /* PosterOrBackdropRenderView.swift */,
+			);
+			path = PosterOrBackdropView;
 			sourceTree = "<group>";
 		};
 		77A67F7C25F0DC82005CB877 = {
@@ -536,6 +570,7 @@
 				778875D92600CCC800B317B1 /* MappingModelV1toV2.xcmappingmodel in Sources */,
 				77DD2CA32614DF19000455F4 /* AppEnvironment.swift in Sources */,
 				7708BEFE2624A2D100E0D67D /* MovieItemDTO.swift in Sources */,
+				77A20CD926274E3B00BE3545 /* TmdbMovieInfoView.swift in Sources */,
 				77CC324825FE1BDA000A6EA0 /* MovieSearchScreenViewModel.swift in Sources */,
 				7735B108261F44C00055EF6E /* MovieInfoRenderView.swift in Sources */,
 				77DD2C932614D979000455F4 /* AppState.swift in Sources */,
@@ -544,6 +579,7 @@
 				77FBABF025F2856E00282331 /* AboutUsScreen.swift in Sources */,
 				775B97B52617297E0061794C /* MovieSearchRenderView.swift in Sources */,
 				778875D225FFC22500B317B1 /* UIImage + Ext.swift in Sources */,
+				77A20CE826275BDB00BE3545 /* PosterOrBackdropRenderView.swift in Sources */,
 				777E3E7E262068E700AABAA6 /* CoreDataProvider.swift in Sources */,
 				77F8BAD3260F8DA600D85E4A /* MovieDetailScreen001.swift in Sources */,
 				778875AA25FE545400B317B1 /* MoveToMoviesModel.xcdatamodeld in Sources */,
@@ -565,14 +601,18 @@
 				77FB1D812606212700C4CD94 /* PopularMovieDTO.swift in Sources */,
 				77F70C9D2610E1B2003E0271 /* PosterAndBackDropScreen.swift in Sources */,
 				77B55DAB25FD2A8C00F5B0B2 /* Transition + Ext.swift in Sources */,
+				77A20CDE2627595D00BE3545 /* PosterAndBackdropContainerView.swift in Sources */,
 				77DD2C9A2614DB79000455F4 /* AppStore.swift in Sources */,
+				77A20CD626274D9F00BE3545 /* Date + Ext.swift in Sources */,
 				77300B5726161E1C006868A2 /* MainScreenContainerView.swift in Sources */,
 				77CC323B25FD3926000A6EA0 /* MovieSearchScreen.swift in Sources */,
 				7772040F261E11C70007E2FC /* MovieDetailRenderView.swift in Sources */,
 				779067762609F0CC00BB7765 /* Collection + Ext.swift in Sources */,
 				7744382426014EDC0024D53E /* DataStorageService.swift in Sources */,
+				77A20CE22627596C00BE3545 /* PosterAndBackdropRenderView.swift in Sources */,
 				77FBABE425F2844100282331 /* DashBoardScreen.swift in Sources */,
 				77A67F8925F0DC82005CB877 /* MoveToMoviesApp.swift in Sources */,
+				77A20CE526275BD000BE3545 /* PosterOrBackdropContainerView.swift in Sources */,
 				7758CEDE25F2586700F7064B /* AppViewModel.swift in Sources */,
 				775B97AF261729480061794C /* DashScreenRenderView.swift in Sources */,
 				775B97B2261729740061794C /* MovieSearchContainerView.swift in Sources */,

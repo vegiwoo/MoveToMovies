@@ -21,6 +21,9 @@ struct MovieDetailContainerView: View {
                               selectedOMDBMoviePoster: selectedOMDBMoviePosterData,
                               selectedTMDBMovie: selectedTMDBMovie,
                               isGotoPreviewsView: $isGotoPreviewsView)
+            .onAppear {
+                print("ℹ️ First nesting level of stack.")
+            }
             .onChange(of: isGotoPreviewsView) { (value) in
                 if value { ns.pop() }
             }

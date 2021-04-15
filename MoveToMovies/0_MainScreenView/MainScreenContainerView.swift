@@ -14,7 +14,7 @@ struct MainScreenContainerView: View ,IContaierView {
     @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
     
     var body: some View {
-        MainScreenRenderView(selectedIndex: tabbarSelectedIndex, selectedView: tabbarSelectedView, visibleTabbar: true, updateData: updateData)
+        MainScreenRenderView(selectedIndex: tabbarSelectedIndex, selectedView: tabbarSelectedView, visibleTabbar: isVisibleTabbar, updateData: updateData)
             .environmentObject(appStore)
     }
 }
@@ -24,6 +24,12 @@ extension MainScreenContainerView {
     
     private var updateData: Binding<Bool> {
         appStore.binding(for: \.popularMovies.updateData) {_ in AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.loadGenres)}
+    }
+    
+    private var isVisibleTabbar: Binding<Bool> {
+        appStore.binding(for: \.tabBar.isVisibleTabBar) {
+            AppAction.tabbar(action: TabbarAction.hideTabbar($0))
+        }
     }
     
     private var tabbarSelectedIndex: Binding<Int> {

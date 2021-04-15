@@ -21,8 +21,7 @@ struct MainScreenRenderView: View, SizeClassAdjustable {
     @Binding var selectedIndex: Int
     @Binding var selectedView: AnyView
     
-    @State var visibleTabbar: Bool
-    
+    @Binding var visibleTabbar: Bool
     @Binding var updateData: Bool
     
     var body: some View {
@@ -74,7 +73,7 @@ struct MainScreenRenderView_Previews: PreviewProvider {
     static let appStore = MoveToMoviesApp.createStore()
     static var previews: some View {
         MainScreenRenderView(
-            selectedIndex: .constant(0), selectedView: .constant(AnyView(EmptyView())), visibleTabbar: true, updateData: .constant(true)
+            selectedIndex: .constant(0), selectedView: .constant(AnyView(EmptyView())), visibleTabbar: .constant(true), updateData: .constant(true)
         ).environmentObject(appStore)
     }
 }

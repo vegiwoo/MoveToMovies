@@ -20,6 +20,7 @@ struct AppState {
 
 //MARK: Context app states
 struct TabBarState {
+    
     var tabBarItems: [TabBarItem] {
         return [
             TabBarItem(sfSymbolName: "list.dash", title: "Dashboard", color: TabbarTab.dashboardScreen.actualColor),
@@ -29,6 +30,7 @@ struct TabBarState {
     }
     var selectedIndex: Int = 0
     var selectedView: AnyView = TabBarState.setActualScreen(for: 0)
+    var isVisibleTabBar: Bool = true
     
     static func setActualScreen(for index: Int) -> AnyView {
         if let selectedTabbarTab = TabbarTab.allCases.first(where: { $0.rawValue == index }) {

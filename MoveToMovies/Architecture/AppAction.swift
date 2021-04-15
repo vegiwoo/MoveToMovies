@@ -23,6 +23,7 @@ enum AppAction {
 // MARK: Context actions
 enum TabbarAction {
     case indexChange(Int)
+    case hideTabbar(Bool)
 }
 
 enum SearchOmbdAPIMoviesAction {
@@ -46,6 +47,7 @@ enum PopularTmbdAPIMoviesAction {
     case updateCovers(postersData: [(String, Data?)], backdropData: [(String, Data?)])
     case updatingPopularMoviesComplete
     case setSelectedTMDBMovieCovers(for: MovieItem?)
+    case getRandomMovie
 }
 
 

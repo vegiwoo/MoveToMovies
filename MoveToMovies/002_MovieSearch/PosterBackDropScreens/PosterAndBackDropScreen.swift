@@ -77,9 +77,6 @@ struct PosterAndBackDropScreen: View {
 
         }
         .frame(alignment: .center)
-        .onAppear{
-            
-        }
     }
 }
 

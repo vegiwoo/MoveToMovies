@@ -33,7 +33,6 @@ struct PosterOrBackDropScreen: View {
                         .frame(width: geometry.size.width, height: geometry.size.height)
                 }
 
-                
                 NavPopButton(destination: PopDestination.previous) {
                     CircleBackButtonLabel()
                 }
