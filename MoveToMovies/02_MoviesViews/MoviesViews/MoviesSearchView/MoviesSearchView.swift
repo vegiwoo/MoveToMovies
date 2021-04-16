@@ -63,7 +63,7 @@ struct MoviesSearchView: View {
                 .foregroundColor(Color(UIColor.systemGray4))
                 .transition(.opacity)
                 Spacer()
-            case MovieSearchStatus.getResults, .endOfSearch, .loading:
+            case MovieSearchStatus.endOfLoadSession,.endOfSearch, .loading:
                 GeometryReader {geometry in
                     VStack {
                         ScrollViewReader { scrollProxy in
@@ -98,8 +98,7 @@ struct MoviesSearchView: View {
                         if movieSearchStatus == .endOfSearch {
                             Text("End of search").frame(width: geometry.size.width, height: 30, alignment: .center)
                         }
-                        
-                    } 
+                    }
                 }
             default:
                 EmptyView()

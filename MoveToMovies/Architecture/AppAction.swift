@@ -30,8 +30,9 @@ enum SearchOmbdAPIMoviesAction {
     case assignIndexSegmentControl(Int)
     case changeStatusMovieSearch(MovieSearchStatus)
     case loadSearchMovies(query: String, page: Int)
-    case updateMoviesWithPosters(items: [(String, Data?)])
     case addFoundMovies(query: String, movies: [MovieOmdbapiObject])
+    case loadMovieCovers(movies: [MovieOmdbapiObject])
+    case updateMoviesWithPosters(items: [(String, Data?)])
     case changeProgressMovieSearch(Float)
     case setSelectedOMDBMoviePoster(for: MovieOmdbapiObject?)
 }

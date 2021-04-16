@@ -99,7 +99,8 @@ public enum MovieSearchStatus {
     case initial
     case typing
     case loading
-    case getResults([MovieOmdbapiObject])
+    //case getResults([MovieOmdbapiObject])
+    case endOfLoadSession
     case endOfSearch
     case error
     
@@ -111,8 +112,10 @@ public enum MovieSearchStatus {
             return "typing"
         case .loading:
             return "loading"
-        case .getResults(_):
-            return "getResults"
+        //case .getResults(_):
+           // return "getResults"
+        case .endOfLoadSession:
+            return "endOfLoadSession"
         case .endOfSearch:
             return "endOfSearch"
         case .error:

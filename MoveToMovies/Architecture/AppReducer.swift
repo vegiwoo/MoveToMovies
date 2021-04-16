@@ -57,9 +57,7 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
                     state.searchPage += 1
                 }
             }
-
-            return Just(SearchOmbdAPIMoviesAction.changeStatusMovieSearch(.getResults(moviesForPosterSearch)))
-                .eraseToAnyPublisher()
+            return Just(SearchOmbdAPIMoviesAction.loadMovieCovers(movies: moviesForPosterSearch)).eraseToAnyPublisher()
         } else {
             if state.foundMovies.isEmpty {
                 return Just(SearchOmbdAPIMoviesAction.changeStatusMovieSearch(.error))
@@ -108,20 +106,7 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
             return publisher
                 .map{SearchOmbdAPIMoviesAction.changeProgressMovieSearch($0)}
                 .eraseToAnyPublisher()
-        case let .getResults(movies):
-            if movies.count > 0 {
-                var receivedItems = movies
-                receivedItems.removeAll(where: {$0.poster == nil || $0.imdbID == nil})
 
-                let dictionary: [String: String] = receivedItems.reduce(into: [:]) { dictionary, movie in
-                    dictionary[movie.imdbID!] = movie.poster
-                }
-                
-                return environment.networkProvider.loadData(for: dictionary)
-                    .replaceError(with: [("String", nil)])
-                    .map{SearchOmbdAPIMoviesAction.updateMoviesWithPosters(items: $0)}
-                    .eraseToAnyPublisher()
-            }
         case .endOfSearch:
             state.movieSearchStatus = .endOfSearch
         default:
@@ -130,11 +115,6 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
     case let .changeProgressMovieSearch(progress):
         if progress < 100 {
             state.progressLoad = progress
-        }
-
-    case let .updateMoviesWithPosters(items):
-        for item in items {
-            state.foundMoviesPosters.updateValue(item.1, forKey: item.0)
         }
     case let .setSelectedOMDBMoviePoster(for: movie):
         if let newValue = movie {
@@ -151,6 +131,25 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
             state.selectedOMDBMovie = nil
             state.selectedOMDBMoviePoster = nil
         }
+    case let .loadMovieCovers(movies):
+        if movies.count > 0 {
+            var receivedItems = movies
+            receivedItems.removeAll(where: {$0.poster == nil || $0.imdbID == nil})
+            
+            let dictionary: [String: String] = receivedItems.reduce(into: [:]) { dictionary, movie in
+                dictionary[movie.imdbID!] = movie.poster
+            }
+            
+            return environment.networkProvider.loadData(for: dictionary)
+                .replaceError(with: [("String", nil)])
+                .map{SearchOmbdAPIMoviesAction.updateMoviesWithPosters(items: $0)}
+                .eraseToAnyPublisher()
+        }
+    case let .updateMoviesWithPosters(items):
+        for item in items {
+            state.foundMoviesPosters.updateValue(item.1, forKey: item.0)
+        }
+        state.movieSearchStatus = .endOfLoadSession
     }
     return Empty().eraseToAnyPublisher()
 }

@@ -21,7 +21,12 @@ struct MoviesSearchContainerView: View {
                          foundMoviesPosters: foundMoviesPosters,
                          needForFurtherLoad: needForFurtherLoad,
                          selectedOMDBMovie: selectedOMDBMovie,
-                         progressLoad: progressLoad).padding(.horizontal)
+                         progressLoad: progressLoad)
+            .padding(.horizontal)
+            .onChange(of: movieSearchStatus.wrappedValue) { (value) in
+                
+                print(value)
+            }
     }
 }
 
