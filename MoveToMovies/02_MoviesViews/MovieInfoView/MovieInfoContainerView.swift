@@ -16,7 +16,6 @@ struct MovieInfoContainerView: View {
     var body: some View {
         MovieInfoRenderView(
             selectedOMDBMovie: selectedOMDBMovie,
-            searchOMDBMoviePoster: selectedOMDBMoviePoster,
             selectedTMDBMovie: selectedTMDBMovie
         )
     }
@@ -24,11 +23,8 @@ struct MovieInfoContainerView: View {
 
 /// Binding variables
 extension MovieInfoContainerView {
-    private var selectedOMDBMovie: Binding<MovieOmdbapiObject?> {
+    private var selectedOMDBMovie: Binding<FoundItem?> {
         appStore.binding(for: \.searchMovies.selectedOMDBMovie)
-    }
-    private var selectedOMDBMoviePoster: Binding<Data?> {
-        appStore.binding(for: \.searchMovies.selectedOMDBMoviePoster)
     }
     private var selectedTMDBMovie: Binding<MovieItem?> {
         appStore.binding(for: \.popularMovies.selectedTMDBMovie) {

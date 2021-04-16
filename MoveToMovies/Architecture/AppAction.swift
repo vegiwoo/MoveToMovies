@@ -32,9 +32,9 @@ enum SearchOmbdAPIMoviesAction {
     case loadSearchMovies(query: String, page: Int)
     case addFoundMovies(query: String, movies: [MovieOmdbapiObject])
     case loadMovieCovers(movies: [MovieOmdbapiObject])
-    case updateMoviesWithPosters(items: [(String, Data?)])
+    case updateMoviesWithPosters(movies: [MovieOmdbapiObject], downloadItems: [(String, Data?)])
     case changeProgressMovieSearch(Float)
-    case setSelectedOMDBMoviePoster(for: MovieOmdbapiObject?)
+    case selectedReport(item: FoundItem?)
 }
 
 enum PopularTmbdAPIMoviesAction {

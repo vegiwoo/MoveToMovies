@@ -20,7 +20,6 @@ struct MovieDetailContainerView: View {
     
     var body: some View {
         MovieDetailRenderView(selectedOMDBMovie: selectedOMDBMovie,
-                              selectedOMDBMoviePoster: selectedOMDBMoviePosterData,
                               selectedTMDBMovie: selectedTMDBMovie,
                               isGotoPreviewsView: $isGotoPreviewsView)
             .onAppear {
@@ -35,10 +34,8 @@ struct MovieDetailContainerView: View {
 }
 
 extension MovieDetailContainerView {
-    private var selectedOMDBMovie: Binding<MovieOmdbapiObject?> {
-        appStore.binding(for: \.searchMovies.selectedOMDBMovie) {
-            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.setSelectedOMDBMoviePoster(for: $0))
-        }
+    private var selectedOMDBMovie: Binding<FoundItem?> {
+        appStore.binding(for: \.searchMovies.selectedOMDBMovie)
     }
 
     private var selectedOMDBMoviePosterData: Binding<Data?> {

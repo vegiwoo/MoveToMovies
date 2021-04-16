@@ -11,14 +11,13 @@ import Navigation
 
 struct MovieInfoRenderView: View {
     
-    @Binding var selectedOMDBMovie: MovieOmdbapiObject?
-    @Binding var searchOMDBMoviePoster: Data?
+    @Binding var selectedOMDBMovie: FoundItem?
     @Binding var selectedTMDBMovie: MovieItem?
     
     var body: some View {
         Group {
             if let item = selectedOMDBMovie {
-                OmbdMovieInfoView(selectedOMDBMovie: item)
+                OmbdMovieInfoView(selectedOMDBMovie: item.movie)
             } else if let item = selectedTMDBMovie {
                 VStack {
                     TmdbMovieInfoView(selectedTMDBMovie: item)
@@ -83,8 +82,7 @@ struct MovieInfoRenderView: View {
 
 struct MovieInfoRenderView_Previews: PreviewProvider {
     static var previews: some View {
-        MovieInfoRenderView(selectedOMDBMovie: .constant(nil), searchOMDBMoviePoster: .constant(nil), selectedTMDBMovie: .constant(nil))
+        MovieInfoRenderView(selectedOMDBMovie: .constant(nil),
+                            selectedTMDBMovie: .constant(nil))
     }
 }
-
-

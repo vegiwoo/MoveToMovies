@@ -53,11 +53,10 @@ struct SearchMoviesState {
     var movieSearchStatus: MovieSearchStatus = .initial
     var searchQuery: String = ""
     var searchPage: Int = 1
-    var foundMovies: [MovieOmdbapiObject] = .init()
-    var foundMoviesPosters: [String: Data?] = .init()
+    var foundItems: [FoundItem] = .init()
     var needForFurtherLoad: Bool = false
     var progressLoad: Float = 0.0
-    var selectedOMDBMovie: MovieOmdbapiObject?
+    var selectedOMDBMovie: FoundItem?
     var selectedOMDBMoviePoster: Data?
 }
 
@@ -75,3 +74,17 @@ struct PopularMoviesState {
 public enum PosterSize: String {
     case w92, w154, w185, w342, w500, w780, original
 }
+
+
+struct FoundItem {
+    var movie: MovieOmdbapiObject
+    var posterData: Data?
+}
+
+extension FoundItem: Identifiable {
+    public var id: String { movie.imdbID! }
+}
+
+
+
+extension FoundItem: Hashable {}

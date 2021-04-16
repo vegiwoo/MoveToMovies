@@ -51,6 +51,7 @@ public struct SearchBar: View {
             .padding(.horizontal, 25)
             .background(Color(.systemGray6))
             .cornerRadius(8)
+            .padding(.horizontal, 16)
             .onTapGesture {
                 movieSearchStatus = .typing
                 withAnimation {
@@ -99,7 +100,6 @@ public enum MovieSearchStatus {
     case initial
     case typing
     case loading
-    //case getResults([MovieOmdbapiObject])
     case endOfLoadSession
     case endOfSearch
     case error
@@ -112,8 +112,6 @@ public enum MovieSearchStatus {
             return "typing"
         case .loading:
             return "loading"
-        //case .getResults(_):
-           // return "getResults"
         case .endOfLoadSession:
             return "endOfLoadSession"
         case .endOfSearch:

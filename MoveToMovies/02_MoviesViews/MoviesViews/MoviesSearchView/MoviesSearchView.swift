@@ -14,25 +14,22 @@ struct MoviesSearchView: View {
     @Binding var accentColor: UIColor
     @Binding var searchQuery: String
     @Binding var movieSearchStatus: MovieSearchStatus
-    @Binding var foundMovies: [MovieOmdbapiObject]
-    @Binding var foundMoviesPosters: [String: Data?]
+    @Binding var foundItems: [FoundItem]
     @Binding var needForFurtherLoad: Bool
-    @Binding var selectedOMDBMovie: MovieOmdbapiObject?
+    @Binding var selectedOMDBMovie: FoundItem?
     @Binding var progressLoad: Float
     
     init(accentColor: Binding<UIColor>,
          searchQuery: Binding<String>,
          movieSearchStatus: Binding<MovieSearchStatus>,
-         foundMovies: Binding<[MovieOmdbapiObject]>,
-         foundMoviesPosters: Binding< [String: Data?]>,
+         foundItems: Binding<[FoundItem]>,
          needForFurtherLoad: Binding<Bool>,
-         selectedOMDBMovie: Binding<MovieOmdbapiObject?>,
+         selectedOMDBMovie: Binding<FoundItem?>,
          progressLoad: Binding<Float>) {
         self._accentColor = accentColor
         self._searchQuery = searchQuery
         self._movieSearchStatus = movieSearchStatus
-        self._foundMovies = foundMovies
-        self._foundMoviesPosters = foundMoviesPosters
+        self._foundItems = foundItems
         self._needForFurtherLoad = needForFurtherLoad
         self._selectedOMDBMovie = selectedOMDBMovie
         self._progressLoad = progressLoad
@@ -67,20 +64,16 @@ struct MoviesSearchView: View {
                 GeometryReader {geometry in
                     VStack {
                         ScrollViewReader { scrollProxy in
-                            ScrollView {
-                                LazyVStack {
-                                    ForEach(foundMovies, id: \.self) {item in
-                                        MovieCell(model: item, poster: foundMoviesPosters[item.imdbID!] ?? nil)
-                                            .frame(width: geometry.size.width, height: 120, alignment: .leading)
-                                            .onAppear {
-                                                if foundMovies.isLast(item) {
-                                                    needForFurtherLoad = true
-                                                }
-                                            }.onTapGesture {
-                                                selectedOMDBMovie = item
-                                            }
+                            List(foundItems, id: \.self) {item in
+                                MovieCell(model: item.movie, poster: item.posterData)
+                                    .frame(width: geometry.size.width - 40, height: 120, alignment: .leading)
+                                    .onAppear {
+                                        if foundItems.isLast(item) {
+                                            needForFurtherLoad = true
+                                        }
+                                    }.onTapGesture {
+                                        selectedOMDBMovie = item
                                     }
-                                }
                             }.onAppear {
                                 if let selectedMovie = selectedOMDBMovie {
                                     withAnimation {
@@ -113,8 +106,7 @@ struct MoviesSearchView_Previews: PreviewProvider {
             accentColor: .constant(.red),
             searchQuery: .constant("SomeText"),
             movieSearchStatus: .constant(.initial),
-            foundMovies: .constant([]),
-            foundMoviesPosters: .constant([:]),
+            foundItems: .constant([]),
             needForFurtherLoad: .constant(false),
             selectedOMDBMovie: .constant(nil),
             progressLoad: .constant(0))
