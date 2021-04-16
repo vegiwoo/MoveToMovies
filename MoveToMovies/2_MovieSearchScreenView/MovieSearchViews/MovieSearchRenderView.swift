@@ -103,7 +103,9 @@ struct MovieSearchRenderView: View {
                                 }
                             }.onAppear {
                                 if let selectedMovie = selectedOMDBMovie {
-                                    scrollProxy.scrollTo(selectedMovie, anchor: .center)
+                                    withAnimation {
+                                        scrollProxy.scrollTo(selectedMovie, anchor: .center)
+                                    }
                                 }
                                 selectedOMDBMovie = nil
                             }
@@ -134,7 +136,7 @@ struct MovieSearchRenderView: View {
                         Spacer()
                     }
                     
-                    // Popular movies
+                // Popular movies
                 } else if selectedIndexSegmentControl == 1 {
                     ScrollViewReader { scrollProxy in
                         ScrollView {
@@ -148,10 +150,16 @@ struct MovieSearchRenderView: View {
                                         }
                                 }
                             }
-                        }.onAppear {
+                        }
+                        .transition(.opacity)
+                        .onAppear {
                             if !gotoDetailedView, let selectedMovie = selectedTMDBMovie {
-                                scrollProxy.scrollTo(selectedMovie, anchor: .center)
-                                selectedTMDBMovie = nil
+                                DispatchQueue.main.async {
+                                    withAnimation(Animation.easeInOut(duration: 2.0)) {
+                                        scrollProxy.scrollTo(selectedMovie, anchor: .center)
+                                        selectedTMDBMovie = nil
+                                    }
+                                }
                             }
                         }
                     }

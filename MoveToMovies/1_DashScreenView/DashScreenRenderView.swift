@@ -17,6 +17,8 @@ struct DashScreenRenderView: View {
     @State private var readinessForQuickTransition: Bool = false
     @Binding private var isQuickTransition: Bool
     
+    @State var degrees: Double = 0
+    
     init(readinessUpdatePopularTmbdMovies: Binding<Bool>, isQuickTransition: Binding<Bool>) {
         self._readinessUpdatePopularTmbdMovies = readinessUpdatePopularTmbdMovies
         self._isQuickTransition = isQuickTransition
@@ -44,9 +46,12 @@ struct DashScreenRenderView: View {
                             ActivityIndicator(color: .white, style: .large, shouldAnimate: .constant(true))
                                 .frame(width: 50, height: 50, alignment: .center)
                         }
-                        .transition(.opacity)
+                        
+                 
+                        //.transition(.opacity)
                     }
                 }
+                .rotation3DEffect(.degrees(degrees), axis: (x: 1, y: 0, z: 0))
                 .frame(width: 150, height: 150, alignment: .center)
                 .onTapGesture {
                     isQuickTransition = true
@@ -54,10 +59,17 @@ struct DashScreenRenderView: View {
             }
             Spacer()
         }
+        .onAppear {
+            withAnimation(Animation.easeInOut(duration: 0.8)) {
+                readinessForQuickTransition = readinessUpdatePopularTmbdMovies
+                degrees += 360
+            }
+        }
         .onChange(of: readinessUpdatePopularTmbdMovies, perform: { value in
             if value {
-                withAnimation(Animation.easeInOut(duration: 0.5)) {
+                withAnimation(Animation.easeInOut(duration: 0.8)) {
                     self.readinessForQuickTransition = true
+                    degrees += 360
                 }
             }
         })
