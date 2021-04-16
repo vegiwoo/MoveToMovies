@@ -77,12 +77,11 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
         }
         
     case let .changeStatusMovieSearch(newStatus):
-        
+    
         state.movieSearchStatus = newStatus
         
         switch newStatus {
         case .initial:
-            state.infoMessage = ("magnifyingglass", "Find your favorite\nmovie or TV series")
             state.foundMovies.removeAll()
             state.foundMoviesPosters.removeAll()
             state.searchPage = 1
@@ -91,11 +90,7 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
             state.progressLoad = 0.00
             state.selectedOMDBMovie = nil
             state.selectedOMDBMoviePoster = nil
-        case .typing:
-            state.infoMessage = ("", "")
         case .loading:
-            state.infoMessage = ("", "")
-            
             state.progressLoad = 0.00
             
             var initValue: Float = state.progressLoad
@@ -114,8 +109,6 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
                 .map{SearchOmbdAPIMoviesAction.changeProgressMovieSearch($0)}
                 .eraseToAnyPublisher()
         case let .getResults(movies):
-            state.infoMessage = ("", "")
-            
             if movies.count > 0 {
                 var receivedItems = movies
                 receivedItems.removeAll(where: {$0.poster == nil || $0.imdbID == nil})
@@ -129,12 +122,10 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
                     .map{SearchOmbdAPIMoviesAction.updateMoviesWithPosters(items: $0)}
                     .eraseToAnyPublisher()
             }
-
-        case .error:
-            state.infoMessage = ("xmark.octagon", "Not found\nTry changing your search")
         case .endOfSearch:
             state.movieSearchStatus = .endOfSearch
-            
+        default:
+            break
         }
     case let .changeProgressMovieSearch(progress):
         if progress < 100 {

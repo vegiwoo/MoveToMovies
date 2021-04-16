@@ -48,7 +48,7 @@ class CoreDataProvider: Singletonable {
         }   
     }
     
-    private func saveContext()  {
+    func saveContext()  {
         self.context.perform {
             if self.context.hasChanges {
                 try! self.context.save()

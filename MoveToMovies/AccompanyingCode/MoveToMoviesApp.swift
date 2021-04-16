@@ -14,6 +14,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
+        // TODO: Save context
         print("App is terminate")
     }
 }
@@ -38,7 +39,7 @@ struct MoveToMoviesApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MainScreenContainerView()
+            MainContainerView()
                 .environmentObject(appStore)
                 .onAppear(perform: UIApplication.shared.addTapGestureRecognizer)
                 //.environment(\.managedObjectContext, AppStating.dataStoreService.context)
@@ -46,10 +47,10 @@ struct MoveToMoviesApp: App {
             switch newScenePhase {
             case .background:
                 print("App is in background")
-                AppStating.dataStoreService.saveContext()
+                appStore.environment.coreDataProvider.saveContext()
             case .inactive:
                 print("App is inactive")
-                AppStating.dataStoreService.saveContext()
+                appStore.environment.coreDataProvider.saveContext()
             case .active:
                 print("App is active")
             @unknown default:

@@ -9,7 +9,7 @@ import SwiftUI
 import UIControls
 import Navigation
 
-struct MainScreenRenderView: View, SizeClassAdjustable {
+struct MainView: View, SizeClassAdjustable {
     
     @Environment(\.verticalSizeClass) var _verticalSizeClass
     @Environment(\.horizontalSizeClass) var _horizontalSizeClass
@@ -72,7 +72,7 @@ struct MainScreenRenderView_Previews: PreviewProvider {
     
     static let appStore = MoveToMoviesApp.createStore()
     static var previews: some View {
-        MainScreenRenderView(
+        MainView(
             selectedIndex: .constant(0), selectedView: .constant(AnyView(EmptyView())), visibleTabbar: .constant(true), updateData: .constant(true)
         ).environmentObject(appStore)
     }

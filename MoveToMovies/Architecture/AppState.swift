@@ -38,7 +38,7 @@ struct TabBarState {
             case .dashboardScreen:
                 return AnyView(DashScreenContainerView())
             case .movies:
-                return AnyView(MovieSearchContainerView())
+                return AnyView(MoviesContainerView())
             case .aboutUSScreen:
                 return AnyView(AboutUsContainerView())
             }
@@ -53,7 +53,6 @@ struct SearchMoviesState {
     var movieSearchStatus: MovieSearchStatus = .initial
     var searchQuery: String = ""
     var searchPage: Int = 1
-    var infoMessage: (symbol: String, message: String) = ("magnifyingglass", "Find your favorite\nmovie or TV series")
     var foundMovies: [MovieOmdbapiObject] = .init()
     var foundMoviesPosters: [String: Data?] = .init()
     var needForFurtherLoad: Bool = false

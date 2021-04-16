@@ -19,6 +19,8 @@ struct MovieDetailRenderView: View {
     @Binding var selectedTMDBMovie: MovieItem?
     @Binding var isGotoPreviewsView: Bool
 
+    @State var backButtonOpacity: Double = 1.0
+    
     init(selectedOMDBMovie: Binding<MovieOmdbapiObject?>, selectedOMDBMoviePoster: Binding<Data?>, selectedTMDBMovie: Binding<MovieItem?>, isGotoPreviewsView: Binding<Bool>) {
         self._selectedOMDBMovie = selectedOMDBMovie
         self._selectedOMDBMoviePoster = selectedOMDBMoviePoster
@@ -41,11 +43,12 @@ struct MovieDetailRenderView: View {
                 StretchyHeaderScreen(imageData: posterData, title: movie.title!, content: AnyView(MovieInfoContainerView()))
             }
 
-            CircleBackButtonLabel().onTapGesture {
-                withAnimation(Animation.easeInOut(duration: 1.0)){
-                    isGotoPreviewsView = true
+            CircleBackButtonLabel()
+                .onTapGesture {
+                    withAnimation(Animation.easeInOut(duration: 0.5)) {
+                        isGotoPreviewsView = true
+                    }
                 }
-            }
         }
     }
 }

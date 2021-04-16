@@ -12,7 +12,7 @@ import OmdbAPI
 import Navigation
 import UIControls
 
-struct MovieSearchContainerView: View {
+struct MoviesContainerView: View {
     
     @EnvironmentObject private var appStore: AppStore<AppState, AppAction, AppEnvironment>
     @EnvironmentObject private var ns: NavigationStack
@@ -22,7 +22,6 @@ struct MovieSearchContainerView: View {
     
     var body: some View {
         ZStack {
-            
             PushView(destination: MovieDetailContainerView(isQuickTransition: gotoDetailedView), isActive: $isGotoOMDBMovieDetailView) {
                 EmptyView()
             }
@@ -32,17 +31,9 @@ struct MovieSearchContainerView: View {
             if gotoDetailedView.wrappedValue {
                 EmptyView()
             } else {
-                MovieSearchRenderView(title: TabbarTab.movies.text,
+                MoviesView(title: TabbarTab.movies.text,
                                       accentColor: TabbarTab.movies.actualColor,
                                       selectedIndexSegmentControl: selectedIndexSegmentControl,
-                                      movieSearchStatus: movieSearchStatus,
-                                      searchQuery: searchQuery,
-                                      infoMessage: infoMessage,
-                                      foundMovies: foundMovies,
-                                      foundMoviesPosters: foundMoviesPosters,
-                                      needForFurtherLoad: needForFurtherLoad,
-                                      progressLoad: progressLoad,
-                                      selectedOMDBMovie: selectedOMDBMovie,
                                       selectedTMDBMovie: selectedTMDBMovie,
                                       gotoDetailedView: gotoDetailedView
                 )
@@ -56,7 +47,7 @@ struct MovieSearchContainerView: View {
                 }
                 isGotoTMDBMovieDetailView = true
             }
-        }.onChange(of: selectedOMDBMovie.wrappedValue, perform: { value in
+        }.onChange(of: appStore.state.searchMovies.selectedOMDBMovie, perform: { value in
             if value != nil, isGotoOMDBMovieDetailView == false {
                 isGotoOMDBMovieDetailView.toggle()
             } else {
@@ -74,44 +65,13 @@ struct MovieSearchContainerView: View {
 }
 
 /// Bindings variables
-extension MovieSearchContainerView {
+extension MoviesContainerView {
     private var selectedIndexSegmentControl: Binding<Int> {
         appStore.binding(for: \.searchMovies.selectedIndexSegmentControl) {
             AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.assignIndexSegmentControl($0))
         }
     }
-    private var movieSearchStatus: Binding<MovieSearchStatus> {
-        appStore.binding(for: \.searchMovies.movieSearchStatus) {
-            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.changeStatusMovieSearch($0))
-        }
-    }
-    private var searchQuery: Binding<String> {
-        appStore.binding(for: \.searchMovies.searchQuery) {
-            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.loadSearchMovies(query: $0, page: 1))
-        }
-    }
-    private var infoMessage: Binding<(symbol: String, message: String)> {
-        appStore.binding(for: \.searchMovies.infoMessage)
-    }
-    private var foundMovies: Binding<[MovieOmdbapiObject]> {
-        appStore.binding(for: \.searchMovies.foundMovies)
-    }
-    private var foundMoviesPosters: Binding< [String: Data?]> {
-        appStore.binding(for: \.searchMovies.foundMoviesPosters)
-    }
-    private var needForFurtherLoad: Binding<Bool> {
-        appStore.binding(for: \.searchMovies.needForFurtherLoad) {_ in
-            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.loadSearchMovies(query: appStore.state.searchMovies.searchQuery, page: appStore.state.searchMovies.searchPage))
-        }
-    }
-    private var progressLoad: Binding<Float> {
-        appStore.binding(for: \.searchMovies.progressLoad)
-    }
-    private var selectedOMDBMovie: Binding<MovieOmdbapiObject?> {
-        appStore.binding(for: \.searchMovies.selectedOMDBMovie) {
-            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.setSelectedOMDBMoviePoster(for: $0))
-        }
-    }
+
     private var selectedTMDBMovie: Binding<MovieItem?> {
         appStore.binding(for: \.popularMovies.selectedTMDBMovie) {
             AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: $0))
@@ -127,7 +87,7 @@ extension MovieSearchContainerView {
 struct MovieSearchContainerView_Previews: PreviewProvider {
     static let appStore = MoveToMoviesApp.createStore()
     static var previews: some View {
-        MovieSearchContainerView()
+        MoviesContainerView()
             .environmentObject(appStore)
     }
 }

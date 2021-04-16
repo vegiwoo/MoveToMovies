@@ -8,19 +8,19 @@
 import SwiftUI
 import Navigation
 
-struct MainScreenContainerView: View ,IContaierView {
+struct MainContainerView: View ,IContaierView {
     
     @EnvironmentObject var appStore: AppStore<AppState, AppAction, AppEnvironment>
     @EnvironmentObject var navCoordinator: NavCoordinatorViewModel
     
     var body: some View {
-        MainScreenRenderView(selectedIndex: tabbarSelectedIndex, selectedView: tabbarSelectedView, visibleTabbar: isVisibleTabbar, updateData: updateData)
+        MainView(selectedIndex: tabbarSelectedIndex, selectedView: tabbarSelectedView, visibleTabbar: isVisibleTabbar, updateData: updateData)
             .environmentObject(appStore)
     }
 }
 
 /// Binding valiables
-extension MainScreenContainerView {
+extension MainContainerView {
     
     private var updateData: Binding<Bool> {
         appStore.binding(for: \.popularMovies.updateData) {_ in AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.loadGenres)}
@@ -43,6 +43,6 @@ extension MainScreenContainerView {
 
 struct MainScreenContainerView_Previews: PreviewProvider {
     static var previews: some View {
-        MainScreenContainerView()
+        MainContainerView()
     }
 }

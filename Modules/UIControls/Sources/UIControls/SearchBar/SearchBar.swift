@@ -42,7 +42,6 @@ public struct SearchBar: View {
                 if !typingText.isEmpty {
                     searchText = typingText
                     self.movieSearchStatus = .loading
-                    //keyboardDismiss()
                 } else {
                     self.movieSearchStatus = .initial
                 }
@@ -52,7 +51,6 @@ public struct SearchBar: View {
             .padding(.horizontal, 25)
             .background(Color(.systemGray6))
             .cornerRadius(8)
-            .padding(.horizontal, 16)
             .onTapGesture {
                 movieSearchStatus = .typing
                 withAnimation {
@@ -87,16 +85,6 @@ public struct SearchBar: View {
             }
         }
     }
-    
-//    private func keyboardDismiss() {
-//        let keyWindow = UIApplication.shared.connectedScenes
-//            .filter({$0.activationState == .foregroundActive})
-//            .map({$0 as? UIWindowScene})
-//            .compactMap({$0})
-//            .first?.windows
-//            .filter({$0.isKeyWindow}).first
-//        keyWindow?.endEditing(true)
-//    }
 }
 
 @available(iOS 13.0, *)
@@ -107,7 +95,7 @@ public struct SearchBar_Previews: PreviewProvider {
 }
 #endif
 
-public enum MovieSearchStatus: CustomStringConvertible {
+public enum MovieSearchStatus {
     case initial
     case typing
     case loading
@@ -115,7 +103,7 @@ public enum MovieSearchStatus: CustomStringConvertible {
     case endOfSearch
     case error
     
-    public var description: String {
+    public var rawValue: String {
         switch self {
         case .initial:
             return "initial"
@@ -131,11 +119,22 @@ public enum MovieSearchStatus: CustomStringConvertible {
             return "error"
         }
     }
+    
+    public var info: (sfSymbol: String?, message: String?) {
+        switch self {
+        case .initial:
+            return ("magnifyingglass","Find your favorite\nmovie or TV series")
+        case .error:
+            return ("xmark.octagon","Not found\nTry changing your search")
+        default:
+            return (nil,nil)
+        }
+    }
 }
 
 extension MovieSearchStatus: Equatable {
     public static func == (lhs: MovieSearchStatus, rhs: MovieSearchStatus) -> Bool {
-        lhs.description == rhs.description
+        lhs.rawValue == rhs.rawValue
     }
     
     
