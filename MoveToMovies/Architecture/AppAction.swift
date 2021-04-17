@@ -34,7 +34,7 @@ enum SearchOmbdAPIMoviesAction {
     case loadMovieCovers(movies: [MovieOmdbapiObject])
     case updateMoviesWithPosters(movies: [MovieOmdbapiObject], downloadItems: [(String, Data?)])
     case changeProgressMovieSearch(Float)
-    case selectedReport(item: FoundItem?)
+    case setSelectedOMDB(item: FoundItem?)
 }
 
 enum PopularTmbdAPIMoviesAction {
@@ -48,7 +48,5 @@ enum PopularTmbdAPIMoviesAction {
     case updateCovers(postersData: [(String, Data?)], backdropData: [(String, Data?)])
     case updatingPopularMoviesComplete
     case setSelectedTMDBMovieCovers(for: MovieItem?)
-    case gotoDetailedView(Bool)
+    case isQuickTransition(Bool)
 }
-
-

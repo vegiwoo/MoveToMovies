@@ -10,7 +10,7 @@ import OmdbAPI
 import UIControls
 import Navigation
 
-struct MoviesView: View {
+struct MoviesRenderView: View {
     
     @EnvironmentObject private var appStore: AppStore<AppState, AppAction, AppEnvironment>
     @Environment(\.managedObjectContext) var managedObjectContext
@@ -95,7 +95,7 @@ struct MoviesView: View {
 
 struct MovieSearchRenderView_Previews: PreviewProvider {
     static var previews: some View {
-        MoviesView(title: "Some title",
+        MoviesRenderView(title: "Some title",
                               accentColor: .brown,
                               selectedIndexSegmentControl: .constant(0),
                               selectedTMDBMovie: .constant(nil),

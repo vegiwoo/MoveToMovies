@@ -16,7 +16,7 @@ struct DashScreenContainerView: View{
     var body: some View {
         DashScreenRenderView(readinessUpdatePopularTmbdMovies: readinessUpdatePopularTmbdMovies, isQuickTransition: gotoDetailedView)
             .onAppear{
-                appStore.send(AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.gotoDetailedView(false)))
+                appStore.send(AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.isQuickTransition(false)))
             }
             .onChange(of: gotoDetailedView.wrappedValue) { (value) in
                 if value {
@@ -40,8 +40,8 @@ extension DashScreenContainerView {
         }
     }
     private var gotoDetailedView: Binding<Bool> {
-        appStore.binding(for: \.popularMovies.gotoDetailedView) {
-            AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.gotoDetailedView($0))
+        appStore.binding(for: \.popularMovies.quickTransition) {
+            AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.isQuickTransition($0))
         }
     }
 }

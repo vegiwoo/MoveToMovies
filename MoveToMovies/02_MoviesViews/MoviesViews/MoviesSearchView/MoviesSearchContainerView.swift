@@ -8,19 +8,34 @@
 import SwiftUI
 import OmdbAPI
 import UIControls
+import Navigation
 
 struct MoviesSearchContainerView: View {
     
     @EnvironmentObject private var appStore: AppStore<AppState, AppAction, AppEnvironment>
     
+    @State var isGotoOMDBMovieDetailView: Bool = false
+    
     var body: some View {
-        MoviesSearchView(accentColor: .constant(.red),
-                         searchQuery: searchQuery,
-                         movieSearchStatus: movieSearchStatus,
-                         foundItems: foundItems,
-                         needForFurtherLoad: needForFurtherLoad,
-                         selectedOMDBMovie: selectedOMDBMovie,
-                         progressLoad: progressLoad)
+        ZStack {
+            PushView(destination: MovieDetailContainerView(isQuickTransition: .constant(false)), isActive: $isGotoOMDBMovieDetailView) {
+                EmptyView()
+            }
+            MoviesSearchRenderView(accentColor: .constant(.red),
+                             searchQuery: searchQuery,
+                             movieSearchStatus: movieSearchStatus,
+                             foundItems: foundItems,
+                             needForFurtherLoad: needForFurtherLoad,
+                             selectedOMDBMovie: selectedOMDBMovie,
+                             progressLoad: progressLoad)
+                .onChange(of: appStore.state.searchMovies.selectedOMDBMovie, perform: { value in
+                    if value != nil, isGotoOMDBMovieDetailView == false {
+                        isGotoOMDBMovieDetailView.toggle()
+                    } else {
+                        isGotoOMDBMovieDetailView = false
+                    }
+                })
+        }
     }
 }
 
@@ -52,7 +67,7 @@ extension MoviesSearchContainerView {
     }
     private var selectedOMDBMovie: Binding<FoundItem?> {
         appStore.binding(for: \.searchMovies.selectedOMDBMovie) {
-            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.selectedReport(item: $0))
+            AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.setSelectedOMDB(item: $0))
         }
     }
 }

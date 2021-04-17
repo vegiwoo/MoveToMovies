@@ -9,7 +9,7 @@ import SwiftUI
 import OmdbAPI
 import UIControls
 
-struct MoviesSearchView: View {
+struct MoviesSearchRenderView: View {
 
     @Binding var accentColor: UIColor
     @Binding var searchQuery: String
@@ -102,7 +102,7 @@ struct MoviesSearchView: View {
 
 struct MoviesSearchView_Previews: PreviewProvider {
     static var previews: some View {
-        MoviesSearchView(
+        MoviesSearchRenderView(
             accentColor: .constant(.red),
             searchQuery: .constant("SomeText"),
             movieSearchStatus: .constant(.initial),

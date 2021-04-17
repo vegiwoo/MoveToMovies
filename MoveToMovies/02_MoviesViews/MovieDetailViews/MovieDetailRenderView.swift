@@ -14,7 +14,7 @@ struct MovieDetailRenderView: View {
     
     @EnvironmentObject var navigationStack: NavigationStack
 
-    @Binding var selectedOMDBMovie: FoundItem?
+    @Binding var selectedOMDBMovieItem: FoundItem?
     @Binding var selectedTMDBMovie: MovieItem?
     @Binding var isGotoPreviewsView: Bool
 
@@ -23,7 +23,7 @@ struct MovieDetailRenderView: View {
     init(selectedOMDBMovie: Binding<FoundItem?>,
          selectedTMDBMovie: Binding<MovieItem?>,
          isGotoPreviewsView: Binding<Bool>) {
-        self._selectedOMDBMovie = selectedOMDBMovie
+        self._selectedOMDBMovieItem = selectedOMDBMovie
         self._selectedTMDBMovie = selectedTMDBMovie
         self._isGotoPreviewsView = isGotoPreviewsView
     }
@@ -33,8 +33,8 @@ struct MovieDetailRenderView: View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .bottom)) {
 
             // Selected OMDB Movie
-            if let selectedMovie = selectedOMDBMovie?.movie,
-               let selectedPosterData = selectedOMDBMovie?.posterData {
+            if let selectedMovie = selectedOMDBMovieItem?.movie,
+               let selectedPosterData = selectedOMDBMovieItem?.posterData {
                 StretchyHeaderScreen(imageData: selectedPosterData, title: selectedMovie.title!, content: AnyView(
                                         MovieInfoContainerView()))
             } else if let movie = selectedTMDBMovie,

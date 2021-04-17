@@ -17,7 +17,6 @@ struct MovieDetailContainerView: View {
     @State var isGotoPreviewsView: Bool = false
     @Binding var isQuickTransition: Bool
     
-    
     var body: some View {
         MovieDetailRenderView(selectedOMDBMovie: selectedOMDBMovie,
                               selectedTMDBMovie: selectedTMDBMovie,

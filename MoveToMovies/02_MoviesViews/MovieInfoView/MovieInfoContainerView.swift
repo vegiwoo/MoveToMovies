@@ -15,7 +15,7 @@ struct MovieInfoContainerView: View {
 
     var body: some View {
         MovieInfoRenderView(
-            selectedOMDBMovie: selectedOMDBMovie,
+            selectedOMDBMovieItem: selectedOMDBMovie,
             selectedTMDBMovie: selectedTMDBMovie
         )
     }

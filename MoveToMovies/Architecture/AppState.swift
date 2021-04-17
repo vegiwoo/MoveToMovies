@@ -68,23 +68,18 @@ struct PopularMoviesState {
     var selectedTMDBMovie: MovieItem?
     var selectedTMDBMoviePoster: Data?
     var selectedTMDBMovieBackdrop: Data?
-    var gotoDetailedView: Bool = false
+    var quickTransition: Bool = false
 }
 
 public enum PosterSize: String {
     case w92, w154, w185, w342, w500, w780, original
 }
 
-
 struct FoundItem {
     var movie: MovieOmdbapiObject
     var posterData: Data?
 }
 
-extension FoundItem: Identifiable {
+extension FoundItem: Identifiable & Hashable {
     public var id: String { movie.imdbID! }
 }
-
-
-
-extension FoundItem: Hashable {}

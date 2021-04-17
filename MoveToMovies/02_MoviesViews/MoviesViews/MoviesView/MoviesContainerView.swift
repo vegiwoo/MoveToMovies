@@ -22,16 +22,13 @@ struct MoviesContainerView: View {
     
     var body: some View {
         ZStack {
-            PushView(destination: MovieDetailContainerView(isQuickTransition: gotoDetailedView), isActive: $isGotoOMDBMovieDetailView) {
-                EmptyView()
-            }
             PushView(destination: MovieDetailContainerView(isQuickTransition: gotoDetailedView), isActive: $isGotoTMDBMovieDetailView) {
                 EmptyView()
             }
             if gotoDetailedView.wrappedValue {
                 EmptyView()
             } else {
-                MoviesView(title: TabbarTab.movies.text,
+                MoviesRenderView(title: TabbarTab.movies.text,
                                       accentColor: TabbarTab.movies.actualColor,
                                       selectedIndexSegmentControl: selectedIndexSegmentControl,
                                       selectedTMDBMovie: selectedTMDBMovie,
@@ -47,13 +44,7 @@ struct MoviesContainerView: View {
                 }
                 isGotoTMDBMovieDetailView = true
             }
-        }.onChange(of: appStore.state.searchMovies.selectedOMDBMovie, perform: { value in
-            if value != nil, isGotoOMDBMovieDetailView == false {
-                isGotoOMDBMovieDetailView.toggle()
-            } else {
-                isGotoOMDBMovieDetailView = false
-            }
-        })
+        }
         .onChange(of: selectedTMDBMovie.wrappedValue, perform: { value in
             if value != nil, isGotoTMDBMovieDetailView == false {
                 isGotoTMDBMovieDetailView.toggle()
@@ -78,8 +69,8 @@ extension MoviesContainerView {
         }
     }
     private var gotoDetailedView: Binding<Bool> {
-        appStore.binding(for: \.popularMovies.gotoDetailedView) {
-            AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.gotoDetailedView($0))
+        appStore.binding(for: \.popularMovies.quickTransition) {
+            AppAction.popularTmbdAPIMovies(action: PopularTmbdAPIMoviesAction.isQuickTransition($0))
         }
     }
 }

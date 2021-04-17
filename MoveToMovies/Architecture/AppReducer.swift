@@ -131,8 +131,8 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
         
         state.movieSearchStatus = .endOfLoadSession
         
-    case let .selectedReport(item):
-        if item != nil { print(item!.id) }
+    case let .setSelectedOMDB(item):
+        state.selectedOMDBMovie = item != nil ? item! : nil
     }
     return Empty().eraseToAnyPublisher()
 }
@@ -191,16 +191,16 @@ func searchTmdbApiMoviesReducer(state: inout PopularMoviesState, action: Popular
             state.selectedTMDBMoviePoster = nil
             state.selectedTMDBMovieBackdrop = nil
         }
-    case let .gotoDetailedView(value):
+    case let .isQuickTransition(value):
         if value {
-            state.gotoDetailedView = true
+            state.quickTransition = true
             if let randomMovie = environment.coreDataProvider.fetshingRandomMovie() {
                 return Just(PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: randomMovie)).eraseToAnyPublisher()
             } else {
                 return Just(PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: nil)).eraseToAnyPublisher()
             }
         } else {
-            state.gotoDetailedView = false
+            state.quickTransition = false
             return Just(PopularTmbdAPIMoviesAction.setSelectedTMDBMovieCovers(for: nil)).eraseToAnyPublisher()
         }
     }
