@@ -17,7 +17,7 @@ struct MoviesSearchRenderView: View {
     @Binding var foundItems: [FoundItem]
     @Binding var needForFurtherLoad: Bool
     @Binding var selectedOMDBMovie: FoundItem?
-    @Binding var progressLoad: Float
+    @Binding var progressLoad: Double
     
     init(accentColor: Binding<UIColor>,
          searchQuery: Binding<String>,
@@ -25,7 +25,7 @@ struct MoviesSearchRenderView: View {
          foundItems: Binding<[FoundItem]>,
          needForFurtherLoad: Binding<Bool>,
          selectedOMDBMovie: Binding<FoundItem?>,
-         progressLoad: Binding<Float>) {
+         progressLoad: Binding<Double>) {
         self._accentColor = accentColor
         self._searchQuery = searchQuery
         self._movieSearchStatus = movieSearchStatus

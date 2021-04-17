@@ -33,7 +33,7 @@ enum SearchOmbdAPIMoviesAction {
     case addFoundMovies(query: String, movies: [MovieOmdbapiObject])
     case loadMovieCovers(movies: [MovieOmdbapiObject])
     case updateMoviesWithPosters(movies: [MovieOmdbapiObject], downloadItems: [(String, Data?)])
-    case changeProgressMovieSearch(Float)
+    case changeProgressMovieSearch(Double)
     case setSelectedOMDB(item: FoundItem?)
 }
 

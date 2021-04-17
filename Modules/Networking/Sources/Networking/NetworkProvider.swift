@@ -11,6 +11,7 @@ public class NetworkProvider: Singletonable {
     
     private var session: URLSession = URLSession.shared
     private var jsonDecoder: JSONDecoder = .init()
+    public var progressPublisher: PassthroughSubject<(String,Double), Never> = PassthroughSubject<(String,Double), Never>()
     
     public required init(container: IContainer, args: Void) { }
     
@@ -22,17 +23,36 @@ public class NetworkProvider: Singletonable {
     public func loadData(for items: [String: String?]) -> AnyPublisher<[(String, Data?)], Never> {
         var futures: [AnyPublisher<(String, Data?), Never>] = []
         
+        let numberOfTasks: Int = items.count
+        var counter: Double = 0 {
+            willSet {
+                self.progressPublisher.send(("loadData", newValue))
+            }
+        }
+
         for item in items {
             guard let urlString = item.value,
                   let url = URL(string: urlString) else {
                 continue
             }
             let future = Future<(String, Data?), Never> { promise in
-                URLSession.shared.dataTask(with: url) {data, response, error in
-                    if let data = data {
+                var cancellable: AnyCancellable?
+                cancellable = self.session.dataTaskPublisher(for: url)
+                    .retry(1)
+                    .map{$0.data}
+                    .sink(receiveCompletion: { (completion) in
+                    
+                    }) { (data) in
                         promise(.success((item.key, data)))
+                        
+                        if items.index(forKey: item.key) == items.endIndex {
+                            counter = 100
+                        } else {
+                            counter += 100 / Double(numberOfTasks)
+                        }
+                        cancellable?.cancel()
                     }
-                }.resume()
+               
             }
             futures.append(future.eraseToAnyPublisher())
         }

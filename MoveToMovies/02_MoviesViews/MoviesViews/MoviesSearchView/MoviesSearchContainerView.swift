@@ -62,7 +62,7 @@ extension MoviesSearchContainerView {
             AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.loadSearchMovies(query: appStore.state.searchMovies.searchQuery, page: appStore.state.searchMovies.searchPage))
         }
     }
-    private var progressLoad: Binding<Float> {
+    private var progressLoad: Binding<Double> {
         appStore.binding(for: \.searchMovies.progressLoad)
     }
     private var selectedOMDBMovie: Binding<FoundItem?> {

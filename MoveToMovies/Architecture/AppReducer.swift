@@ -76,23 +76,12 @@ func searchOmdbApiMoviesReducer(state: inout SearchMoviesState, action: SearchOm
             state.selectedOMDBMoviePoster = nil
         case .loading:
             state.progressLoad = 0.00
-            
-            var initValue: Float = state.progressLoad
-            let publisher = PassthroughSubject<Float, Never>()
 
-            Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
-                if initValue < 100.00 {
-                    initValue += 1
-                    publisher.send(initValue)
-                } else {
-                    timer.invalidate()
-                }
-            }.fire()
-            
-            return publisher
-                .map{SearchOmbdAPIMoviesAction.changeProgressMovieSearch($0)}
+            return environment.networkProvider.progressPublisher
+                .filter{$0.0 == "loadData"}
+                .map{SearchOmbdAPIMoviesAction.changeProgressMovieSearch($0.1)}
                 .eraseToAnyPublisher()
-
+            
         case .endOfSearch:
             state.movieSearchStatus = .endOfSearch
         default:

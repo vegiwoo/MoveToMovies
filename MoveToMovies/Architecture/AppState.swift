@@ -55,7 +55,7 @@ struct SearchMoviesState {
     var searchPage: Int = 1
     var foundItems: [FoundItem] = .init()
     var needForFurtherLoad: Bool = false
-    var progressLoad: Float = 0.0
+    var progressLoad: Double = 0.0
     var selectedOMDBMovie: FoundItem?
     var selectedOMDBMoviePoster: Data?
 }
