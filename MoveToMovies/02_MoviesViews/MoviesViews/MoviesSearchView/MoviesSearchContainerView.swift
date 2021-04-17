@@ -21,13 +21,13 @@ struct MoviesSearchContainerView: View {
             PushView(destination: MovieDetailContainerView(isQuickTransition: .constant(false)), isActive: $isGotoOMDBMovieDetailView) {
                 EmptyView()
             }
-            MoviesSearchRenderView(accentColor: .constant(.red),
-                             searchQuery: searchQuery,
-                             movieSearchStatus: movieSearchStatus,
-                             foundItems: foundItems,
-                             needForFurtherLoad: needForFurtherLoad,
-                             selectedOMDBMovie: selectedOMDBMovie,
-                             progressLoad: progressLoad)
+            MoviesSearchRenderView( accentColor: .constant(TabbarTab.movies.actualColor),
+                                    searchQuery: searchQuery,
+                                    movieSearchStatus: movieSearchStatus,
+                                    foundItems: foundItems,
+                                    needForFurtherLoad: needForFurtherLoad,
+                                    selectedOMDBMovie: selectedOMDBMovie,
+                                    progressLoad: progressLoad)
                 .onChange(of: appStore.state.searchMovies.selectedOMDBMovie, perform: { value in
                     if value != nil, isGotoOMDBMovieDetailView == false {
                         isGotoOMDBMovieDetailView.toggle()
@@ -41,7 +41,7 @@ struct MoviesSearchContainerView: View {
 
 /// Bindings variables
 extension MoviesSearchContainerView {
-
+    
     private var movieSearchStatus: Binding<MovieSearchStatus> {
         appStore.binding(for: \.searchMovies.movieSearchStatus) {
             AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.changeStatusMovieSearch($0))
@@ -56,7 +56,7 @@ extension MoviesSearchContainerView {
     private var foundItems: Binding<[FoundItem]> {
         appStore.binding(for: \.searchMovies.foundItems)
     }
-
+    
     private var needForFurtherLoad: Binding<Bool> {
         appStore.binding(for: \.searchMovies.needForFurtherLoad) {_ in
             AppAction.searchOmbdAPIMovies(action: SearchOmbdAPIMoviesAction.loadSearchMovies(query: appStore.state.searchMovies.searchQuery, page: appStore.state.searchMovies.searchPage))

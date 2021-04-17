@@ -52,7 +52,6 @@ public class NetworkProvider: Singletonable {
                         }
                         cancellable?.cancel()
                     }
-               
             }
             futures.append(future.eraseToAnyPublisher())
         }

@@ -232,13 +232,13 @@
 			path = 02_MoviesViews;
 			sourceTree = "<group>";
 		};
-		775B97AA2617290D0061794C /* 3_AboutUsView */ = {
+		775B97AA2617290D0061794C /* 03_AboutUsView */ = {
 			isa = PBXGroup;
 			children = (
 				775B97B7261729AE0061794C /* AboutUsContainerView.swift */,
 				775B97BA261729BB0061794C /* AboutUsRenderView.swift */,
 			);
-			path = 3_AboutUsView;
+			path = 03_AboutUsView;
 			sourceTree = "<group>";
 		};
 		77720411261E11D20007E2FC /* MovieDetailViews */ = {
@@ -335,7 +335,7 @@
 				77300B5526161DFB006868A2 /* 00_MainViews */,
 				775B97A8261728DB0061794C /* 01_DashboardViews */,
 				775B97A9261728ED0061794C /* 02_MoviesViews */,
-				775B97AA2617290D0061794C /* 3_AboutUsView */,
+				775B97AA2617290D0061794C /* 03_AboutUsView */,
 				7746164C25F157D8001D8ADB /* AccompanyingCode */,
 				7746163925F144D8001D8ADB /* CodeGeneration */,
 				77A67F8E25F0DC83005CB877 /* Preview Content */,
