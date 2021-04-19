@@ -14,7 +14,7 @@ import Architecture
 class CoreDataProvider: Singletonable {
     required init(container: IContainer, args: Void) { }
     
-    lazy var context: NSManagedObjectContext = {
+    var context: NSManagedObjectContext = {
         let container = NSPersistentContainer(name: "MoveToMoviesModel")
         
         var context: NSManagedObjectContext = .init(concurrencyType: .privateQueueConcurrencyType)
